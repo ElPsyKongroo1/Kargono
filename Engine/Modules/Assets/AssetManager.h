@@ -19,8 +19,11 @@
 namespace Kargono::Assets
 {
 	using AssetRegistry = std::unordered_map<AssetHandle, Metadata>;
-	using AssetCache = std::unordered_map<AssetHandle, GenericAssetReference>;
 
+	template<AssetConcept t_AssetType>
+	using AssetCache = std::unordered_map<AssetHandle, AssetReference<t_AssetType>>;
+
+	template<AssetConcept t_AssetType>
 	class AssetManager
 	{
 	public:
@@ -43,8 +46,9 @@ namespace Kargono::Assets
 			return m_AssetRegistry.at(handle);
 		}
 
-		template<AssetConcept t_AssetType> requires HasAssetCacheFlag<t_AssetType>
-		AssetReference<t_AssetType> GetCachedReference(AssetHandle handle)
+		
+		AssetReference<t_AssetType> GetCachedReference(AssetHandle handle) 
+			requires HasAssetCacheFlag<t_AssetType>
 		{
 			if (!m_AssetCache.contains(handle))
 			{
@@ -54,7 +58,6 @@ namespace Kargono::Assets
 			return { m_AssetCache.at(handle) };
 		}
 
-		template<AssetConcept t_AssetType>
 		AssetReference<t_AssetType> GetAssetByHandle(AssetHandle handle)
 		{
 			// Check cache first
@@ -70,19 +73,13 @@ namespace Kargono::Assets
 			if (m_AssetRegistry.contains(handle))
 			{
 				Metadata& metadata = m_AssetRegistry[handle];
-				AssetReference<t_AssetType> newAssetRef{ DeserializeAssetImpl<t_AssetType>(metadata)};
+				AssetReference<t_AssetType> newAssetRef{ DeserializeAssetImpl(metadata)};
 				KG_ASSERT(newAssetRef.IsUsable());
 				
 				// Cache asset if applicable
 				if constexpr (HasAssetCacheFlag<t_AssetType>)
 				{
-					GenericAssetReference cachedReference
-					{
-						newAssetRef.GetHandle(),
-						newAssetRef.GetLoadState(),
-						(void*)& newAssetRef.GetAsset()
-					};
-					m_AssetCache.insert({ handle, cachedReference });
+					m_AssetCache.insert({ handle, newAssetRef });
 				}
 				return newAssetRef;
 			}
@@ -91,11 +88,11 @@ namespace Kargono::Assets
 			return {};
 		}
 
-		template<AssetConcept t_AssetType> requires HasFileLocation<t_AssetType>
 		AssetReference<t_AssetType> GetAssetByFileLocation(const std::filesystem::path& queryLocation)
+			requires HasFileLocation<t_AssetType>
 		{
 			// Find asset handle
-			AssetHandle handle{ GetAssetHandleByFileLocation<t_AssetType>(queryLocation) };
+			AssetHandle handle{ GetAssetHandleByFileLocation(queryLocation) };
 
 			// Check for invalid case
 			if (handle == k_EmptyHandle)
@@ -104,18 +101,18 @@ namespace Kargono::Assets
 			}
 
 			// Get indicated asset
-			return GetAssetByHandle<t_AssetType>(handle);
+			return GetAssetByHandle(handle);
 		}
 
-		template<AssetConcept t_AssetType> requires HasGetAssetFromSpec<t_AssetType>
 		AssetReference<t_AssetType> GetAssetBySpec(const typename t_AssetType::Spec& spec)
+			requires HasGetAssetFromSpec<t_AssetType>
 		{
 			// Check each asset for matching spec
 			for (const auto& [handle, metadata] : m_AssetRegistry)
 			{
 				if (GetAssetFromSpecImpl(metadata, spec))
 				{
-					return GetAssetByHandle<t_AssetType>(handle);
+					return GetAssetByHandle(handle);
 				}
 			}
 
@@ -129,7 +126,6 @@ namespace Kargono::Assets
 			return m_AssetRegistry.contains(handle);
 		}
 
-		template<AssetConcept t_AssetType>
 		bool HasAssetByName(std::string_view assetName)
 		{
 			// Check for a matching name
@@ -145,11 +141,11 @@ namespace Kargono::Assets
 			return false;
 		}
 
-		template<AssetConcept t_AssetType> requires HasFileLocation<t_AssetType>
 		bool HasAssetByFile(const std::filesystem::path& queryLocation)
+			requires HasFileLocation<t_AssetType>
 		{
 			// Find asset handle
-			AssetHandle handle{ GetAssetHandleByFileLocation<t_AssetType>(queryLocation) };
+			AssetHandle handle{ GetAssetHandleByFileLocation(queryLocation) };
 
 			// Return boolean response
 			if (handle == k_EmptyHandle)
@@ -159,13 +155,12 @@ namespace Kargono::Assets
 			return true;
 		}
 
-		template<AssetConcept t_AssetType> requires HasAssetCacheFlag<t_AssetType>
 		bool HasCachedReferenceByHandle(AssetHandle handle)
+			requires HasAssetCacheFlag<t_AssetType>
 		{
 			return m_AssetCache.contains(handle);
 		}
 
-		template<AssetConcept t_AssetType> requires HasUpdateFromAsset<t_AssetType>
 		bool UpdateAsset(AssetReference<t_AssetType> otherRef)
 		{
 			KG_ASSERT(otherRef.IsUsable());
@@ -177,15 +172,16 @@ namespace Kargono::Assets
 				KG_WARN("Attempt to update asset when handle does not exist in registry");
 				return false;
 			}
-			if (!HasCachedReferenceByHandle<t_AssetType>(handle))
-			{
-				KG_WARN("Attempt to update an asset that does not exist in the asset cache");
-				return false;
-			}
 
-			// Get the current asset reference
-			AssetReference<t_AssetType> currentRef{ m_AssetCache.at(handle) };
-			KG_ASSERT(currentRef.IsUsable());
+			// Ensure asset is cached if applicable
+			if constexpr (HasAssetCacheFlag<t_AssetType>)
+			{
+				if (!HasCachedReferenceByHandle(handle))
+				{
+					KG_WARN("Attempt to update an asset that does not exist in the asset cache");
+					return false;
+				}
+			}
 
 			// Get metadata
 			Metadata& metadata{ GetRawMetadata(handle) };
@@ -195,43 +191,56 @@ namespace Kargono::Assets
 			Ref<void> providedData{ nullptr };
 			if constexpr (HasValidateUpdateFromAsset<t_AssetType>)
 			{
-				providedData = ValidateUpdateFromAssetImpl<t_AssetType>(metadata, otherRef);
+				providedData = ValidateUpdateFromAssetImpl(metadata, otherRef);
 			}
 
 			// Update the asset using a user-defined update function
 			if constexpr (HasCustomUpdateFromAsset<t_AssetType>)
 			{
-				CustomUpdateFromAssetImpl<t_AssetType>(metadata, currentRef, otherRef);
+				// Get the current asset reference
+				AssetReference<t_AssetType> currentRef{ m_AssetCache.at(handle) };
+				KG_ASSERT(currentRef.IsUsable());
+
+				// Perform custom update
+				CustomUpdateFromAssetImpl(metadata, currentRef, otherRef);
 			}
 			// Update the asset using a default override
-			else if (HasDefaultUpdateFromAsset<t_AssetType>)
+			else if constexpr (HasAssetCacheFlag<t_AssetType>)
 			{
-				m_AssetCache.at(handle) =
-				{
-					handle,
-					otherRef.GetLoadState(),
-					(void*)&otherRef.GetAsset()
-				};
+				m_AssetCache.at(handle) = otherRef;
 			}
 
 			// Update save files on disk if relevant
 			if constexpr (HasAssetSaving<t_AssetType>)
 			{
-				SerializeAssetImpl<t_AssetType>(metadata, currentRef);
+				// Save either the cached or provided asset
+				if constexpr (HasAssetCacheFlag<t_AssetType>)
+				{
+					// Get the current asset reference
+					AssetReference<t_AssetType> currentRef{ m_AssetCache.at(handle) };
+					KG_ASSERT(currentRef.IsUsable());
+
+					// Serialize the stored asset
+					SerializeAssetImpl(metadata, currentRef);
+				}
+				else
+				{
+					// Serialize the provided asset
+					SerializeAssetImpl(metadata, otherRef);
+				}
 			}
 
 			// Re-generate asset hash
-			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(metadata) };
+			Utility::SHA256Hash resultHash{ GenerateAssetHash(metadata) };
 			KG_ASSERT(!resultHash.IsEmpty());
 			metadata.m_Hash = resultHash;
 
 			// Send update event
-			SendManageAssetEvent<t_AssetType>(Events::ManageAssetAction::UpdateAsset,
-				metadata, providedData);
+			SendManageAssetEvent(metadata, Events::ManageAssetAction::UpdateAsset, providedData);
 		}
 
-		template<AssetConcept t_AssetType> requires HasSpecification<t_AssetType>
 		void UpdateAsset(AssetHandle handle, const t_AssetType::Spec& spec)
+			requires HasUpdateFromSpec<t_AssetType>
 		{
 			// Ensure asset exists and is cached
 			if (!HasAssetByHandle(handle))
@@ -239,7 +248,9 @@ namespace Kargono::Assets
 				KG_WARN("Attempt to update asset when handle does not exist in registry");
 				return false;
 			}
-			if (!HasCachedReferenceByHandle<t_AssetType>(handle))
+
+			// Ensure asset is cached
+			if (!HasCachedReferenceByHandle(handle))
 			{
 				KG_WARN("Attempt to update an asset that does not exist in the asset cache");
 				return false;
@@ -252,7 +263,7 @@ namespace Kargono::Assets
 			Ref<void> providedData{ nullptr };
 			if constexpr (HasValidateUpdateFromSpec<t_AssetType>)
 			{
-				providedData = ValidateUpdateFromSpecImpl<t_AssetType>(metadata, spec);
+				providedData = ValidateUpdateFromSpecImpl(metadata, spec);
 			}
 
 			// Get the current asset reference
@@ -260,25 +271,39 @@ namespace Kargono::Assets
 			KG_ASSERT(currentRef.IsUsable());
 
 			// Update current asset w/ spec
-			UpdateFromSpecImpl<t_AssetType>(metadata, currentRef, spec);
+			UpdateFromSpecImpl(metadata, currentRef, spec);
 
 			// Save asset files on-disk if relevant
 			if constexpr (HasAssetSaving<t_AssetType>)
 			{
-				SerializeAssetImpl<t_AssetType>(metadata, assetReference);
+				SerializeAssetImpl(metadata, currentRef);
 			}
 
 			// Re-generate asset hash
-			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(metadata) };
-			KG_ASSERT(!resultHash.IsEmpty());
+			Utility::SHA256Hash resultHash{ GenerateAssetHash(metadata) };
+
+			// Incorporate spec hash if applicable
+			if constexpr (HasHashFromSpec<t_AssetType>)
+			{
+				// Generate spec hash
+				Utility::SHA256Hash specHash{ GetHashFromSpecImpl(spec) };
+				resultHash = resultHash ^ specHash;
+			}
 			metadata.m_Hash = resultHash;
 
+			// Validate asset hash
+			if (!ValidateAssetHash(resultHash))
+			{
+				KG_WARN("Invalid asset hash generated from updated asset");
+				// TODO: Need to do something here yeah?
+				return;
+			}
+
 			// Send update event
-			SendManageAssetEvent<t_AssetType>(Events::ManageAssetAction::UpdateAsset,
+			SendManageAssetEvent(Events::ManageAssetAction::UpdateAsset,
 				metadata, providedData);
 		}
 
-		template<AssetConcept t_AssetType>
 		bool DeleteAsset(AssetHandle handle)
 		{
 			// Ensure asset exists
@@ -294,28 +319,27 @@ namespace Kargono::Assets
 			// Provide asset specific validation
 			if constexpr (HasValidateDelete<t_AssetType>)
 			{
-				ValidateDeleteImpl<t_AssetType>(metadata);
+				ValidateDeleteImpl(metadata);
 			}
 
 			// Send pre-delete event
-			SendManageAssetEvent<t_AssetType>(Events::ManageAssetAction::PreDelete,
+			SendManageAssetEvent(Events::ManageAssetAction::PreDelete,
 				metadata, nullptr);
 
 			// Remove asset
-			DeleteAssetFiles<t_AssetType>(metadata);
-			RemoveAssetDataFromRegistry<t_AssetType>(handle);
+			DeleteAssetFiles(metadata);
+			RemoveAssetDataFromRegistry(handle);
 
 			// Save the modified registry to disk
-			SerializeAssetRegistry<t_AssetType>();
+			SerializeAssetRegistry();
 
 			// Send post-delete event
-			SendManageAssetEvent<t_AssetType>(Events::ManageAssetAction::PostDelete,
+			SendManageAssetEvent(Events::ManageAssetAction::PostDelete,
 				metadata, nullptr);
 
 			return true;
 		}
 
-		template<AssetConcept t_AssetType>
 		void ClearAssetRegistry()
 		{
 			// Create cache of all asset id's for stability
@@ -329,7 +353,7 @@ namespace Kargono::Assets
 			// Remove each asset
 			for (AssetHandle handle : m_AllAssetIDs)
 			{
-				RemoveAssetDataFromRegistry<t_AssetType>(handle);
+				RemoveAssetDataFromRegistry(handle);
 			}
 			
 			// Verify completion
@@ -360,12 +384,11 @@ namespace Kargono::Assets
 			metadata.m_IsHidden = isHidden;
 		}
 
-
-		template<AssetConcept t_AssetType> requires HasCreateFromName<t_AssetType>
 		AssetHandle CreateAssetFromName(const AssetCreationData& creationData)
+			requires HasCreateFromName<t_AssetType>
 		{
 			// Validate asset name
-			if (!ValidateAssetName<t_AssetType>(creationData.m_AssetName))
+			if (!ValidateAssetName(creationData.m_AssetName))
 			{
 				KG_WARN("Invalid asset name provided to create asset from name function: {}", 
 					creationData.m_AssetName);
@@ -405,43 +428,44 @@ namespace Kargono::Assets
 			}
 
 			// Create asset on disk
-			CreateFromNameImpl<t_AssetType>(newMetadata);
+			CreateFromNameImpl(newMetadata);
 
 			// Generate asset hash
-			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(newMetadata) };
+			Utility::SHA256Hash resultHash{ GenerateAssetHash(newMetadata) };
 			newMetadata.m_Hash = resultHash;
 
 			// Register new asset
 			m_AssetRegistry.insert({ newMetadata.m_Handle, newMetadata });
-			SerializeAssetRegistry<t_AssetType>();
+			SerializeAssetRegistry();
 
 			// Fill in-memory cache
 			if constexpr (HasAssetCacheFlag<t_AssetType>)
 			{
-				LoadAssetIntoCache<t_AssetType>(newMetadata);
+				LoadAssetIntoCache(newMetadata);
 			}
 
 			// Validate asset hash
-			if (!ValidateAssetHash<t_AssetType>(resultHash))
+			if (!ValidateAssetHash(resultHash))
 			{
 				KG_WARN("Invalid asset hash generated from new asset");
 
 				// Rollback asset creation
-				bool deleteSuccess = DeleteAsset<t_AssetType>(newMetadata.m_Handle);
+				bool deleteSuccess = DeleteAsset(newMetadata.m_Handle);
 				KG_ASSERT(deleteSuccess);
 
 				return k_EmptyHandle;
 			}
 
 			// Send creation event
-			SendManageAssetEvent<t_AssetType>(Events::ManageAssetAction::Create, 
+			SendManageAssetEvent(Events::ManageAssetAction::Create, 
 				newMetadata, nullptr);
 			
 			return newMetadata.m_Handle;
 		}
 
-		template<AssetConcept t_AssetType> requires HasCreateFromFile<t_AssetType>
-		AssetHandle CreateAssetFromFile(const std::filesystem::path& sourcePath, const AssetCreationData& creationData)
+		AssetHandle CreateAssetFromFile(const std::filesystem::path& sourcePath, 
+			const AssetCreationData& creationData)
+			requires HasCreateFromFile<t_AssetType>
 		{
 			// Ensure valid asset name is provided
 			if (!ValidateAssetName(creationData.m_AssetName))
@@ -472,7 +496,7 @@ namespace Kargono::Assets
 			}
 
 			// Check if source path is valid
-			if (!ValidateSourcePath<t_AssetType>(sourcePath))
+			if (!ValidateSourcePath(sourcePath))
 			{
 				KG_WARN("Source path validation failed for provided path: {}", 
 					sourcePath.string());
@@ -492,29 +516,29 @@ namespace Kargono::Assets
 			}
 
 			// Create asset files on disk
-			CreateFromFileImpl<t_AssetType>(newMetadata, sourcePath);
+			CreateFromFileImpl(newMetadata, sourcePath);
 
 			// Generate asset hash
-			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(newMetadata) };
+			Utility::SHA256Hash resultHash{ GenerateAssetHash(newMetadata) };
 			newMetadata.m_Hash = resultHash;
 
 			// Add new asset into asset registry
 			m_AssetRegistry.insert({ newHandle, newMetadata });
-			SerializeAssetRegistry<t_AssetType>();
+			SerializeAssetRegistry();
 
 			// Fill in-memory cache
 			if constexpr (HasAssetCacheFlag<t_AssetType>)
 			{
-				LoadAssetIntoCache<t_AssetType>(newMetadata);
+				LoadAssetIntoCache(newMetadata);
 			}
 
 			// Validate asset hash
-			if (!ValidateAssetHash<t_AssetType>(resultHash))
+			if (!ValidateAssetHash(resultHash))
 			{
 				KG_WARN("Invalid asset hash generated from new asset");
 
 				// Rollback asset creation
-				bool deleteSuccess = DeleteAsset<t_AssetType>(newMetadata.m_Handle);
+				bool deleteSuccess = DeleteAsset(newMetadata.m_Handle);
 				KG_ASSERT(deleteSuccess);
 
 				// Return empty handle
@@ -522,15 +546,15 @@ namespace Kargono::Assets
 			}
 
 			// Send creation event
-			SendManageAssetEvent<t_AssetType>(Events::ManageAssetAction::Create,
+			SendManageAssetEvent(Events::ManageAssetAction::Create,
 				newMetadata, nullptr);
 
 			return newMetadata.m_Handle;
 		}
 
-		template<AssetConcept t_AssetType> requires HasCreateFromSpec<t_AssetType>
 		AssetHandle CreateAssetFromSpec(const AssetCreationData& creationData, 
 			const typename t_AssetType::Spec& spec)
+			requires HasCreateFromSpec<t_AssetType>
 		{
 			// Handle validation
 			if constexpr (HasValidateCreateFromSpec<t_AssetType>)
@@ -544,7 +568,7 @@ namespace Kargono::Assets
 			}
 
 			// Ensure valid asset name is provided
-			if (!ValidateAssetName<t_AssetType>(creationData.m_AssetName))
+			if (!ValidateAssetName(creationData.m_AssetName))
 			{
 				KG_WARN("Invalid asset name provided to create asset from file function: {}",
 					creationData.m_AssetName);
@@ -584,37 +608,37 @@ namespace Kargono::Assets
 			}
 
 			// Create asset
-			CreateFromSpecImpl<t_AssetType>(newMetadata, spec);
+			CreateFromSpecImpl(newMetadata, spec);
 
 			// Generate asset hash
-			Utility::SHA256Hash resultHash{ GenerateAssetHash<t_AssetType>(newMetadata) };
+			Utility::SHA256Hash resultHash{ GenerateAssetHash(newMetadata) };
 
 			// Incorporate spec hash if applicable
 			if constexpr (HasHashFromSpec<t_AssetType>)
 			{
 				// Generate spec hash
-				Utility::SHA256Hash specHash{ GetHashFromSpecImpl<t_AssetType>(spec) };
+				Utility::SHA256Hash specHash{ GetHashFromSpecImpl(spec) };
 				resultHash = resultHash ^ specHash;
 			}
 			newMetadata.m_Hash = resultHash;
 
 			// Register new asset
 			m_AssetRegistry.insert({ newHandle, newMetadata });
-			SerializeAssetRegistry<t_AssetType>(); // Update Registry File on Disk
+			SerializeAssetRegistry(); // Update Registry File on Disk
 
 			// Fill in-memory cache
 			if constexpr (HasAssetCacheFlag<t_AssetType>)
 			{
-				LoadAssetIntoCache<t_AssetType>(newMetadata);
+				LoadAssetIntoCache(newMetadata);
 			}
 
 			// Validate asset hash
-			if (!ValidateAssetHash<t_AssetType>(resultHash))
+			if (!ValidateAssetHash(resultHash))
 			{
 				KG_WARN("Invalid asset hash generated from new asset");
 
 				// Rollback asset creation
-				bool deleteSuccess = DeleteAsset<t_AssetType>(newMetadata.m_Handle);
+				bool deleteSuccess = DeleteAsset(newMetadata.m_Handle);
 				KG_ASSERT(deleteSuccess);
 
 				// Return empty handle
@@ -622,19 +646,18 @@ namespace Kargono::Assets
 			}
 
 			// Send creation event
-			SendManageAssetEvent<t_AssetType>(Events::ManageAssetAction::Create,
+			SendManageAssetEvent(Events::ManageAssetAction::Create,
 				newMetadata, nullptr);
 
 			return newMetadata.m_Handle;
 		}
 
-		template<AssetConcept t_AssetType>
 		void SerializeAssetRegistry()
 		{
 			// Get registry path
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
-			std::filesystem::path registryPath{ GetAssetRegistryPath<t_AssetType>() };
+			std::filesystem::path registryPath{ GetAssetRegistryPath() };
 			KG_ASSERT(!registryPath.empty(),
 				"Generated empty registry path for asset type" );
 			
@@ -646,7 +669,7 @@ namespace Kargono::Assets
 			// Serialize other registry specific data
 			if constexpr (HasRegistryData<t_AssetType>)
 			{
-				SerializeRegistrySpecificData<t_AssetType>(serializer);
+				SerializeRegistrySpecificData(serializer);
 			}
 
 			// Serialize all assets
@@ -663,17 +686,17 @@ namespace Kargono::Assets
 				serializer << YAML::Key << "IsHidden" << YAML::Value << metadata.m_IsHidden;
 				if constexpr (HasFileLocation<t_AssetType>)
 				{
-					serializer << YAML::Key << "FileDirectory" << YAML::Value << metadata.GetAssetRelativeFilePath<t_AssetType>().string();
+					serializer << YAML::Key << "FileDirectory" << YAML::Value << metadata.GetAssetRelativeFilePath().string();
 				}
 				if constexpr (HasIntermediates<t_AssetType>)
 				{
-					serializer << YAML::Key << "IntermediateDirectory" << YAML::Value << metadata.GetAssetRelativeIntermediatePath<t_AssetType>({}).string();
+					serializer << YAML::Key << "IntermediateDirectory" << YAML::Value << metadata.GetAssetRelativeIntermediatePath({}).string();
 				}
 				serializer << YAML::Key << "AssetIdentifier" << YAML::Value << metadata.m_TypeIdentifier;
 
 				if constexpr (HasMetadata<t_AssetType>)
 				{
-					SerializeAssetSpecificMetadata<t_AssetType>(serializer, metadata);
+					SerializeAssetSpecificMetadata(serializer, metadata);
 				}
 				
 				serializer << YAML::EndMap; // Close metadata map
@@ -688,7 +711,6 @@ namespace Kargono::Assets
 			fout << serializer.c_str();
 		}
 
-		template<AssetConcept t_AssetType>
 		void DeserializeAssetRegistry()
 		{
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
@@ -697,7 +719,7 @@ namespace Kargono::Assets
 			m_AssetRegistry.clear();
 
 			// Get registry path
-			std::filesystem::path registryPath{ GetAssetRegistryPath<t_AssetType>() };
+			std::filesystem::path registryPath{ GetAssetRegistryPath() };
 			KG_ASSERT(!registryPath.empty(),
 				"Generated empty registry path for asset type");
 
@@ -705,7 +727,7 @@ namespace Kargono::Assets
 			if (!Utility::FileSystem::PathExists(registryPath))
 			{
 				KG_WARN("No .kgreg file found at provided registry path {}. Creating a new one.", registryPath.string());
-				SerializeAssetRegistry<t_AssetType>();
+				SerializeAssetRegistry();
 			}
 
 			// Load registry file
@@ -734,7 +756,7 @@ namespace Kargono::Assets
 			// Open registry specific data
 			if constexpr (HasRegistryData<t_AssetType>)
 			{
-				DeserializeRegistrySpecificData<t_AssetType>(data);
+				DeserializeRegistrySpecificData(data);
 			}
 
 			// Opening all assets 
@@ -771,24 +793,24 @@ namespace Kargono::Assets
 			}
 		}
 
-		template<AssetConcept t_AssetType>
-		void LoadAllAssetIntoCache() requires HasAssetCacheFlag<t_AssetType>
+		void LoadAllAssetIntoCache()
+			requires HasAssetCacheFlag<t_AssetType>
 		{
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
 			// Revalidate active registry
-			DeserializeAssetRegistry<t_AssetType>();
+			DeserializeAssetRegistry();
 
 			// Load every asset into memory
 			for (auto& [handle, metadata] : m_AssetRegistry)
 			{
 				// TODO: Maybe skip already loaded assets. Maybe add an option for clearing the asset cache first?
-				LoadAssetIntoCache<t_AssetType>(metadata);
+				LoadAssetIntoCache(metadata);
 			}
 		}
 
-		template<AssetConcept t_AssetType> requires HasFileLocation<t_AssetType>
 		bool SetAssetFileDirectory(AssetHandle handle, const std::filesystem::path& newFileDirectory)
+			requires HasFileLocation<t_AssetType>
 		{
 			// Validate asset exists
 			if (!HasAssetByHandle(handle))
@@ -824,10 +846,10 @@ namespace Kargono::Assets
 			metadata.m_FileDirectory = cachedDirectory;
 
 			// Save changes to disk
-			SerializeAssetRegistry<t_AssetType>();
+			SerializeAssetRegistry();
 
 			// Send update event
-			SendManageAssetEvent<t_AssetType>(Events::ManageAssetAction::UpdateAssetInfo,
+			SendManageAssetEvent(Events::ManageAssetAction::UpdateAssetInfo,
 				metadata, nullptr);
 			return true;
 		}
@@ -837,7 +859,7 @@ namespace Kargono::Assets
 			return m_AssetRegistry;
 		}
 
-		AssetCache& GetAssetCache()
+		AssetCache<t_AssetType>& GetAssetCache()
 		{
 			return m_AssetCache;
 		}
@@ -848,11 +870,11 @@ namespace Kargono::Assets
 		}
 
 	private:
-		template<AssetConcept t_AssetType> requires HasFileLocation<t_AssetType>
 		AssetHandle GetAssetHandleFromFileLocation(const std::filesystem::path& queryFileLocation)
+			requires HasFileLocation<t_AssetType>
 		{
 			// Validate query file location
-			if (!ValidateQueryFileLocation<t_AssetType>(queryFileLocation))
+			if (!ValidateQueryFileLocation(queryFileLocation))
 			{
 				KG_WARN("File location validation failed for provided path: {}", 
 					queryFileLocation.string());
@@ -864,7 +886,7 @@ namespace Kargono::Assets
 			// Check each asset in the registry for a matching file location
 			for (auto& [handle, metadata] : m_AssetRegistry)
 			{
-				if (metadata.GetAssetRelativeFilePath<t_AssetType>().string().c_str() == 
+				if (metadata.GetAssetRelativeFilePath().string().c_str() == 
 					normalizedQueryPath.string().c_str())
 				{
 					return handle;
@@ -875,7 +897,6 @@ namespace Kargono::Assets
 			return k_EmptyHandle;
 		}
 
-		template<AssetConcept t_AssetType>
 		AssetReference<t_AssetType> DeserializeAssetImpl(Metadata& metadata)
 		{
 			// Check if asset already exists
@@ -908,7 +929,6 @@ namespace Kargono::Assets
 			return { metadata.m_Handle, LoadState::Loaded, newAsset };
 		}
 
-		template<AssetConcept t_AssetType>
 		void SerializeAssetImpl(Metadata& metadata, AssetReference<t_AssetType> assetReference)
 		{
 			// Ensure asset type supports serialization
@@ -925,8 +945,8 @@ namespace Kargono::Assets
 			asset.Serialize((void*)(&serializeContext));
 		}
 
-		template<AssetConcept t_AssetType> requires HasRegistryData<t_AssetType>
 		void DeserializeRegistrySpecificData(YAML::Node& registryNode)
+			requires HasRegistryData<t_AssetType>
 		{
 			// Check if the registry data already exists
 			if (!m_RegistrySpecificData)
@@ -942,8 +962,8 @@ namespace Kargono::Assets
 			registryData->Deserialize((void*)&context);
 		}
 
-		template<AssetConcept t_AssetType> requires HasRegistryData<t_AssetType>
 		void SerializeRegistrySpecificData(YAML::Emitter& serializer)
+			requires HasRegistryData<t_AssetType>
 		{
 			// Get registry specific data reference
 			typename t_AssetType::RegistryData* registryData = (typename t_AssetType::RegistryData*)m_RegistrySpecificData;
@@ -954,8 +974,8 @@ namespace Kargono::Assets
 			registryData->Serialize((void*)&context);
 		}
 
-		template<AssetConcept t_AssetType> requires HasMetadata<t_AssetType>
 		void DeserializeAssetSpecificMetadata(YAML::Node& node, Metadata& metadata)
+			requires HasMetadata<t_AssetType>
 		{
 			// Get specific metadata
 			typename t_AssetType::Metadata* specificMetadata = metadata.GetSpecificMetaData<typename t_AssetType::Metadata>();
@@ -969,9 +989,9 @@ namespace Kargono::Assets
 			DeserializeMetaDataContext context{ &node, &metadata };
 			specificMetadata->Deserialize((void*)&context);
 		}
-
-		template<AssetConcept t_AssetType> requires HasMetadata<t_AssetType>
+ 
 		void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Metadata& metadata)
+			requires HasMetadata<t_AssetType>
 		{
 			// Get specific metadata
 			typename t_AssetType::Metadata* specificMetadata = metadata.GetSpecificMetaData<typename t_AssetType::Metadata>();
@@ -1004,7 +1024,6 @@ namespace Kargono::Assets
 			return Utility::FileSystem::ConvertToUnixStylePath(pathRelativeToAssetDir);
 		}
 
-		template<AssetConcept t_AssetType>
 		std::filesystem::path GetAssetRegistryPath()
 		{
 			if constexpr (!HasIntermediates<t_AssetType>)
@@ -1021,7 +1040,6 @@ namespace Kargono::Assets
 			return path.str();
 		}
 
-		template <AssetConcept t_AssetType>
 		Utility::SHA256Hash GenerateAssetHash(Metadata metadata)
 		{
 			Utility::SHA256Hash resultHash{};
@@ -1038,7 +1056,7 @@ namespace Kargono::Assets
 			if constexpr (HasFileLocation<t_AssetType>)
 			{
 				Utility::SHA256Hash fileChecksum{};
-				fileChecksum = Utility::FileSystem::SHA256HashFromFile(metadata.GetAssetFullFilePath<t_AssetType>());
+				fileChecksum = Utility::FileSystem::SHA256HashFromFile(metadata.GetAssetFullFilePath());
 				resultHash = resultHash ^ fileChecksum;
 			}
 
@@ -1046,7 +1064,7 @@ namespace Kargono::Assets
 			if constexpr (HasIntermediates<t_AssetType>)
 			{
 				Utility::SHA256Hash intermediateChecksum{};
-				std::filesystem::path intermediateFolder{ metadata.GetAssetFullIntermediatePath<t_AssetType>({})};
+				std::filesystem::path intermediateFolder{ metadata.GetAssetFullIntermediatePath({})};
 				for (const FixedStrBuf16& extension : t_AssetType::GetIntermediateExtensions())
 				{
 					intermediateFolder.replace_extension(extension.CString());
@@ -1059,13 +1077,12 @@ namespace Kargono::Assets
 			return resultHash;
 		}
 
-		template<AssetConcept t_AssetType>
 		void DeleteAssetFiles(Metadata& metadata)
 		{
 			// Delete the asset's data on-disk
 			if constexpr (HasFileLocation<t_AssetType>)
 			{
-				std::filesystem::path fileLocation { metadata.GetAssetFullFilePath<t_AssetType>()};
+				std::filesystem::path fileLocation { metadata.GetAssetFullFilePath()};
 				bool deleteSuccess{ Utility::FileSystem::DeleteSelectedFile(fileLocation) };
 				KG_ASSERT(deleteSuccess);
 			}
@@ -1073,7 +1090,7 @@ namespace Kargono::Assets
 			// Delete the asset's intermediate(s) on-disk
 			if constexpr (HasIntermediates<t_AssetType>)
 			{
-				std::filesystem::path intermediateFolder{ metadata.GetAssetRelativeIntermediatePath<t_AssetType>({})};
+				std::filesystem::path intermediateFolder{ metadata.GetAssetRelativeIntermediatePath({})};
 				intermediateFolder.replace_filename(metadata.m_Name);
 
 				std::span<FixedBufStr16> allIntermediateExtensions{ t_AssetType::GetIntermediateExtensions };
@@ -1087,7 +1104,6 @@ namespace Kargono::Assets
 			}
 		}
 
-		template<AssetConcept t_AssetType>
 		void RemoveAssetDataFromRegistry(AssetHandle handle)
 		{
 			// Delete in-memory copy of this asset
@@ -1096,16 +1112,16 @@ namespace Kargono::Assets
 				if (m_AssetCache.contains(handle))
 				{
 					// Get the relevant asset data
-					GenericAssetReference& assetData{ m_AssetCache.at(handle)};
-					KG_ASSERT(assetData.m_DataPtr);
-					KG_ASSERT(assetData.m_Handle == handle);
-					KG_ASSERT(assetData.m_LoadState != LoadState::Unloaded);
+					AssetRef<t_AssetType> currentRef{ m_AssetCache.at(handle)};
+					KG_ASSERT(currentRef.GetAssetOptional());
+					KG_ASSERT(currentRef.GetHandle() == handle);
+					KG_ASSERT(currentRef.GetLoadState() != LoadState::Unloaded);
 
 					// Deallocate if necessary
-					if (assetData.m_LoadState == LoadState::Loaded)
+					if (currentRef.m_LoadState == LoadState::Loaded)
 					{
 						// Deallocate the data
-						i_BackingAllocator->Dealloc<t_AssetType>((t_AssetType*)assetData.m_DataPtr); // GOTTA LOVE UB
+						i_BackingAllocator->Dealloc<t_AssetType>(&currentRef.GetAsset()); // GOTTA LOVE UB
 					}
 
 					// Remove asset listing from cache map
@@ -1117,28 +1133,19 @@ namespace Kargono::Assets
 			m_AssetRegistry.erase(assetHandle);
 		}
 
-		template<AssetConcept t_AssetType> requires HasAssetCacheFlag<t_AssetType>
-		void LoadAssetIntoCache(Metadata& metadata)
+		void LoadAssetIntoCache(Metadata& metadata) requires HasAssetCacheFlag<t_AssetType>
 		{
 			// Fill in-memory cache if appropriate
 			KG_ASSERT(!m_AssetCache.contains(metadata.m_Handle));
 
-			AssetReference<t_AssetType> newAssetRef{ DeserializeAssetImpl<t_AssetType>(metadata) };
+			AssetReference<t_AssetType> newAssetRef{ DeserializeAssetImpl(metadata) };
 			KG_ASSERT(newAssetRef.IsUsable());
-			m_AssetCache.insert
-			({
-				metadata.m_Handle,
-				{
-					newAssetRef.GetHandle(),
-					newAssetRef.GetLoadState(),
-					(void*)&newAssetRef.GetAsset()
-				}
-			});
+			m_AssetCache.insert(metadata.m_Handle, newAssetRef);
 		}
-
-		template<AssetConcept t_AssetType> requires HasUpdateFromAsset<t_AssetType>
+ 
 		void CustomUpdateFromAssetImpl(Metadata& metadata,
 			AssetReference<t_AssetType> currentRef, AssetReference<t_AssetType> otherRef)
+			requires HasCustomUpdateFromAsset<t_AssetType>
 		{
 			// Ensure asset type supports serialization
 			KG_ASSERT(metadata.IsValid());
@@ -1152,8 +1159,8 @@ namespace Kargono::Assets
 			currentAsset.UpdateFromAsset(metadata, otherRef);
 		}
 
-		template<AssetConcept t_AssetType> requires HasValidateUpdateFromAsset<t_AssetType>
 		Ref<void> ValidateUpdateFromAssetImpl(Metadata& metadata, AssetReference<t_AssetType> newAsset)
+			requires HasValidateUpdateFromAsset<t_AssetType>
 		{
 			// Ensure asset reference is valid
 			KG_ASSERT(metadata.IsValid());
@@ -1162,9 +1169,9 @@ namespace Kargono::Assets
 			return t_AssetType::ValidateUpdateFromAsset(metadata, newAsset);
 		};
 
-		template<AssetConcept t_AssetType> requires HasUpdateFromSpec<t_AssetType>
 		void UpdateFromSpecImpl(Metadata& metadata,
 			AssetReference<t_AssetType> currentRef, const typename t_AssetType::Spec& spec)
+			requires HasUpdateFromSpec<t_AssetType>
 		{
 			// Ensure asset type supports serialization
 			KG_ASSERT(metadata.IsValid());
@@ -1177,8 +1184,8 @@ namespace Kargono::Assets
 			currentAsset.UpdateFromSpec(metadata, spec);
 		}
 
-		template<AssetConcept t_AssetType> requires HasValidateUpdateFromSpec<t_AssetType>
 		Ref<void> ValidateUpdateFromSpecImpl(Metadata& metadata, const typename t_AssetType::Spec& spec)
+			requires HasValidateUpdateFromSpec<t_AssetType>
 		{
 			KG_ASSERT(metadata.IsValid());
 
@@ -1186,8 +1193,8 @@ namespace Kargono::Assets
 			return t_AssetType::ValidateUpdateFromSpec(metadata, spec);
 		};
 
-		template<AssetConcept t_AssetType> requires HasValidateDelete<t_AssetType>
 		void ValidateDeleteImpl(Metadata& metadata)
+			requires HasValidateDelete<t_AssetType>
 		{
 			KG_ASSERT(metadata.IsValid());
 
@@ -1195,8 +1202,8 @@ namespace Kargono::Assets
 			t_AssetType::ValidateDelete(metadata);
 		};
 
-		template<AssetConcept t_AssetType> requires HasCreateFromName<t_AssetType>
 		void CreateFromNameImpl(Metadata& metadata)
+			requires HasCreateFromName<t_AssetType>
 		{
 			KG_ASSERT(metadata.IsValid());
 
@@ -1204,8 +1211,8 @@ namespace Kargono::Assets
 			t_AssetType::CreateFromName(metadata);
 		};
 
-		template <AssetConcept t_AssetType> requires HasCreateFromFile<t_AssetType>
 		void CreateFromFileImpl(Metadata& metadata, const std::filesystem::path& sourcePath)
+			requires HasCreateFromFile<t_AssetType>
 		{
 			KG_ASSERT(metadata.IsValid());
 			KG_ASSERT(!sourcePath.empty());
@@ -1214,8 +1221,8 @@ namespace Kargono::Assets
 			t_AssetType::CreateFromFile(metadata, sourcePath);
 		};
 
-		template <AssetConcept t_AssetType> requires HasCreateFromSpec<t_AssetType>
 		void CreateFromSpecImpl(Metadata& metadata, const typename t_AssetType::Spec& spec)
+			requires HasCreateFromSpec<t_AssetType>
 		{
 			KG_ASSERT(metadata.IsValid());
 
@@ -1223,29 +1230,28 @@ namespace Kargono::Assets
 			t_AssetType::CreateFromSpec(metadata, spec);
 		};
 
-		template <AssetConcept t_AssetType> requires HasValidateCreateFromSpec<t_AssetType>
 		void ValidateCreateFromSpecImpl(const AssetCreationData& creationData, 
 			const typename t_AssetType::Spec& spec)
+			requires HasValidateCreateFromSpec<t_AssetType>
 		{
 			// Call user-defined create-from-file function
 			t_AssetType::ValidateCreateFromSpec(creationData, spec);
 		};
 
-		template <AssetConcept t_AssetType> requires HasGetAssetFromSpec<t_AssetType>
 		bool GetAssetFromSpecImpl(Metadata& metadata, const typename t_AssetType::Spec& spec)
+			requires HasGetAssetFromSpec<t_AssetType>
 		{
 			// Call user-defined function to check if an asset meets the provided specification requirements
 			return t_AssetType::GetAssetFromSpec(metadata, spec);
 		};
 
-		template <AssetConcept t_AssetType> requires HasHashFromSpec<t_AssetType>
 		bool GetHashFromSpecImpl(const typename t_AssetType::Spec& spec)
+			requires HasHashFromSpec<t_AssetType>
 		{
 			// Call user-defined function to get hash from spec
 			return t_AssetType::GetHashFromSpec(spec);
 		};
 
-		template<AssetConcept t_AssetType>
 		bool ValidateAssetName(std::string_view name)
 		{
 			// Ensure name is not empty
@@ -1271,7 +1277,6 @@ namespace Kargono::Assets
 			return true;
 		}
 
-		template<AssetConcept t_AssetType>
 		bool ValidateAssetHash(Utility::SHA256Hash hash)
 		{
 			// Ensure hash is not empty
@@ -1297,8 +1302,8 @@ namespace Kargono::Assets
 			return true;
 		}
 
-		template<AssetConcept t_AssetType> requires HasImportExtensions<t_AssetType>
 		bool ValidateSourcePath(const std::filesystem::path& sourcePath)
+			requires HasImportExtensions<t_AssetType>
 		{
 			// Source path needs to be a regular file yeah?
 			if (!Utility::FileSystem::IsRegularFile(sourcePath))
@@ -1378,8 +1383,8 @@ namespace Kargono::Assets
 			return true;
 		}
 
-		template<AssetConcept t_AssetType> requires HasFileLocation<t_AssetType>
 		bool ValidateQueryFileLocation(const std::filesystem::path& fileLocation)
+			requires HasFileLocation<t_AssetType>
 		{
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
@@ -1412,7 +1417,6 @@ namespace Kargono::Assets
 			return true;
 		}
 
-		template<AssetConcept t_AssetType>
 		Metadata CreateAssetMetadata(AssetIdentifier identifier, std::string_view assetName, 
 			const std::filesystem::path& assetDirectory, bool isHidden)
 		{
@@ -1447,7 +1451,7 @@ namespace Kargono::Assets
 			if (isHidden)
 			{
 				KG_ASSERT(assetDirectory.empty());
-				newMetadata.m_FileDirectory = newMetadata.GetAssetRelativeHiddenFolder<t_AssetType>();
+				newMetadata.m_FileDirectory = newMetadata.GetAssetRelativeHiddenFolder();
 			}
 			else
 			{
@@ -1466,8 +1470,8 @@ namespace Kargono::Assets
 			return metadata;
 		}
 
-		template<AssetConcept t_AssetType> requires HasFileLocation<t_AssetType>
 		AssetHandle GetAssetHandleByFileLocation(const std::filesystem::path& queryLocation)
+			requires HasFileLocation<t_AssetType>
 		{
 			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
@@ -1481,7 +1485,7 @@ namespace Kargono::Assets
 
 			for (auto& [assetHandle, metadata] : m_AssetRegistry)
 			{
-				std::filesystem::path registryAssetPath = metadata.GetAssetRelativeFilePath<t_AssetType>();
+				std::filesystem::path registryAssetPath = metadata.GetAssetRelativeFilePath();
 				if (registryAssetPath.compare(assetPath) == 0)
 				{
 					return assetHandle
@@ -1490,7 +1494,6 @@ namespace Kargono::Assets
 			return k_EmptyHandle;
 		}
 
-		template<AssetConcept t_AssetType>
 		void SendManageAssetEvent(Metadata& metadata, Events::ManageAssetAction action, 
 			Ref<void> optionalData = nullptr)
 		{
@@ -1509,7 +1512,7 @@ namespace Kargono::Assets
 		// Internal Fields
 		//==============================
 		AssetRegistry m_AssetRegistry{};
-		AssetCache m_AssetCache{};
+		AssetCache<t_AssetType> m_AssetCache{};
 		void* m_RegistrySpecificData{ nullptr };
 	private:
 		//==============================

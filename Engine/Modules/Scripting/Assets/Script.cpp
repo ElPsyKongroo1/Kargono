@@ -345,10 +345,10 @@ namespace Kargono::Scripting
 		// Ensure all other assets do not contain this script
 		// If they do, remove the reference
 
-		// Check AI State assets
+		// Check StateMachines State assets
 		for (auto& [aiHandle, assetInfo] : Assets::AssetService::GetAIStateRegistry())
 		{
-			Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(aiHandle);
+			Ref<States::State> aiStateRef = Assets::AssetService::GetAIState(aiHandle);
 			bool aiModified = AssetService::RemoveScriptFromAIState(aiStateRef, metadata.m_Handle);
 
 			if (aiModified)

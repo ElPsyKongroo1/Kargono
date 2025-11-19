@@ -286,7 +286,7 @@ namespace Kargono::Panels
 		}
 		else
 		{
-			// Add warning to close active AI state before opening a new AIState
+			// Add warning to close active StateMachines state before opening a new State
 			s_MainWindow->OpenWarningMessage("An Color Palette is already active inside the editor. Please close the current Color Palette before opening a new one.");
 		}
 	}

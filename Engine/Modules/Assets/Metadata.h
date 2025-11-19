@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Modules/Rendering/Shader.h"
+#include "Modules/Rendering/Assets/Shader.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Modules/Scripting/ScriptingCommon.h"
 #include "Kargono/Core/UUID.h"

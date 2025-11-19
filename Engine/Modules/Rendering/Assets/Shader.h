@@ -59,7 +59,7 @@ namespace Kargono::Rendering
 		//==============================
 		// Public Fields
 		//==============================
-		Ref<Shader> m_Shader;
+		Assets::TAssetRef<Shader> m_Shader;
 		Ref<Texture2D> m_Texture;
 		Rendering::ShapeComponent* m_ShapeComponent{ nullptr }; // TODO: The shape component is a memory leak...
 		Ref<DrawCallBuffer> m_CurrentDrawBuffer;
@@ -149,7 +149,7 @@ namespace Kargono::Rendering
 		// Interact with Input Locations
 		//==============================
 		template<typename T>
-		static T* GetInputLocation(uint32_t inputNameHash, Buffer inputBuffer, Ref<Shader> shader)
+		static T* GetInputLocation(uint32_t inputNameHash, Buffer inputBuffer, Assets::AssetRef<Shader> shader)
 		{
 			InputBufferElement* currentInputBufferElement = shader->GetInputLayout().FindElementByName(inputNameHash);
 
@@ -162,7 +162,7 @@ namespace Kargono::Rendering
 			return inputBuffer.As<T>(inputLocation);
 		}
 		template<typename T>
-		static void SetDataAtInputLocation(const T& value, uint32_t inputNameHash, Buffer inputBuffer, Ref<Shader> shader)
+		static void SetDataAtInputLocation(const T& value, uint32_t inputNameHash, Buffer inputBuffer, Assets::AssetRef<Shader> shader)
 		{
 			InputBufferElement* currentInputBufferElement = shader->GetInputLayout().FindElementByName(inputNameHash);
 
@@ -203,7 +203,6 @@ namespace Kargono::Rendering
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.ClearFlag(Assets::AssetFlag::RequireUniqueName);
-			flags.ClearFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 

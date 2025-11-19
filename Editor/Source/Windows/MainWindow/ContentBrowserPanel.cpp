@@ -154,7 +154,7 @@ namespace Kargono::Panels
 
 		// Manage custom file type tooltips
 		m_RightClickTooltip.ClearEntries();
-		if (fileType == BrowserFileType::AIState)
+		if (fileType == BrowserFileType::State)
 		{
 			EditorUI::TooltipEntry openAIStateTooltipEntry{ "Open AI State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
@@ -421,7 +421,7 @@ namespace Kargono::Panels
 		{
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativeToAssetsDirFilePath);
-			// If AI state in registry is not found, simply delete the file
+			// If StateMachines state in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("File extension recognized as a AI state, however, no AI state could be found in registry. Moving the indicated file without updating registry.");
@@ -987,7 +987,7 @@ namespace Kargono::Panels
 		aiStateArch.m_IconColor = EditorUI::EditorUIContext::m_ConfigColors.m_HighlightColor1_Thin;
 		aiStateArch.m_OnRightClick = KG_BIND_CLASS_FN(OnGridHandleRightClick);
 		aiStateArch.m_OnCreatePayload = KG_BIND_CLASS_FN(OnGridCreatePayload);
-		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::AIState, aiStateArch);
+		m_FileFolderViewer.AddEntryArchetype((uint32_t)BrowserFileType::State, aiStateArch);
 
 		EditorUI::GridEntryArchetype audioArch;
 		audioArch.m_Icon = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Audio_KG;

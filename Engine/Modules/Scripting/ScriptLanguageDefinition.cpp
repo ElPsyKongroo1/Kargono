@@ -11,7 +11,7 @@
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/ProjectData/ProjectEnum.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/ECS/Entity.h"
 
 #include <array>
@@ -649,7 +649,7 @@ namespace Kargono::Scripting
 		newPrimitiveType.Members.insert_or_assign(newDataMember.Name, CreateRef<MemberType>(newDataMember));
 		newDataMember = {};
 
-		newDataMember.Name = "AIState";
+		newDataMember.Name = "State";
 		newDataMember.Description = "This entity member is a AI state component. This component stores the AI's current global, current, and previous states and uses them to provide a managed state machine in the engine.";
 		newDataMember.PrimitiveType.Type = ScriptTokenType::None;
 		newDataMember.PrimitiveType.Value = "None";
@@ -776,7 +776,7 @@ namespace Kargono::Scripting
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "ClearGlobalState" };
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
-		newFunctionMember.Description = "This function clears the current global state of the entity's AIStateComponent. This function takes no parameters";
+		newFunctionMember.Description = "This function clears the current global state of the entity's StateMachine. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
 				generator.m_OutputText << "AI_ClearGlobalState(";
@@ -790,7 +790,7 @@ namespace Kargono::Scripting
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "ClearCurrentState" };
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
-		newFunctionMember.Description = "This function clears the current current state of the entity's AIStateComponent. This function takes no parameters";
+		newFunctionMember.Description = "This function clears the current current state of the entity's StateMachine. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
 				generator.m_OutputText << "AI_ClearCurrentState(";
@@ -804,7 +804,7 @@ namespace Kargono::Scripting
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "ClearPreviousState" };
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
-		newFunctionMember.Description = "This function clears the current previous state of the entity's AIStateComponent. This function takes no parameters";
+		newFunctionMember.Description = "This function clears the current previous state of the entity's StateMachine. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
 				generator.m_OutputText << "AI_ClearPreviousState(";
@@ -818,7 +818,7 @@ namespace Kargono::Scripting
 		newFunctionMember.Name = { ScriptTokenType::Identifier, "ClearAllStates" };
 		newFunctionMember.Namespace = {};
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
-		newFunctionMember.Description = "This function clears all AI State references inside an entity's AIStateComponent. This function takes no parameters";
+		newFunctionMember.Description = "This function clears all AI State references inside an entity's StateMachine. This function takes no parameters";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
 
@@ -1127,7 +1127,7 @@ namespace Kargono::Scripting
 			{"Key", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input}}
 		};
 
-		// Load in names of all AI States
+		// Load in names of all StateMachines States
 		CustomLiteralNameToIDMap& aiMap = m_AllLiteralTypes.at("AIStates").m_CustomLiteralNameToID;
 		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAIStateRegistry())
 		{

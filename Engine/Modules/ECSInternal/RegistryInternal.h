@@ -5,7 +5,7 @@
 #include "Modules/ECSInternal/EntityRegistry.h"
 #include "Modules/ECSInternal/Views/PackedView.h"
 #include "Modules/ECSInternal/Views/FlatView.h"
-#include "Kargono/Memory/IAllocator.h"
+#include "Modules/Memory/IAllocator.h"
 
 namespace Kargono::ECSInternal
 {

@@ -1,8 +1,8 @@
 #pragma once
 #include "Kargono/Core/Types.h"
-#include "Kargono/Core/DataStructures.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Core/DataStructures/PriorityList.h"
+#include "Kargono/Core/Base.h"
 
 #include <functional>
 #include <unordered_set>

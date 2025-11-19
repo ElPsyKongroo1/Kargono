@@ -3,12 +3,12 @@
 #include "Modules/Scripting/ScriptCompiler.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Modules/Audio/Audio.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/RuntimeUI/Font.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Modules/Core/Engine.h"
-#include "Modules/AI/AIContext.h"
+#include "Modules/AI/StatesContext.h"
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Events/PhysicsEvent.h"
 #include "Modules/Events/ApplicationEvent.h"
@@ -53,8 +53,8 @@ namespace Kargono
 		Particles::ParticleService::CreateParticleContext();
 		Particles::ParticleService::GetActiveContext().Init();
 		EditorUI::EditorUIContext::Init();
-		AI::AIService::CreateAIContext();
-		AI::AIService::GetActiveContext().Init();
+		States::AIService::CreateStatesContext();
+		States::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(1.0f);
 		RuntimeUI::FontService::GetActiveContext().Init();
@@ -100,8 +100,8 @@ namespace Kargono
 		Audio::AudioService::GetActiveContext().Terminate();
 		Audio::AudioService::RemoveAudioContext();
 		Scripting::ScriptBinderService::GetActiveContext().Terminate();
-		AI::AIService::GetActiveContext().Terminate();
-		AI::AIService::RemoveAIContext();
+		States::AIService::GetActiveContext().Terminate();
+		States::AIService::RemoveStatesContext();
 		Scripting::ScriptCompilerService::GetActiveContext().Terminate();
 		Assets::AssetService::ClearAll();
 		RuntimeUI::FontService::GetActiveContext().Terminate();

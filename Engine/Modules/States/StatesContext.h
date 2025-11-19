@@ -9,7 +9,7 @@
 #include <unordered_set>
 #include <queue>
 
-namespace Kargono::AI
+namespace Kargono::States
 {
 	struct AIMessage
 	{
@@ -19,13 +19,13 @@ namespace Kargono::AI
 		float m_DispatchTime{ 0.0f };
 	};
 
-	// Comparison functor for sorting AIMessages inside AIContext's MessageQueue
+	// Comparison functor for sorting AIMessages inside StatesContext's MessageQueue
 	inline auto k_MessageQueueComparisonFunctor = [](const AIMessage& aiMessageOne, const AIMessage& aiMessageTwo) 
 	{
 		return aiMessageOne.m_DispatchTime < aiMessageTwo.m_DispatchTime;
 	};
 
-	class AIContext
+	class StatesContext
 	{
 	public:
 		//=========================
@@ -41,14 +41,14 @@ namespace Kargono::AI
 
 		// TODO: THESE FUNCTIONS BELONG IN THE AICOMPONENT!!!!!!
 		//=========================
-		// Query Entity's AIState
+		// Query Entity's State
 		//=========================
 		bool IsGlobalState(UUID entityID, Assets::AssetHandle queryAIStateHandle);
 		bool IsCurrentState(UUID entityID, Assets::AssetHandle queryAIStateHandle);
 		bool IsPreviousState(UUID entityID, Assets::AssetHandle queryAIStateHandle);
 
 		//=========================
-		// Manage Entity's AIState
+		// Manage Entity's State
 		//=========================
 		void ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle);
 		void ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIStateHandle);
@@ -77,37 +77,37 @@ namespace Kargono::AI
 	{
 	public:
 		//==============================
-		// Create AI Context
+		// Create StateMachines Context
 		//==============================
-		static void CreateAIContext()
+		static void CreateStatesContext()
 		{
-			// Initialize AIContext
-			if (!s_AIContext)
+			// Initialize StatesContext
+			if (!s_StatesContext)
 			{
-				s_AIContext = CreateRef<AI::AIContext>();
+				s_StatesContext = CreateRef<States::StatesContext>();
 			}
 
 			// Verify init is successful
-			KG_VERIFY(s_AIContext, "AI Service System Initiated");
+			KG_VERIFY(s_StatesContext, "AI Service System Initiated");
 		}
-		static void RemoveAIContext()
+		static void RemoveStatesContext()
 		{
-			// Clear AIContext
-			s_AIContext.reset();
-			s_AIContext = nullptr;
+			// Clear StatesContext
+			s_StatesContext.reset();
+			s_StatesContext = nullptr;
 
 			// Verify terminate is successful
-			KG_VERIFY(!s_AIContext, "AI Service System Initiated");
+			KG_VERIFY(!s_StatesContext, "AI Service System Initiated");
 		}
 		//==============================
 		// Getters/Setters
 		//==============================
-		static AIContext& GetActiveContext() { return *s_AIContext; }
-		static bool IsContextActive() { return (bool)s_AIContext; }
+		static StatesContext& GetActiveContext() { return *s_StatesContext; }
+		static bool IsContextActive() { return (bool)s_StatesContext; }
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
-		static inline Ref<AIContext> s_AIContext{ nullptr };
+		static inline Ref<StatesContext> s_StatesContext{ nullptr };
 	};
 }

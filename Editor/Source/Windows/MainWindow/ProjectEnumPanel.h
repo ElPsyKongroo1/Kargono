@@ -1,5 +1,5 @@
 #pragma once
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/ProjectData/ProjectEnum.h"
 #include "Modules/EditorUI/EditorUIInclude.h"

@@ -58,7 +58,6 @@ namespace Kargono::Audio
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.ClearFlag(Assets::AssetFlag::RequireUniqueName);
-			flags.ClearFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 

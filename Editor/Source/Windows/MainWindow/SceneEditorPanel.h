@@ -4,7 +4,7 @@
 #include "Modules/ECS/Entity.h"
 #include "Modules/Events/Event.h"
 #include "Modules/Events/KeyEvent.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Kargono/Core/FixedBufferString.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 
@@ -55,7 +55,7 @@ namespace Kargono::Panels
 		void InitializeBoxCollider2DComponent();
 		void InitializeCircleCollider2DComponent();
 		void InitializeCameraComponent();
-		void InitializeParticleEmitterComponent();
+		void InitializeParticleEmitter();
 		void InitializeOnUpdate();
 		void InitializeOnCreate();
 		void InitializeAIComponent();
@@ -104,9 +104,9 @@ namespace Kargono::Panels
 		void DrawBoxCollider2DComponent(ECS::Entity entity);
 		void DrawCircleCollider2DComponent(ECS::Entity entity);
 		void DrawCameraComponent(ECS::Entity entity);
-		void DrawParticleEmitterComponent(ECS::Entity entity);
+		void DrawParticleEmitter(ECS::Entity entity);
 		void DrawOnUpdate(ECS::Entity entity);
-		void DrawAIStateComponent(ECS::Entity entity);
+		void DrawStateMachine(ECS::Entity entity);
 		void DrawOnCreate(ECS::Entity entity);
 		void DrawShapeComponent(ECS::Entity entity);
 		void DrawCustomComponent(ECS::Entity entity, Assets::AssetHandle handle);
@@ -203,7 +203,7 @@ namespace Kargono::Panels
 		EditorUI::CollapsingHeaderWidget m_OnUpdateHeader{};
 		EditorUI::SelectOptionWidget m_SelectOnUpdateScript{};
 
-		// AI State Component
+		// StateMachines State Component
 		EditorUI::CollapsingHeaderWidget m_AIStateHeader{};
 		EditorUI::SelectOptionWidget m_SelectCurrentState{};
 		EditorUI::SelectOptionWidget m_SelectPreviousState{};

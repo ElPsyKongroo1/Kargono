@@ -114,16 +114,16 @@ namespace Kargono::Particles
 		// If they do, remove the reference
 
 		// Check scene assets
-		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())
+		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::m_SceneManager.GetAssetRegistry())
 		{
 			// Handle UI level function pointers
-			Ref<Scenes::Scene> sceneRef = Assets::AssetService::GetScene(sceneHandle);
+			Assets::AssetRef<Scenes::Scene> sceneRef = Assets::AssetService::m_SceneManager.GetAssetByHandle(sceneHandle);
 
-			bool sceneModified = Assets::AssetService::RemoveEmitterConfigFromScene(sceneRef, metadata.m_Handle);
+			bool sceneModified = sceneRef->RemoveEmitterConfig(metadata.m_Handle);
 			if (sceneModified)
 			{
 				// Save scene
-				Assets::AssetService::SaveScene(sceneHandle, sceneRef);
+				Assets::AssetService::m_SceneManager.UpdateAsset(sceneRef);
 			}
 		}
 	}

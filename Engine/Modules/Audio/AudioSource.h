@@ -20,7 +20,7 @@ namespace Kargono::Audio
 		float m_Pitch{ 1.0f };
 		float m_Gain{ 1.0f };
 		bool m_IsLooping{ false };
-		Ref<AudioBuffer> m_CurrentBuffer{ nullptr };
+		Assets::TAssetRef<AudioBuffer> m_CurrentBuffer{ nullptr };
 	};
 
 	class AudioSource

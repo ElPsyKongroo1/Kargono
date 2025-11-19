@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/InputMap/Assets/InputMap.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 
 #include "Modules/Input/InputService.h"
 #include "Modules/Core/Engine.h"

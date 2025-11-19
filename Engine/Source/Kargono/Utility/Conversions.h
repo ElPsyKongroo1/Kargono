@@ -22,7 +22,7 @@ namespace Kargono::Utility
 		static bool CharBufferToVariable(Buffer buffer, T& variable)
 		{
 			//std::string stringValue{buffer.As<char>()};
-			auto [ptr, ec] = std::from_chars(buffer.As<char>(), buffer.As<char>() + buffer.Size, variable);
+			auto [ptr, ec] = std::from_chars(buffer.As<char>(), buffer.As<char>() + buffer.m_Size, variable);
 
 			if ((bool)ec)
 			{

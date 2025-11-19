@@ -87,8 +87,8 @@ namespace Kargono
 			currentWindow.SetResizable(false);
 		}
 
-		AI::AIService::CreateAIContext();
-		AI::AIService::GetActiveContext().Init();
+		States::AIService::CreateStatesContext();
+		States::AIService::GetActiveContext().Init();
 		Rendering::RenderingService::Init();
 		Rendering::RenderingService::SetLineWidth(4.0f);
 		RuntimeUI::FontService::GetActiveContext().Init();
@@ -124,8 +124,8 @@ namespace Kargono
 		Audio::AudioService::GetActiveContext().Terminate();
 		Audio::AudioService::RemoveAudioContext();
 		Scripting::ScriptBinderService::GetActiveContext().Terminate();
-		AI::AIService::GetActiveContext().Terminate();
-		AI::AIService::RemoveAIContext();
+		States::AIService::GetActiveContext().Terminate();
+		States::AIService::RemoveStatesContext();
 		Assets::AssetService::ClearAll();
 		RuntimeUI::FontService::GetActiveContext().Terminate();
 		Scenes::SceneService::GetActiveContext().Terminate();
@@ -471,8 +471,8 @@ namespace Kargono
 
 	void RuntimeApp::OnUpdateRuntime(Timestep ts)
 	{
-		// Process AI
-		AI::AIService::GetActiveContext().OnUpdate(ts);
+		// Process StateMachines
+		States::AIService::GetActiveContext().OnUpdate(ts);
 		Particles::ParticleService::GetActiveContext().OnUpdate(ts);
 
 		// Update

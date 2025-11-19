@@ -52,7 +52,7 @@ namespace Kargono
 	using ListenerIndex = size_t;
 	constexpr ListenerIndex k_InvalidListenerIndex{ std::numeric_limits<ListenerIndex>::max() };
 
-	template <typename... Args>
+	template <typename... t_Args>
 	class MultiNotifier
 	{
 	public:
@@ -65,25 +65,24 @@ namespace Kargono
 		//==============================
 		// Send Notifications
 		//==============================
-		void Notify(Args... args)
+		void Notify(t_Args... args)
 		{
 			// Loop through all observers
 			for (size_t field{ m_BitField }; field != 0; field &= field - 1)
 			{
 				// Get the next index
 				size_t index = std::countr_zero(field);
-
 				KG_ASSERT(m_Listeners[index]);
 
 				// Notify this observer index!
-				m_Listeners[index](std::forward<Args>(args)...);
+				m_Listeners[index](std::forward<t_Args>(args)...);
 			}
 		}
 
 		//==============================
 		// Manage Observers
 		//==============================
-		ListenerIndex AddObserver(std::function<void(Args... args)> func)
+		ListenerIndex AddObserver(std::function<void(t_Args... args)> func)
 		{
 			// Get the index of the first empty space
 			size_t emptyIndex = std::countr_zero(~m_BitField);
@@ -140,7 +139,7 @@ namespace Kargono
 		//==============================
 		// Internal Fields
 		//==============================
-		std::vector<std::function<void(Args... args)>> m_Listeners{};
+		std::vector<std::function<void(t_Args... args)>> m_Listeners{};
 		size_t m_BitField{0};
 	};
 }

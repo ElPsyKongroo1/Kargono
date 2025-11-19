@@ -9,7 +9,7 @@
 #include "Modules/RuntimeUI/RuntimeUICommon.h"
 #include "Kargono/Core/Window.h"
 #include "Kargono/Utility/Random.h"
-#include "Modules/Rendering/Shader.h"
+#include "Modules/Rendering/Assets/Shader.h"
 
 #include "Modules/RuntimeUI/Assets/RuntimeUIUserInterface.h"
 

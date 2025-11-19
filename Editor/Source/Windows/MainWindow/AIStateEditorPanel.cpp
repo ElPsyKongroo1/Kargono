@@ -133,7 +133,7 @@ namespace Kargono::Panels
 			}
 		}
 
-		if (manageAsset->GetAssetType() == Assets::AssetType::AIState &&
+		if (manageAsset->GetAssetType() == Assets::AssetType::State &&
 			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			if (manageAsset->GetAssetID() != m_EditorAIStateHandle)
@@ -146,7 +146,7 @@ namespace Kargono::Panels
 			return true;
 		}
 
-		if (manageAsset->GetAssetType() == Assets::AssetType::AIState &&
+		if (manageAsset->GetAssetType() == Assets::AssetType::State &&
 			manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
 			if (manageAsset->GetAssetID() != m_EditorAIStateHandle)
@@ -170,20 +170,20 @@ namespace Kargono::Panels
 
 	void AIStateEditorPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
-		// Open AI State Window
+		// Open StateMachines State Window
 		s_MainWindow->m_ShowAIStateEditor = true;
 		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		if (!m_EditorAIState)
 		{
-			// Open dialog to create editor AI State
+			// Open dialog to create editor StateMachines State
 			OnCreateAIStateDialog();
 			m_SelectAIStateLocationSpec.m_CurrentOption = createLocation;
 		}
 		else
 		{
-			// Add warning to close active AI state before creating a new AIState
+			// Add warning to close active StateMachines state before creating a new State
 			s_MainWindow->OpenWarningMessage("An AI State is already active inside the editor. Please close the current AI State before creating a new one.");
 		}
 
@@ -224,12 +224,12 @@ namespace Kargono::Panels
 		// Check if panel is already occupied by an asset
 		if (!m_EditorAIState)
 		{
-			// Open dialog to create editor AI State
+			// Open dialog to create editor StateMachines State
 			OnOpenAIState(assetHandle);
 		}
 		else
 		{
-			// Add warning to close active AI state before opening a new AIState
+			// Add warning to close active StateMachines state before opening a new State
 			s_MainWindow->OpenWarningMessage("An AI State is already active inside the editor. Please close the current AI State before opening a new one.");
 		}
 	}

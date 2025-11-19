@@ -21,7 +21,7 @@ namespace Kargono::Panels
 		Directory,
 
 		// Kargono managed files
-		AIState,
+		State,
 		Audio,
 		Binary,
 		ColorPalette,
@@ -187,7 +187,7 @@ namespace Kargono::Utility
 				return Panels::BrowserFileType::RawFont;
 			}
 		}
-		if (currentFileExtension == ".kgaistate") { return Panels::BrowserFileType::AIState; }
+		if (currentFileExtension == ".kgaistate") { return Panels::BrowserFileType::State; }
 		if (currentFileExtension == ".kgaudio") { return Panels::BrowserFileType::Audio; }
 		if (currentFileExtension == ".kgfont") { return Panels::BrowserFileType::Font; }
 		if (currentFileExtension == ".kgpalette") { return Panels::BrowserFileType::ColorPalette; }
@@ -222,7 +222,7 @@ namespace Kargono::Utility
 
 		case Panels::BrowserFileType::GenericFile: { return "CONTENT_BROWSER_ITEM"; }
 
-		case Panels::BrowserFileType::AIState: { return "CONTENT_BROWSER_ITEM"; }
+		case Panels::BrowserFileType::State: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Audio: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::Binary: { return "CONTENT_BROWSER_ITEM"; }
 		case Panels::BrowserFileType::EmitterConfig: { return "CONTENT_BROWSER_ITEM"; }

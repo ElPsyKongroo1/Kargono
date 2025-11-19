@@ -1,55 +1,59 @@
 #include "kgpch.h"
 
-#include "Modules/AI/AIContext.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/States/StatesContext.h"
+#include "Modules/States/Assets/State.h"
+#include "Modules/Scenes/Assets/Scene.h"
+#include "Modules/Scenes/SceneContext.h"
 #include "Modules/ECS/Entity.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Assets/AssetService.h"
 #include "Kargono/Utility/Time.h"
-#include "Modules/AI/Components/AIStateComponent.h"
+#include "Modules/States/Components/StateMachine.h"
 
 
-namespace Kargono::AI
+namespace Kargono::States
 {
-	bool AIContext::Init()
+	bool StatesContext::Init()
 	{
 		return true;
 	}
-	bool AIContext::Terminate()
+	bool StatesContext::Terminate()
 	{
 		return true;
 	}
-	void AIContext::OnUpdate(Timestep timeStep)
+	void StatesContext::OnUpdate(Timestep timeStep)
 	{
 		// Ensure a valid scene is active
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference when calling AIService's OnUpdate()");
 
-		// Run on update for all active AI with AIComponents including the global, then the current state
-		for (ECSInternal::EntityID id : activeScene->m_EntityRegistry.GetView<AI::AIStateComponent>())
+		// Run on update for all active StateMachines with AIComponents including the global, then the current state
+		for (ECSInternal::EntityID id : activeScene->m_EntityRegistry.GetView<States::StateMachine>())
 		{
 			ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByECSID(id);
 			KG_ASSERT(entity, "Invalid entity obtained. Could not run OnUpdate on provided entity.");
-			AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+			States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 			// Call Global State OnUpdate
-			if (aiComponent.m_GlobalStateReference && aiComponent.m_GlobalStateReference->OnUpdate)
+			if (aiComponent.m_GlobalStateReference && aiComponent.m_GlobalStateReference->m_OnUpdate)
 			{
-				Utility::CallWrapped<WrappedVoidEntityFloat>(aiComponent.m_GlobalStateReference->OnUpdate->m_Function, entity.GetUUID(), timeStep);
+				Ref<WrappedFunction> onUpdateFunc = aiComponent.m_GlobalStateReference->m_OnUpdate->m_Function;
+				Utility::CallWrapped<WrappedVoidEntityFloat>(onUpdateFunc, entity.GetUUID(), timeStep);
 			}
 
 			// Call Current State OnUpdate
-			if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->OnUpdate)
+			if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->m_OnUpdate)
 			{
-				Utility::CallWrapped<WrappedVoidEntityFloat>(aiComponent.m_CurrentStateReference->OnUpdate->m_Function, entity.GetUUID(), timeStep);
+
+				Utility::CallWrapped<WrappedVoidEntityFloat>(aiComponent.m_CurrentStateReference->m_OnUpdate->m_Function, entity.GetUUID(), timeStep);
 			}
 		}
 
-		// Check/Handle AIContext's delayed messages queue
+		// Check/Handle StatesContext's delayed messages queue
 		HandleDelayedMessages();
 	}
-	bool AIContext::IsGlobalState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	bool StatesContext::IsGlobalState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -58,12 +62,12 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be queried
-		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Return whether the component aiState is the same as query aiState
-		return aiComponent.m_GlobalStateHandle == queryAIStateHandle;
+		return aiComponent.m_GlobalStateReference.GetAssetHandle() == queryAIStateHandle;
 	}
-	bool AIContext::IsCurrentState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	bool StatesContext::IsCurrentState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -72,12 +76,12 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be queried
-		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Return whether the component aiState is the same as query aiState
-		return aiComponent.m_CurrentStateHandle == queryAIStateHandle;
+		return aiComponent.m_CurrentStateReference.GetAssetHandle() == queryAIStateHandle;
 	}
-	bool AIContext::IsPreviousState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	bool StatesContext::IsPreviousState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -86,12 +90,12 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be queried
-		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Return whether the component aiState is the same as query aiState
-		return aiComponent.m_PreviousStateHandle == queryAIStateHandle;
+		return aiComponent.m_PreviousStateReference.GetAssetHandle() == queryAIStateHandle;
 	}
-	void AIContext::ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle)
+	void StatesContext::ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -99,31 +103,30 @@ namespace Kargono::AI
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
-		// Ensure new AIState is valid
-		Ref<AIState> newAIStateRef = Assets::AssetService::GetAIState(newAIStateHandle);
+		// Ensure new State is valid
+		Assets::AssetRef<State> newAIStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(newAIStateHandle);
 		KG_ASSERT(newAIStateRef, "Invalid new AI state provided inside AIService");
 
 		// Get ai component to be modified
-		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
-		// Call OnExitState() for active global AIState
-		if (aiComponent.m_GlobalStateReference && aiComponent.m_GlobalStateReference->OnExitState)
+		// Call OnExitState() for active global State
+		if (aiComponent.m_GlobalStateReference && aiComponent.m_GlobalStateReference.GetAsset().m_OnExitState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_GlobalStateReference->OnExitState->m_Function, entityID);
+			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_GlobalStateReference.GetAsset().m_OnExitState->m_Function, entityID);
 		}
 
-		// Switch to new global AIState
-		aiComponent.m_GlobalStateHandle = newAIStateHandle;
+		// Switch to new global State
 		aiComponent.m_GlobalStateReference = newAIStateRef;
 
 		// Call OnEnter for new global state
-		if (aiComponent.m_GlobalStateReference && aiComponent.m_GlobalStateReference->OnEnterState)
+		if (aiComponent.m_GlobalStateReference && aiComponent.m_GlobalStateReference->m_OnEnterState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_GlobalStateReference->OnEnterState->m_Function, entityID);
+			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_GlobalStateReference->m_OnEnterState->m_Function, entityID);
 		}
 
 	}
-	void AIContext::ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIStateHandle)
+	void StatesContext::ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -131,34 +134,32 @@ namespace Kargono::AI
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
-		// Ensure new AIState is valid
-		Ref<AIState> newAIStateRef = Assets::AssetService::GetAIState(newAIStateHandle);
-		KG_ASSERT(newAIStateRef, "Invalid new AI state provided inside AIService");
+		// Ensure new State is valid
+		Assets::AssetReference<State> newAIStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(newAIStateHandle);
+		KG_ASSERT(newAIStateRef);
 
 		// Get ai component to be modified
-		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Store current state as the new previous state
-		aiComponent.m_PreviousStateHandle = aiComponent.m_CurrentStateHandle;
 		aiComponent.m_PreviousStateReference = aiComponent.m_CurrentStateReference;
 
-		// Call OnExitState() for current AIState
-		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->OnExitState)
+		// Call OnExitState() for current State
+		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference.GetAsset().m_OnExitState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_CurrentStateReference->OnExitState->m_Function, entityID);
+			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_CurrentStateReference.GetAsset().m_OnExitState->m_Function, entityID);
 		}
 
-		// Switch to new AIState
-		aiComponent.m_CurrentStateHandle = newAIStateHandle;
+		// Switch to new State
 		aiComponent.m_CurrentStateReference = newAIStateRef;
 
 		// Call OnEnter for new state
-		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->OnEnterState)
+		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->m_OnEnterState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_CurrentStateReference->OnEnterState->m_Function, entityID);
+			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_CurrentStateReference->m_OnEnterState->m_Function, entityID);
 		}
 	}
-	void AIContext::RevertPreviousState(UUID entityID)
+	void StatesContext::RevertPreviousState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -168,37 +169,35 @@ namespace Kargono::AI
 
 
 		// Get ai component to be modified
-		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 		
 		// Ensure previous state is valid
-		if (aiComponent.m_PreviousStateHandle == Assets::k_EmptyHandle)
+		if (aiComponent.m_PreviousStateReference.GetAssetHandle() == Assets::k_EmptyHandle)
 		{
 			KG_WARN("Could not revert to previous state. None currently exists.");
 			return;
 		}
 
-		// Call OnExitState() for current AIState
-		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->OnExitState)
+		// Call OnExitState() for current State
+		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->m_OnExitState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_CurrentStateReference->OnExitState->m_Function, entityID);
+			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_CurrentStateReference->m_OnExitState->m_Function, entityID);
 		}
 
 		// Call ChangeState() into entityID's previous state if it exists
-		aiComponent.m_CurrentStateHandle = aiComponent.m_PreviousStateHandle;
 		aiComponent.m_CurrentStateReference = aiComponent.m_PreviousStateReference;
 
 		// Call OnEnter for new current state
-		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->OnEnterState)
+		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->m_OnEnterState)
 		{
-			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_CurrentStateReference->OnEnterState->m_Function, entityID);
+			Utility::CallWrapped<WrappedVoidEntity>(aiComponent.m_CurrentStateReference->m_OnEnterState->m_Function, entityID);
 		}
 
 		// Clear previous state
-		aiComponent.m_PreviousStateHandle = Assets::k_EmptyHandle;
-		aiComponent.m_PreviousStateReference = nullptr;
+		aiComponent.m_PreviousStateReference.Reset();
 	}
 
-	void AIContext::ClearGlobalState(UUID entityID)
+	void StatesContext::ClearGlobalState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -207,13 +206,12 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
-		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Clear global state
-		aiComponent.m_GlobalStateHandle = Assets::k_EmptyHandle;
-		aiComponent.m_GlobalStateReference = nullptr;
+		aiComponent.m_GlobalStateReference.Reset();
 	}
-	void AIContext::ClearCurrentState(UUID entityID)
+	void StatesContext::ClearCurrentState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -222,13 +220,12 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
-		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Clear current state
-		aiComponent.m_CurrentStateHandle = Assets::k_EmptyHandle;
-		aiComponent.m_CurrentStateReference = nullptr;
+		aiComponent.m_CurrentStateReference = {};
 	}
-	void AIContext::ClearPreviousState(UUID entityID)
+	void StatesContext::ClearPreviousState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -237,13 +234,12 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
-		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Clear previous state
-		aiComponent.m_PreviousStateHandle = Assets::k_EmptyHandle;
-		aiComponent.m_PreviousStateReference = nullptr;
+		aiComponent.m_PreviousStateReference = {};
 	}
-	void AIContext::ClearAllStates(UUID entityID)
+	void StatesContext::ClearAllStates(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -252,23 +248,20 @@ namespace Kargono::AI
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Get ai component to be modified
-		AI::AIStateComponent& aiComponent = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Clear global state
-		aiComponent.m_GlobalStateHandle = Assets::k_EmptyHandle;
-		aiComponent.m_GlobalStateReference = nullptr;
+		aiComponent.m_GlobalStateReference.Reset();
 
 		// Clear current state
-		aiComponent.m_CurrentStateHandle = Assets::k_EmptyHandle;
-		aiComponent.m_CurrentStateReference = nullptr;
+		aiComponent.m_CurrentStateReference.Reset();
 
 		// Clear previous state
-		aiComponent.m_PreviousStateHandle = Assets::k_EmptyHandle;
-		aiComponent.m_PreviousStateReference = nullptr;
+		aiComponent.m_PreviousStateReference.Reset();
 	}
 
 
-	void AIContext::SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float delayTime)
+	void StatesContext::SendAIMessage(uint32_t messageType, UUID senderEntity, UUID receiverEntity, float delayTime)
 	{
 		AIMessage newMessage{ messageType, senderEntity, receiverEntity, Utility::Time::GetTime() + delayTime };
 
@@ -284,31 +277,31 @@ namespace Kargono::AI
 			HandleAIMessage(std::move(newMessage));
 		}
 	}
-	void AIContext::HandleAIMessage(const AIMessage& messageToHandle)
+	void StatesContext::HandleAIMessage(const AIMessage& messageToHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
-		ECS::Entity receiverEntity = activeScene->m_EntityRegistry.GetEntityByUUID(messageToHandle.ReceiverEntity);
+		ECS::Entity receiverEntity = activeScene->m_EntityRegistry.GetEntityByUUID(messageToHandle.m_ReceiverEntity);
 		KG_ASSERT(receiverEntity, "Invalid entity obtained inside AIService");
 
 
 		// Get ai component whose OnMessage() function needs to be called
-		AI::AIStateComponent& receiverAIComponent = receiverEntity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& receiverAIComponent = receiverEntity.GetComponent<States::StateMachine>();
 
 		// Call OnMessage for recipient's global state
-		if (receiverAIComponent.m_GlobalStateReference && receiverAIComponent.m_GlobalStateReference->OnMessage)
+		if (receiverAIComponent.m_GlobalStateReference && receiverAIComponent.m_GlobalStateReference->m_OnMessage)
 		{
-			Utility::CallWrapped<WrappedVoidUInt32EntityEntityFloat>(receiverAIComponent.m_GlobalStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.DispatchTime);
+			Utility::CallWrapped<WrappedVoidUInt32EntityEntityFloat>(receiverAIComponent.m_GlobalStateReference->m_OnMessage->m_Function, messageToHandle.m_MessageType, messageToHandle.m_SenderEntity, messageToHandle.m_ReceiverEntity, messageToHandle.m_DispatchTime);
 		}
 
 		// Call OnMessage for recipient's current state
-		if (receiverAIComponent.m_CurrentStateReference && receiverAIComponent.m_CurrentStateReference->OnMessage)
+		if (receiverAIComponent.m_CurrentStateReference && receiverAIComponent.m_CurrentStateReference->m_OnMessage)
 		{
-			Utility::CallWrapped<WrappedVoidUInt32EntityEntityFloat>(receiverAIComponent.m_CurrentStateReference->OnMessage->m_Function, messageToHandle.MessageType, messageToHandle.SenderEntity, messageToHandle.ReceiverEntity, messageToHandle.DispatchTime);
+			Utility::CallWrapped<WrappedVoidUInt32EntityEntityFloat>(receiverAIComponent.m_CurrentStateReference->m_OnMessage->m_Function, messageToHandle.m_MessageType, messageToHandle.m_SenderEntity, messageToHandle.m_ReceiverEntity, messageToHandle.m_DispatchTime);
 		}
 	}
-	void AIContext::HandleDelayedMessages()
+	void StatesContext::HandleDelayedMessages()
 	{
 		float currentTime = Utility::Time::GetTime();
 		auto& messageQueue = m_MessageQueue;
@@ -320,7 +313,7 @@ namespace Kargono::AI
 			const AIMessage& currentMessage = messageQueue.top();
 
 			// Check if current message is due for dispatch
-			if (currentMessage.DispatchTime <= currentTime)
+			if (currentMessage.m_DispatchTime <= currentTime)
 			{
 				// Remove message from queue
 				messageQueue.pop();

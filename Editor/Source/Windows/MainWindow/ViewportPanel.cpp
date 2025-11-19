@@ -4,7 +4,7 @@
 
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Rendering/Texture.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/Input/InputService.h"
 #include "Kargono/Utility/Time.h"
 #include "Modules/Events/EditorEvent.h"
@@ -102,8 +102,8 @@ namespace Kargono::Panels
 		{
 			if (!s_MainWindow->m_IsPaused || s_MainWindow->m_StepFrames-- > 0)
 			{
-				// Process AI
-				AI::AIService::GetActiveContext().OnUpdate(ts);
+				// Process StateMachines
+				States::AIService::GetActiveContext().OnUpdate(ts);
 				// Process Input Mode
 				Input::InputMapService::GetActiveContext().OnUpdate(ts);
 				// Process entity OnUpdate

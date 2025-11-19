@@ -5,7 +5,7 @@
 #include "Kargono/Utility/Operations.h"
 #include "Modules/Rendering/Texture.h"
 #include "Kargono/Utility/Time.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/Network/Server.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };

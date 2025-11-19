@@ -30,8 +30,7 @@ namespace Kargono::Assets
 		None = 0, // Default value
 		HasAssetCache = 1, // Store cache of the filetype in runtime memory for easy reuse
 		RequireUniqueName = 2, // Individual asset names must be unique
-		RequireUniqueHash = 3, // Individual asset hashes must be unique
-		AllowDefaultUpdateAsset = 4 // Allow updating an asset using an asset reference by default
+		RequireUniqueHash = 3 // Individual asset hashes must be unique
 	};
 
 	using AssetFlags = BitField<std::underlying_type_t<AssetFlag>>;

@@ -18,7 +18,7 @@
 #include "Modules/GlobalState/Assets/GameState.h"
 #include "Modules/GlobalState/GameStateContext.h"
 #include "Kargono/Utility/Operations.h"
-#include "Modules/AI/AIContext.h"
+#include "Modules/AI/StatesContext.h"
 #include "Modules/Scripting/ScriptCompiler.h"
 #include "Modules/Events/EditorEvent.h"
 #include "Modules/Physics2D/Physics2DCommon.h"
@@ -1356,52 +1356,52 @@ namespace Kargono::Scripting
 		// Artificial Intelligence
 		AddEngineFunctionPointerToDll(AI_ChangeGlobalState, [](UUID entityID, Assets::AssetHandle newAIStateHandle)
 		{
-			AI::AIService::GetActiveContext().ChangeGlobalState(entityID, newAIStateHandle);
+			States::AIService::GetActiveContext().ChangeGlobalState(entityID, newAIStateHandle);
 		}, VoidUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, [](UUID entityID, Assets::AssetHandle newAIStateHandle)
 		{
-			AI::AIService::GetActiveContext().ChangeCurrentState(entityID, newAIStateHandle);
+			States::AIService::GetActiveContext().ChangeCurrentState(entityID, newAIStateHandle);
 		}, VoidUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_RevertPreviousState, [](UUID entityID) 
 		{
-			AI::AIService::GetActiveContext().RevertPreviousState(entityID);
+			States::AIService::GetActiveContext().RevertPreviousState(entityID);
 		}, VoidUInt64)
 		AddEngineFunctionPointerToDll(AI_SendMessage, [](uint32_t messageType, UUID senderEntity, UUID receiverEntity, float delayTime)
 		{
-			AI::AIService::GetActiveContext().SendAIMessage(messageType, senderEntity, receiverEntity, delayTime);
+			States::AIService::GetActiveContext().SendAIMessage(messageType, senderEntity, receiverEntity, delayTime);
 		}, VoidUInt32UInt64UInt64Float)
 		AddEngineFunctionPointerToDll(AI_ClearGlobalState, [](UUID entityID)
 		{
-			AI::AIService::GetActiveContext().ClearGlobalState(entityID);
+			States::AIService::GetActiveContext().ClearGlobalState(entityID);
 		}, VoidUInt64)
 		AddEngineFunctionPointerToDll(AI_ClearCurrentState, [](UUID entityID)
 		{
-			AI::AIService::GetActiveContext().ClearCurrentState(entityID);
+			States::AIService::GetActiveContext().ClearCurrentState(entityID);
 		}, VoidUInt64)
 
 		AddEngineFunctionPointerToDll(AI_ClearPreviousState, [](UUID entityID)
 		{
-			AI::AIService::GetActiveContext().ClearPreviousState(entityID);
+			States::AIService::GetActiveContext().ClearPreviousState(entityID);
 		}, VoidUInt64)
 
 		AddEngineFunctionPointerToDll(AI_ClearAllStates, [](UUID entityID)
 		{
-			AI::AIService::GetActiveContext().ClearAllStates(entityID);
+			States::AIService::GetActiveContext().ClearAllStates(entityID);
 		}, VoidUInt64)
 
 		AddEngineFunctionPointerToDll(AI_IsGlobalState, [](UUID entityID, Assets::AssetHandle stateHandle)
 		{
-			return AI::AIService::GetActiveContext().IsGlobalState(entityID, stateHandle);
+			return States::AIService::GetActiveContext().IsGlobalState(entityID, stateHandle);
 		}, BoolUInt64UInt64)
 
 		AddEngineFunctionPointerToDll(AI_IsCurrentState, [](UUID entityID, Assets::AssetHandle stateHandle)
 		{
-			return AI::AIService::GetActiveContext().IsCurrentState(entityID, stateHandle);
+			return States::AIService::GetActiveContext().IsCurrentState(entityID, stateHandle);
 		}, BoolUInt64UInt64)
 
 		AddEngineFunctionPointerToDll(AI_IsPreviousState, [](UUID entityID, Assets::AssetHandle stateHandle)
 		{
-			return AI::AIService::GetActiveContext().IsPreviousState(entityID, stateHandle);
+			return States::AIService::GetActiveContext().IsPreviousState(entityID, stateHandle);
 		}, BoolUInt64UInt64)
 		// Audio
 		AddEngineFunctionPointerToDll(PlaySoundFromHandle, [](Assets::AssetHandle audioHandle)

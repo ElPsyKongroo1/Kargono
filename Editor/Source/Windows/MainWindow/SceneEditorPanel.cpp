@@ -4,7 +4,7 @@
 
 #include "EditorApp.h"
 
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/Events/SceneEvent.h"
 
 #include "Modules/Core/Components/Transform.h"
@@ -16,10 +16,10 @@
 #include "Modules/Physics2D/Components/Rigidbody2DComponent.h"
 #include "Modules/Physics2D/Components/BoxCollider2DComponent.h"
 #include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
-#include "Modules/Particles/Components/ParticleEmitterComponent.h"
+#include "Modules/Particles/Components/ParticleEmitter.h"
 #include "Modules/Scripting/Components/OnCreate.h"
 #include "Modules/Scripting/Components/OnUpdate.h"
-#include "Modules/AI/Components/AIStateComponent.h"
+#include "Modules/AI/Components/StateMachine.h"
 #include "Modules/Network/Components/NetworkComponent.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
@@ -127,7 +127,7 @@ namespace Kargono::Panels
 			{
 				spec.AddToOptions("Engine Component", "Camera", Assets::k_EmptyHandle);
 			}
-			if (!entity.HasComponent<Particles::ParticleEmitterComponent>())
+			if (!entity.HasComponent<Particles::ParticleEmitter>())
 			{
 				spec.AddToOptions("Engine Component", "Particle Emitter", Assets::k_EmptyHandle);
 			}
@@ -156,7 +156,7 @@ namespace Kargono::Panels
 				spec.AddToOptions("Engine Component", "On Update", Assets::k_EmptyHandle);
 			}
 
-			if (!entity.HasComponent<AI::AIStateComponent>())
+			if (!entity.HasComponent<States::StateMachine>())
 			{
 				spec.AddToOptions("Engine Component", "AI State", Assets::k_EmptyHandle);
 			}
@@ -245,9 +245,9 @@ namespace Kargono::Panels
 			}
 			if (option.m_Label == "Particle Emitter")
 			{
-				entity.AddComponent<Particles::ParticleEmitterComponent>();
+				entity.AddComponent<Particles::ParticleEmitter>();
 				componentEntry.m_Label = "Particle Emitter";
-				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Particles::ParticleEmitterComponent>(), Assets::k_EmptyHandle);
+				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Particles::ParticleEmitter>(), Assets::k_EmptyHandle);
 				componentEntry.m_IconHandle = EditorUI::EditorUIContext::m_SceneIcons.m_Particles;
 				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
@@ -255,7 +255,7 @@ namespace Kargono::Panels
 						m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-						ECSInternal::GetComponentIdentifier<Particles::ParticleEmitterComponent>());
+						ECSInternal::GetComponentIdentifier<Particles::ParticleEmitter>());
 				};
 				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
@@ -348,9 +348,9 @@ namespace Kargono::Panels
 
 			if (option.m_Label == "AI State")
 			{
-				entity.AddComponent<AI::AIStateComponent>();
+				entity.AddComponent<States::StateMachine>();
 				componentEntry.m_Label = "AI State";
-				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<AI::AIStateComponent>(), Assets::k_EmptyHandle);
+				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<States::StateMachine>(), Assets::k_EmptyHandle);
 				componentEntry.m_IconHandle = EditorUI::EditorUIContext::m_GenIcons.m_AI;
 				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
@@ -358,7 +358,7 @@ namespace Kargono::Panels
 						GetActiveScene()->m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-						ECSInternal::GetComponentIdentifier<AI::AIStateComponent>());
+						ECSInternal::GetComponentIdentifier<States::StateMachine>());
 				};
 				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
@@ -1254,7 +1254,7 @@ namespace Kargono::Panels
 		};
 	}
 
-	void SceneEditorPanel::InitializeParticleEmitterComponent()
+	void SceneEditorPanel::InitializeParticleEmitter()
 	{
 		// Set up particle emitter header
 		m_ParticleEmitterHeader.m_Label = "Particle Emitter";
@@ -1267,7 +1267,7 @@ namespace Kargono::Panels
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
-				if (entity.HasComponent<Particles::ParticleEmitterComponent>())
+				if (entity.HasComponent<Particles::ParticleEmitter>())
 				{
 					m_SceneHierarchyTree.EditDepth([&](EditorUI::TreeEntry& entry)
 					{
@@ -1276,7 +1276,7 @@ namespace Kargono::Panels
 							for (EditorUI::TreeEntry& subEntry : entry.m_SubEntries)
 							{
 								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
-								if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<Particles::ParticleEmitterComponent>())
+								if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<Particles::ParticleEmitter>())
 								{
 									pathToDelete = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
 									break;
@@ -1293,7 +1293,7 @@ namespace Kargono::Panels
 
 					KG_ASSERT(pathToDelete);
 					m_SceneHierarchyTree.RemoveEntry(pathToDelete);
-					entity.RemoveComponent<Particles::ParticleEmitterComponent>();
+					entity.RemoveComponent<Particles::ParticleEmitter>();
 					s_MainWindow->LoadSceneParticleEmitters();
 				}
 			});
@@ -1319,12 +1319,12 @@ namespace Kargono::Panels
 		m_SelectParticleEmitter.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Particles::ParticleEmitterComponent>())
+			if (!entity.HasComponent<Particles::ParticleEmitter>())
 			{
 				KG_ERROR("Attempt to edit entity particle emitter component when none exists!");
 				return;
 			}
-			Particles::ParticleEmitterComponent& component = entity.GetComponent<Particles::ParticleEmitterComponent>();
+			Particles::ParticleEmitter& component = entity.GetComponent<Particles::ParticleEmitter>();
 
 			// Check for empty entry
 			if (entry.m_Handle == Assets::k_EmptyHandle)
@@ -1624,7 +1624,7 @@ namespace Kargono::Panels
 
 	void SceneEditorPanel::InitializeAIComponent()
 	{
-		// Set up AI state header
+		// Set up StateMachines state header
 		m_AIStateHeader.m_Label = "AI State";
 		m_AIStateHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
 		m_AIStateHeader.m_Expanded = true;
@@ -1635,7 +1635,7 @@ namespace Kargono::Panels
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 				EditorUI::TreePath pathToDelete;
-				if (entity.HasComponent<AI::AIStateComponent>())
+				if (entity.HasComponent<States::StateMachine>())
 				{
 					m_SceneHierarchyTree.EditDepth([&](EditorUI::TreeEntry& entry)
 					{
@@ -1644,7 +1644,7 @@ namespace Kargono::Panels
 							for (EditorUI::TreeEntry& subEntry : entry.m_SubEntries)
 							{
 								SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
-								if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<AI::AIStateComponent>())
+								if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<States::StateMachine>())
 								{
 									pathToDelete = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
 									break;
@@ -1661,7 +1661,7 @@ namespace Kargono::Panels
 
 					KG_ASSERT(pathToDelete);
 					m_SceneHierarchyTree.RemoveEntry(pathToDelete);
-					entity.RemoveComponent<AI::AIStateComponent>();
+					entity.RemoveComponent<States::StateMachine>();
 				}
 			});
 		});
@@ -1676,7 +1676,7 @@ namespace Kargono::Panels
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
 			{
-				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
+				Ref<States::State> aiStateRef = Assets::AssetService::GetAIState(handle);
 				KG_ASSERT(aiStateRef);
 
 				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
@@ -1686,12 +1686,12 @@ namespace Kargono::Panels
 		m_SelectGlobalState.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<AI::AIStateComponent>())
+			if (!entity.HasComponent<States::StateMachine>())
 			{
-				KG_ERROR("Attempt to edit entity AIState component when none exists!");
+				KG_ERROR("Attempt to edit entity State component when none exists!");
 				return;
 			}
-			AI::AIStateComponent& component = entity.GetComponent<AI::AIStateComponent>();
+			States::StateMachine& component = entity.GetComponent<States::StateMachine>();
 
 			// Check for empty entry
 			if (entry.m_Handle == Assets::k_EmptyHandle)
@@ -1714,7 +1714,7 @@ namespace Kargono::Panels
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
 			{
-				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
+				Ref<States::State> aiStateRef = Assets::AssetService::GetAIState(handle);
 				KG_ASSERT(aiStateRef);
 
 				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
@@ -1724,12 +1724,12 @@ namespace Kargono::Panels
 		m_SelectCurrentState.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<AI::AIStateComponent>())
+			if (!entity.HasComponent<States::StateMachine>())
 			{
-				KG_ERROR("Attempt to edit entity AIState component when none exists!");
+				KG_ERROR("Attempt to edit entity State component when none exists!");
 				return;
 			}
-			AI::AIStateComponent& component = entity.GetComponent<AI::AIStateComponent>();
+			States::StateMachine& component = entity.GetComponent<States::StateMachine>();
 
 			// Check for empty entry
 			if (entry.m_Handle == Assets::k_EmptyHandle)
@@ -1752,7 +1752,7 @@ namespace Kargono::Panels
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
 			{
-				Ref<AI::AIState> aiStateRef = Assets::AssetService::GetAIState(handle);
+				Ref<States::State> aiStateRef = Assets::AssetService::GetAIState(handle);
 				KG_ASSERT(aiStateRef);
 
 				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
@@ -1762,12 +1762,12 @@ namespace Kargono::Panels
 		m_SelectPreviousState.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<AI::AIStateComponent>())
+			if (!entity.HasComponent<States::StateMachine>())
 			{
-				KG_ERROR("Attempt to edit entity AIState component when none exists!");
+				KG_ERROR("Attempt to edit entity State component when none exists!");
 				return;
 			}
-			AI::AIStateComponent& component = entity.GetComponent<AI::AIStateComponent>();
+			States::StateMachine& component = entity.GetComponent<States::StateMachine>();
 
 			// Check for empty entry
 			if (entry.m_Handle == Assets::k_EmptyHandle)
@@ -2385,7 +2385,7 @@ namespace Kargono::Panels
 		InitializeRigidbody2DComponent();
 		InitializeOnUpdate();
 		InitializeOnCreate();
-		InitializeParticleEmitterComponent();
+		InitializeParticleEmitter();
 		InitializeBoxCollider2DComponent();
 		InitializeCircleCollider2DComponent();
 		InitializeAIComponent();
@@ -2526,7 +2526,7 @@ namespace Kargono::Panels
 			}
 		}
 
-		if (manageAsset->GetAssetType() == Assets::AssetType::AIState &&
+		if (manageAsset->GetAssetType() == Assets::AssetType::State &&
 			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
 			if (m_SelectCurrentState.m_CurrentOption.m_Handle == manageAsset->GetAssetID())
@@ -2696,10 +2696,10 @@ namespace Kargono::Panels
 		DrawBoxCollider2DComponent(entity);
 		DrawOnUpdate(entity);
 		DrawOnCreate(entity);
-		DrawAIStateComponent(entity);
+		DrawStateMachine(entity);
 		DrawCircleCollider2DComponent(entity);
 		DrawCameraComponent(entity);
-		DrawParticleEmitterComponent(entity);
+		DrawParticleEmitter(entity);
 		DrawShapeComponent(entity);
 		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
 		{
@@ -2728,8 +2728,8 @@ namespace Kargono::Panels
 		case ECSInternal::GetComponentIdentifier<Rendering::CameraComponent>():
 			DrawCameraComponent(entity);
 			return;
-		case ECSInternal::GetComponentIdentifier<Particles::ParticleEmitterComponent>():
-			DrawParticleEmitterComponent(entity);
+		case ECSInternal::GetComponentIdentifier<Particles::ParticleEmitter>():
+			DrawParticleEmitter(entity);
 			return;
 		case ECSInternal::GetComponentIdentifier<Scripting::OnUpdate>():
 			DrawOnUpdate(entity);
@@ -2737,8 +2737,8 @@ namespace Kargono::Panels
 		case ECSInternal::GetComponentIdentifier<Scripting::OnCreate>():
 			DrawOnCreate(entity);
 			return;
-		case ECSInternal::GetComponentIdentifier<AI::AIStateComponent>():
-			DrawAIStateComponent(entity);
+		case ECSInternal::GetComponentIdentifier<States::StateMachine>():
+			DrawStateMachine(entity);
 			return;
 		case ECSInternal::GetComponentIdentifier<Rendering::ShapeComponent>():
 			DrawShapeComponent(entity);
@@ -2913,13 +2913,13 @@ namespace Kargono::Panels
 		}
 		
 	}
-	void SceneEditorPanel::DrawParticleEmitterComponent(ECS::Entity entity)
+	void SceneEditorPanel::DrawParticleEmitter(ECS::Entity entity)
 	{
-		if (!entity.HasComponent<Particles::ParticleEmitterComponent>())
+		if (!entity.HasComponent<Particles::ParticleEmitter>())
 		{
 			return;
 		}
-		Particles::ParticleEmitterComponent& component = entity.GetComponent<Particles::ParticleEmitterComponent>();
+		Particles::ParticleEmitter& component = entity.GetComponent<Particles::ParticleEmitter>();
 		m_ParticleEmitterHeader.RenderHeader();
 		if (m_ParticleEmitterHeader.m_Expanded)
 		{
@@ -2948,13 +2948,13 @@ namespace Kargono::Panels
 			m_SelectOnUpdateScript.RenderOptions();
 		}
 	}
-	void SceneEditorPanel::DrawAIStateComponent(ECS::Entity entity)
+	void SceneEditorPanel::DrawStateMachine(ECS::Entity entity)
 	{
-		if (!entity.HasComponent<AI::AIStateComponent>())
+		if (!entity.HasComponent<States::StateMachine>())
 		{
 			return;
 		}
-		AI::AIStateComponent& component = entity.GetComponent<AI::AIStateComponent>();
+		States::StateMachine& component = entity.GetComponent<States::StateMachine>();
 		m_AIStateHeader.RenderHeader();
 		if (m_AIStateHeader.m_Expanded)
 		{
@@ -3495,17 +3495,17 @@ namespace Kargono::Panels
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
-		if (entity.HasComponent<Particles::ParticleEmitterComponent>())
+		if (entity.HasComponent<Particles::ParticleEmitter>())
 		{
 			componentEntry.m_Label = "Particle Emitter";
-			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Particles::ParticleEmitterComponent>(), Assets::k_EmptyHandle);
+			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Particles::ParticleEmitter>(), Assets::k_EmptyHandle);
 			componentEntry.m_IconHandle = EditorUI::EditorUIContext::m_SceneIcons.m_Particles;
 			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-						ECSInternal::GetComponentIdentifier<Particles::ParticleEmitterComponent>());
+						ECSInternal::GetComponentIdentifier<Particles::ParticleEmitter>());
 				};
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}
@@ -3555,17 +3555,17 @@ namespace Kargono::Panels
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
-		if (entity.HasComponent<AI::AIStateComponent>())
+		if (entity.HasComponent<States::StateMachine>())
 		{
 			componentEntry.m_Label = "AI State";
-			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<AI::AIStateComponent>(), Assets::k_EmptyHandle);
+			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<States::StateMachine>(), Assets::k_EmptyHandle);
 			componentEntry.m_IconHandle = EditorUI::EditorUIContext::m_GenIcons.m_AI;
 			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-						ECSInternal::GetComponentIdentifier<AI::AIStateComponent>());
+						ECSInternal::GetComponentIdentifier<States::StateMachine>());
 				};
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}

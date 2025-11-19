@@ -4,11 +4,11 @@
 //		(Editor and Runtime) as an easy single include to provide all of
 //		the core engine functionality.
 
-//-----------------AI-----------------//
-#include "Modules/AI/AIContext.h"
+//-----------------StateMachines-----------------//
+#include "Modules/AI/StatesContext.h"
 
 //-----------------Assets-----------------//
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Assets/AssetService.h"
 
 //-----------------Audio-----------------//
@@ -58,7 +58,7 @@
 //-----------------Rendering-----------------//
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Rendering/InputBuffer.h"
-#include "Modules/Rendering/Shader.h"
+#include "Modules/Rendering/Assets/Shader.h"
 #include "Modules/Rendering/Shape.h"
 #include "Modules/Rendering/Framebuffer.h"
 #include "Modules/Rendering/Texture.h"
@@ -66,7 +66,7 @@
 #include "Modules/Rendering/EditorPerspectiveCamera.h"
 
 //-----------------Scene-----------------//
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/GlobalState/Assets/GameState.h"
 
 //-----------------Scripting-----------------//

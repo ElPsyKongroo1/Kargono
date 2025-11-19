@@ -2,7 +2,7 @@
 
 #include "EditorApp.h"
 
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/Rendering/RenderingService.h"
 #include "Kargono/Utility/Time.h"
 

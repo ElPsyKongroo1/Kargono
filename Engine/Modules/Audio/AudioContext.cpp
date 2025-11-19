@@ -11,7 +11,7 @@
 
 namespace Kargono::Audio
 {
-	void AudioContext::PlayStereoSound(Ref<AudioBuffer> audioBuffer)
+	void AudioContext::PlayStereoSound(Assets::AssetRef<AudioBuffer> audioBuffer)
 	{
 		if (m_Mute)
 		{
@@ -39,7 +39,7 @@ namespace Kargono::Audio
 	}
 	void AudioContext::PlayStereoSoundFromHandle(Assets::AssetHandle audioHandle)
 	{
-		Ref<AudioBuffer> audioBuffer = Assets::AssetService::GetAudioBuffer(audioHandle);
+		Assets::AssetRef<AudioBuffer> audioBuffer = Assets::AssetService::m_AudioBufferManager.GetAssetByHandle(audioHandle);
 		if (audioBuffer)
 		{
 			PlayStereoSound(audioBuffer);
@@ -49,7 +49,7 @@ namespace Kargono::Audio
 			KG_WARN("Could not find an audio buffer with the provided handle {}", audioHandle);
 		}
 	}
-	void AudioContext::PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec)
+	void AudioContext::PlaySound(AudioSourceSpecification& sourceSpec, AudioListenerSpecification& listenerSpec)
 	{
 		if (m_Mute)
 		{
@@ -83,7 +83,7 @@ namespace Kargono::Audio
 		
 	}
 
-	void AudioContext::PlaySound(Ref<AudioBuffer> audioBuffer)
+	void AudioContext::PlaySound(Assets::AssetRef<AudioBuffer> audioBuffer)
 	{
 		m_DefaultSourceSpec.m_CurrentBuffer = audioBuffer;
 		PlaySound(m_DefaultSourceSpec);
@@ -91,7 +91,7 @@ namespace Kargono::Audio
 
 	void AudioContext::PlaySoundFromHandle(Assets::AssetHandle audioHandle)
 	{
-		Ref<Audio::AudioBuffer> audioBuffer = Assets::AssetService::GetAudioBuffer(audioHandle);
+		Assets::AssetRef<AudioBuffer> audioBuffer = Assets::AssetService::m_AudioBufferManager.GetAssetByHandle(audioHandle);
 		if (audioBuffer)
 		{
 			Audio::AudioContext::PlaySound(audioBuffer);
@@ -168,7 +168,7 @@ namespace Kargono::Audio
 
 	bool AudioContext::Terminate()
 	{
-		m_DefaultSourceSpec.m_CurrentBuffer.reset();
+		m_DefaultSourceSpec.m_CurrentBuffer.Reset();
 		m_StereoMusicSource.reset();
 		while (!m_AudioSourceQueue.empty())
 		{
@@ -176,7 +176,7 @@ namespace Kargono::Audio
 			m_AudioSourceQueue.front().reset();
 			m_AudioSourceQueue.pop();
 		}
-		Assets::AssetService::ClearAudioBufferRegistry();
+		Assets::AssetService::m_AudioBufferManager.ClearAssetRegistry();
 
 		// Close OpenAL Context
 		alcDestroyContext(m_ContextID);

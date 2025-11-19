@@ -8,7 +8,7 @@
 #include "Modules/Core/Components/Tag.h"
 #include "Modules/Scripting/Components/OnCreate.h"
 #include "Modules/Scripting/Components/OnUpdate.h"
-#include "Modules/AI/Components/AIState.h"
+#include "Modules/States/Components/StateMachine.h"
 #include "Modules/Particles/Components/ParticleEmitter.h"
 #include "Modules/Cameras/Components/Camera.h"
 #include "Modules/Physics2D/Components/BoxCollider2D.h"
@@ -59,17 +59,17 @@ namespace Kargono::ECS
 			transform.Serialize((void*)&componentContext);
 		}
 
-		if (HasComponent<AI::AIState>())
+		if (HasComponent<States::State>())
 		{
-			AI::AIStateComponent& aiStateComp =
-				GetComponent<AI::AIState>();
-			out << YAML::Key << GetTypeName<AI::AIState>();
+			States::StateMachine& aiStateComp =
+				GetComponent<States::State>();
+			out << YAML::Key << GetTypeName<States::State>();
 			aiStateComp.Serialize((void*)&componentContext);
 		}
 
 		if (HasComponent<Particles::ParticleEmitter>())
 		{
-			Particles::ParticleEmitterComponent& particleEmitterComp =
+			Particles::ParticleEmitter& particleEmitterComp =
 				GetComponent<Particles::ParticleEmitter>();
 			out << YAML::Key << GetTypeName<Particles::ParticleEmitter>();
 			particleEmitterComp.Serialize((void*)&componentContext);
@@ -176,10 +176,10 @@ namespace Kargono::ECS
 			component.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node aiStateNode = entityNode[GetTypeName<AI::AIState>()];
+		YAML::Node aiStateNode = entityNode[GetTypeName<States::State>()];
 		if (aiStateNode)
 		{
-			AI::AIStateComponent& component = AddComponent<AI::AIState>();
+			States::StateMachine& component = AddComponent<States::State>();
 			component.Deserialize((void*)&componentContext);
 		}
 
@@ -193,7 +193,7 @@ namespace Kargono::ECS
 		YAML::Node particleEmitterNode = entityNode[GetTypeName<Particles::ParticleEmitter>()];
 		if (particleEmitterNode)
 		{
-			Particles::ParticleEmitterComponent& component = AddComponent<Particles::ParticleEmitter>();
+			Particles::ParticleEmitter& component = AddComponent<Particles::ParticleEmitter>();
 			component.Deserialize((void*)&componentContext);
 		}
 

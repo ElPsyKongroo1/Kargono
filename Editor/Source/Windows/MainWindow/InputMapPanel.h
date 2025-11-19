@@ -1,5 +1,5 @@
 #pragma once
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/InputMap/Assets/InputMap.h"
 #include "Modules/EditorUI/EditorUIInclude.h"

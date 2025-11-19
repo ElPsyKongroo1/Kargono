@@ -23,19 +23,19 @@ namespace Kargono
 		//=========================
 		// Modify Specific Flags
 		//=========================
-		void SetFlag(uint8_t flag)
+		constexpr void SetFlag(uint8_t flag)
 		{
-			KG_ASSERT(flag < sizeof(t_DataType) * 8);
+			//KG_ASSERT(flag < sizeof(t_DataType) * 8);
 			m_Bitfield |= (1 << flag);
 		}
-		void ClearFlag(uint8_t flag)
+		constexpr void ClearFlag(uint8_t flag)
 		{
-			KG_ASSERT(flag < sizeof(t_DataType) * 8);
+			//KG_ASSERT(flag < sizeof(t_DataType) * 8);
 			m_Bitfield &= ~(1 << flag);
 		}
-		void ToggleFlag(uint8_t flag)
+		constexpr void ToggleFlag(uint8_t flag)
 		{
-			KG_ASSERT(flag < sizeof(t_DataType) * 8);
+			//KG_ASSERT(flag < sizeof(t_DataType) * 8);
 			m_Bitfield ^= (1 << flag);
 		}
 
@@ -57,7 +57,7 @@ namespace Kargono
 		//=========================
 		constexpr bool IsFlagSet(uint8_t flag) const
 		{
-			KG_ASSERT(flag < sizeof(t_DataType) * 8);
+			//KG_ASSERT(flag < sizeof(t_DataType) * 8);
 
 			return m_Bitfield & (1 << flag);
 		}

@@ -4,7 +4,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/Timestep.h"
 #include "Modules/Events/Event.h"
-#include "Modules/Rendering/Shader.h"
+#include "Modules/Rendering/Assets/Shader.h"
 #include "Kargono/Utility/Random.h"
 #include "Modules/Particles/EmitterInstance.h"
 
@@ -45,10 +45,10 @@ namespace Kargono::Particles
 		//==============================
 		// Manage Emitters
 		//==============================
-		[[nodiscard]] UUID AddEmitter(EmitterConfig* config, const Math::vec3& position);
+		[[nodiscard]] UUID AddEmitter(Assets::AssetRef<EmitterConfig> config, const Math::vec3& position);
 		// TODO: YOU SHOULD RETURN A UUID YEA?
 		void AddEmitterByHandle(Assets::AssetHandle emitterHandle, const Math::vec3& position);
-		[[nodiscard]] UUID AddEmitter(EmitterConfig* config, Scenes::Scene* parentScene, UUID entityID);
+		[[nodiscard]] UUID AddEmitter(Assets::AssetRef<EmitterConfig> config, Scenes::Scene* parentScene, UUID entityID);
 		[[nodiscard]] bool RemoveEmitter(UUID emitterID);
 		void ClearEmitters();
 		void ClearSceneEmitters();

@@ -1,6 +1,6 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Kargono/Core/Base.h"

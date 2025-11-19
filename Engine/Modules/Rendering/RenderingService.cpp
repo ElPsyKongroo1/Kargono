@@ -1,12 +1,12 @@
 #include "kgpch.h"
 
 #include "Modules/Rendering/RenderingService.h"
-#include "Modules/Rendering/Shader.h"
+#include "Modules/Rendering/Assets/Shader.h"
 #include "Modules/Rendering/Assets/Texture.h"
 #include "Modules/Rendering/VertexArray.h"
 #include "Modules/Rendering/UniformBuffer.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
 
 namespace Kargono::Rendering

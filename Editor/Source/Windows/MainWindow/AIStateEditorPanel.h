@@ -1,7 +1,7 @@
 #pragma once
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Events/KeyEvent.h"
-#include "Modules/AI/AIContext.h"
+#include "Modules/AI/StatesContext.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>
@@ -49,7 +49,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		Ref<AI::AIState> m_EditorAIState{ nullptr };
+		Ref<States::State> m_EditorAIState{ nullptr };
 		Assets::AssetHandle m_EditorAIStateHandle { Assets::k_EmptyHandle };
 		FixedBufStr32 m_PanelName{ "AI State Editor" };
 	private:

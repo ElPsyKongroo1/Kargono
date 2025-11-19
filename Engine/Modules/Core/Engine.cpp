@@ -10,10 +10,11 @@
 #include "Kargono/Utility/Timers.h"
 #include "Modules/Events/NetworkingEvent.h"
 #include "Modules/ECS/Entity.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/Core/Components/Transform.h"
 #include "Modules/Network/Client.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
+#include "Modules/Scenes/SceneContext.h"
 
 
 namespace Kargono

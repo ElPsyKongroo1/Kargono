@@ -5,13 +5,14 @@
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Assets/AssetService.h"
 #include "Modules/Core/Engine.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/ECS/Entity.h"
 #include "Kargono/Math/Interpolation.h"
 #include "Modules/Events/SceneEvent.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
 #include "Modules/Core/Components/Transform.h"
-#include "Modules/Particles/Components/ParticleEmitterComponent.h"
+#include "Modules/Particles/Components/ParticleEmitter.h"
+#include "Modules/Scenes/SceneContext.h"
 
 namespace Kargono::Particles
 {
@@ -22,7 +23,7 @@ namespace Kargono::Particles
 			m_ParticleRenderSpec.ClearData();
 				// Create shader for UI background/quad rendering
 			Rendering::ShaderSpecification shaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawIndex, false };
-			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
+			Assets::AssetRef<Rendering::Shader> localShader = Assets::AssetService::m_ShaderManager.GetAssetBySpec(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			// Default particle color is pure white
@@ -36,7 +37,6 @@ namespace Kargono::Particles
 			shapeComp->m_CurrentShape = Rendering::ShapeTypes::Quad;
 			shapeComp->m_Vertices = CreateRef<std::vector<Math::vec3>>(Rendering::Shape::s_Quad.GetIndexVertices());
 			shapeComp->m_Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
-
 
 			m_ParticleRenderSpec.m_Shader = localShader;
 			m_ParticleRenderSpec.m_Buffer = localBuffer;
@@ -283,7 +283,7 @@ namespace Kargono::Particles
 
 		return false;
 	}
-	UUID ParticleContext::AddEmitter(EmitterConfig* config, const Math::vec3& position)
+	UUID ParticleContext::AddEmitter(Assets::AssetRef<EmitterConfig> config, const Math::vec3& position)
 	{
 		KG_ASSERT(config);
 		KG_ASSERT(config->m_BufferSize > 0);
@@ -318,15 +318,15 @@ namespace Kargono::Particles
 		KG_ASSERT(emitterHandle != Assets::k_EmptyHandle);
 
 		// Get emitter from asset service
-		Ref<Particles::EmitterConfig> emitter = Assets::AssetService::GetEmitterConfig(emitterHandle);
+		Assets::AssetRef<Particles::EmitterConfig> emitter = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(emitterHandle);
 
 		KG_ASSERT(emitter);
 
 		// Call add emitter function
-		AddEmitter(emitter.get(), position);
+		AddEmitter(emitter, position);
 	}
 
-	UUID ParticleContext::AddEmitter(EmitterConfig* config, Scenes::Scene* parentScene, UUID entityID)
+	UUID ParticleContext::AddEmitter(Assets::AssetRef<EmitterConfig> config, Scenes::Scene* parentScene, UUID entityID)
 	{
 		KG_ASSERT(config);
 		KG_ASSERT(config->m_BufferSize > 0);
@@ -394,17 +394,17 @@ namespace Kargono::Particles
 	}
 	void ParticleContext::LoadSceneEmitters(Ref<Scenes::Scene> scene)
 	{
-		for (ECSInternal::EntityID id : scene->m_EntityRegistry.GetView<Particles::ParticleEmitterComponent>())
+		for (ECSInternal::EntityID id : scene->m_EntityRegistry.GetView<Particles::ParticleEmitter>())
 		{
 			ECS::Entity entity{ scene->m_EntityRegistry.GetEntityByECSID(id) };
-			Particles::ParticleEmitterComponent particleComp = entity.GetComponent<Particles::ParticleEmitterComponent>();
+			Particles::ParticleEmitter particleComp = entity.GetComponent<Particles::ParticleEmitter>();
 			Transform transform = entity.GetComponent<Transform>();
-			if (particleComp.m_EmitterConfigHandle == Assets::k_EmptyHandle)
+			if (particleComp.m_EmitterConfigRef.GetAssetHandle() == Assets::k_EmptyHandle)
 			{
 				continue;
 			}
 
-			AddEmitter(particleComp.m_EmitterConfigRef.get(), scene.get(), entity.GetUUID());
+			AddEmitter(particleComp.m_EmitterConfigRef, scene.get(), entity.GetUUID());
 		}
 	}
 }

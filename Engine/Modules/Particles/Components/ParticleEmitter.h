@@ -3,28 +3,28 @@
 #include "Modules/Particles/Module/ParticlesModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
 #include "Modules/Assets/AssetsCommon.h"
+#include "Modules/Assets/AssetReference.h"
 
 namespace Kargono::Particles
 {
-	struct ParticleEmitterComponent
+	struct ParticleEmitter
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		ParticleEmitterComponent() = default;
-		~ParticleEmitterComponent() = default;
+		ParticleEmitter() = default;
+		~ParticleEmitter() = default;
 	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
-		void CopyTo(ParticleEmitterComponent* dst)
+		void CopyTo(ParticleEmitter* dst)
 		{
 			// Create the component in place
-			std::construct_at<ParticleEmitterComponent>(dst);
+			std::construct_at<ParticleEmitter>(dst);
 
 			// Copy over relevant data
-			dst->m_EmitterConfigHandle = m_EmitterConfigHandle;
 			dst->m_EmitterConfigRef = m_EmitterConfigRef;
 		}
 
@@ -38,9 +38,8 @@ namespace Kargono::Particles
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::AssetHandle m_EmitterConfigHandle{ Assets::k_EmptyHandle };
-		Ref<Particles::EmitterConfig> m_EmitterConfigRef{ nullptr };
+		Assets::TAssetRef<EmitterConfig> m_EmitterConfigRef{};
 	};
 
-	Register_Module_Type(ParticleEmitterComponent, ECSInternal::ComponentTag)
+	Register_Module_Type(ParticleEmitter, ECSInternal::ComponentTag)
 }

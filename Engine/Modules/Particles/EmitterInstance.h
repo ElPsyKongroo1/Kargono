@@ -29,7 +29,7 @@ namespace Kargono::Particles
 		EmitterMotionType m_EmitterMotionType{ EmitterMotionType::NoMotion };
 		Scenes::Scene* m_ParentScene{ nullptr };
 		UUID m_ParentEntityID{ k_EmptyUUID };
-		EmitterConfig* m_Config;
+		Assets::TAssetRef<EmitterConfig> m_Config;
 		std::vector<Particle> m_Particles;
 		size_t m_ParticleIndex;
 		float m_ParticleSpawnAccumulator{ 0.0f };

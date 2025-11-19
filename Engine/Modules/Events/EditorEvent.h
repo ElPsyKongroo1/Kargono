@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Modules/Events/Event.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Kargono/Math/Math.h"
 
 #include <sstream>

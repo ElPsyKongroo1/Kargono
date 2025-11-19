@@ -4,7 +4,7 @@
 #include "Modules/Assets/AssetService.h"
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Core/Engine.h"
-#include "Modules/Rendering/Shader.h"
+#include "Modules/Rendering/Assets/Shader.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Rendering/Assets/Texture.h"
 #include "Kargono/Projects/Project.h"

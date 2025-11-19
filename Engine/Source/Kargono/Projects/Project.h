@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/Resolution.h"
 #include "Modules/Network/ServerConfig.h"

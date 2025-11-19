@@ -1,7 +1,7 @@
 #include "MainWindow.h"
 #include "EditorApp.h"
 
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
 #include "Modules/Network/Client.h"
@@ -308,7 +308,7 @@ namespace Kargono::Windows
 		}
 
 		// Handle removing ai state from editor scene
-		if (manageAsset.GetAssetType() == Assets::AssetType::AIState &&
+		if (manageAsset.GetAssetType() == Assets::AssetType::State &&
 			manageAsset.GetAction() == Events::ManageAssetAction::PreDelete &&
 			m_EditorScene)
 		{

@@ -1,10 +1,11 @@
 #include "kgpch.h"
 
-#include "Modules/Particles/Components/ParticleEmitterComponent.h"
+#include "Modules/Particles/Components/ParticleEmitter.h"
+#include "Modules/Assets/AssetService.h"
 
 namespace Kargono::Particles
 {
-	void ParticleEmitterComponent::Serialize(void* context)
+	void ParticleEmitter::Serialize(void* context)
 	{
 		// Get context
 		ECSInternal::SerializeComponentContext* serializeContext =
@@ -16,12 +17,12 @@ namespace Kargono::Particles
 		YAML::Emitter& out = *serializeContext->m_Serializer;
 
 		// Serialize component
-		out << YAML::Key << "ParticleEmitterComponent";
+		out << YAML::Key << "ParticleEmitter";
 		out << YAML::BeginMap; // Component Map
-		out << YAML::Key << "EmitterHandle" << YAML::Value << static_cast<uint64_t>(m_EmitterConfigHandle);
+		out << YAML::Key << "EmitterHandle" << YAML::Value << static_cast<uint64_t>(m_EmitterConfigRef.GetAssetHandle());
 		out << YAML::EndMap; // Component Map
 	}
-	void ParticleEmitterComponent::Deserialize(void* context)
+	void ParticleEmitter::Deserialize(void* context)
 	{
 		// Get context
 		ECSInternal::DeserializeComponentContext* deserializeContext =
@@ -31,7 +32,7 @@ namespace Kargono::Particles
 		// Get node
 		YAML::Node& node = *deserializeContext->m_Node;
 
-		m_EmitterConfigHandle = node["EmitterHandle"].as<uint64_t>();
-		m_EmitterConfigRef = Assets::AssetService::GetEmitterConfig(m_EmitterConfigHandle);
+		Assets::AssetHandle emitterConfigHandle = node["EmitterHandle"].as<uint64_t>();
+		m_EmitterConfigRef = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(emitterConfigHandle);
 	}
 }

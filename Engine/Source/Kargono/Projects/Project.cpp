@@ -2,7 +2,7 @@
 
 #include "Kargono/Projects/Project.h"
 #include "Modules/Core/Engine.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Network/NetworkTools.h"
 
 #include "API/Serialization/yamlcppAPI.h"

@@ -2,8 +2,9 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Math/Math.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Audio/AudioSource.h"
+#include "Modules/Audio/AudioListener.h"
 
 #include <queue>
 #include <string>
@@ -34,10 +35,10 @@ namespace Kargono::Audio
 		//==============================
 		// Sound Playback
 		//==============================
-		void PlayStereoSound(Ref<AudioBuffer> audioBuffer);
+		void PlayStereoSound(Assets::AssetRef<AudioBuffer> audioBuffer);
 		void PlayStereoSoundFromHandle(Assets::AssetHandle audioHandle);
-		void PlaySound(const AudioSourceSpecification& sourceSpec, const AudioListenerSpecification& listenerSpec = {});
-		void PlaySound(Ref<AudioBuffer> audioBuffer);
+		void PlaySound(AudioSourceSpecification& sourceSpec, AudioListenerSpecification& listenerSpec);
+		void PlaySound(Assets::AssetRef<AudioBuffer> audioBuffer);
 		void PlaySoundFromHandle(Assets::AssetHandle audioHandle);
 		void StopAllAudio();
 		//==============================

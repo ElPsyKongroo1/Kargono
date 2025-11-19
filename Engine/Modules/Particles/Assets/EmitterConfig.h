@@ -3,7 +3,6 @@
 #include "Kargono/Math/Interpolation.h"
 #include "Kargono/Math/MathAliases.h"
 #include "Kargono/Core/Base.h"
-
 #include "Modules/Particles/Module/ParticlesModule.h"
 #include "Modules/Assets/Module/AssetTag.h"
 
@@ -42,7 +41,6 @@ namespace Kargono::Particles
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
-			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 

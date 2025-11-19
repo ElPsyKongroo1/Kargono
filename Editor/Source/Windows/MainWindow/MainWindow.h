@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 #include "Kargono/Core/FixedBufferString.h"

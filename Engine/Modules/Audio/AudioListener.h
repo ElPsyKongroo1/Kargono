@@ -12,7 +12,6 @@ namespace Kargono::Audio
 
 	struct AudioListenerSpecification
 	{
-	public:
 		Math::vec3 m_Position{};
 		Math::vec3 m_Velocity{};
 		Math::vec3 m_Forward{ 1.0f, 0.0f, 0.0f };

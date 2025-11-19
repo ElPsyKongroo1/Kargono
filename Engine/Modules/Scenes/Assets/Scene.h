@@ -42,7 +42,6 @@ namespace Kargono::Scenes
 			Assets::AssetFlags flags{};
 			flags.ClearFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
-			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 		constexpr static FixedBufStr16 GetFileExtension()
@@ -83,10 +82,10 @@ namespace Kargono::Scenes
 		//====================
 		// Remove Asset References
 		//====================
-		bool RemoveScript(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle scriptHandle);
-		bool RemoveAIState(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle aiStateHandle);
-		bool RemoveCustomComponent(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle projectCompHandle);
-		bool RemoveEmitterConfig(Ref<Scenes::Scene> sceneRef, Assets::AssetHandle emitterConfigHandle);
+		bool RemoveScript(Assets::AssetHandle scriptHandle);
+		bool RemoveAIState(Assets::AssetHandle aiStateHandle);
+		bool RemoveCustomComponent(Assets::AssetHandle projectCompHandle);
+		bool RemoveEmitterConfig(Assets::AssetHandle emitterConfigHandle);
 	public:
 		//====================
 		// Create Scenes

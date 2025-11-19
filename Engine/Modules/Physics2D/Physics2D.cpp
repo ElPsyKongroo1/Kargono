@@ -3,7 +3,7 @@
 #include "Modules/Physics2D/Physics2D.h"
 
 #include "Modules/Core/Engine.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/ECS/Entity.h"
 #include "Modules/Core/Components/Transform.h"
 #include "Modules/Physics2D/Components/BoxCollider2DComponent.h"

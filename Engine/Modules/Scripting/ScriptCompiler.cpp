@@ -15,7 +15,7 @@
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
-#include "Kargono/Scenes/Scene.h"
+#include "Modules/Scenes/Assets/Scene.h"
 
 namespace Kargono::Scripting
 {

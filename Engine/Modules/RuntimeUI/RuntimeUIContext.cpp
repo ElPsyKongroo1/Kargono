@@ -8,7 +8,7 @@
 #include "Kargono/Projects/Project.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
 
-#include "Modules/Rendering/Shader.h"
+#include "Modules/Rendering/Assets/Shader.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Math/Interpolation.h"
 #include "Modules/EditorUI/EditorUIInclude.h"

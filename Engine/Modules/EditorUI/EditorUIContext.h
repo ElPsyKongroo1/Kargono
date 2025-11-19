@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Modules/Events/ApplicationEvent.h"
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 #include "Kargono/Core/Buffer.h"
 #include "Kargono/Core/WrappedData.h"
 #include "Kargono/Core/Window.h"

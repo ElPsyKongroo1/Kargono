@@ -2,7 +2,7 @@
 
 #include "Modules/Core/Module.h"
 
-namespace Kargono::AI
+namespace Kargono::States
 {
-	Register_Module(AI)
+	Register_Module(States)
 }

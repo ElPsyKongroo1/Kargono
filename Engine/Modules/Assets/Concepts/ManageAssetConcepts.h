@@ -15,9 +15,6 @@
 namespace Kargono::Assets
 {
 	// Asset update
-	template <typename t_AssetType>
-	concept HasDefaultUpdateFromAsset = HasAssetCacheFlag<t_AssetType> && 
-		HasAllowDefaultUpdateAssetFlag<t_AssetType>;
 
 	template <typename t_AssetType>
 	concept HasCustomUpdateFromAsset = HasAssetCacheFlag<t_AssetType> && 
@@ -27,11 +24,7 @@ namespace Kargono::Assets
 	};
 
 	template <typename t_AssetType>
-	concept HasUpdateFromAsset = HasDefaultUpdateFromAsset<t_AssetType> || HasCustomUpdateFromAsset<t_AssetType>;
-
-	template <typename t_AssetType>
-	concept HasValidateUpdateFromAsset = HasUpdateFromAsset<t_AssetType> && 
-		requires (Metadata& metadata, AssetReference<t_AssetType> newAssetRef)
+	concept HasValidateUpdateFromAsset = requires (Metadata& metadata, AssetReference<t_AssetType> newAssetRef)
 	{
 		{ t_AssetType::ValidateUpdateFromAsset(metadata, newAssetRef) } -> std::same_as<Ref<void>>;
 	};

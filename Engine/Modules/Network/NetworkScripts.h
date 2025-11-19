@@ -1,5 +1,5 @@
 #pragma once
-#include "Modules/Assets/Asset.h"
+#include "Modules/Assets/AssetsCommon.h"
 
 namespace Kargono::Network
 {
