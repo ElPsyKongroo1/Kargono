@@ -3,7 +3,7 @@
 #include "Modules/EditorUI/Widgets/EditorUIGridWidget.h"
 #include "Modules/EditorUI/EditorUIContext.h"
 
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 
 namespace Kargono::EditorUI
 {

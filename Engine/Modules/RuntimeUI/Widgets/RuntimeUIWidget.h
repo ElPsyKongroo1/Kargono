@@ -1,5 +1,5 @@
 #pragma once
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 #include "Modules/RuntimeUI/RuntimeUICommon.h"
 #include "Modules/RuntimeUI/Assets/Font.h"
 
@@ -154,7 +154,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Public Fields
 		//============================
-		Ref<Rendering::Texture2D> m_ImageRef{ nullptr };
+		Assets::AssetRef<Rendering::Texture2D> m_ImageRef{ nullptr };
 		Assets::AssetHandle m_ImageHandle{ Assets::k_EmptyHandle };
 		bool m_FixedAspectRatio{ false };
 	};
@@ -372,7 +372,7 @@ namespace Kargono::Utility
 		}
 	}
 
-	Ref<Rendering::Texture2D> WidgetTypeToIcon(RuntimeUI::WidgetTypes widgetType);
+	Assets::AssetRef<Rendering::Texture2D> WidgetTypeToIcon(RuntimeUI::WidgetTypes widgetType);
 
 	inline RuntimeUI::WidgetTypes StringToWidgetType(std::string_view widgetName)
 	{

@@ -149,12 +149,12 @@ namespace Kargono::Rendering
 {
 	void RendererInputSpec::ClearData()
 	{
-		m_Shader = nullptr;
-		m_Texture = nullptr;
+		m_Shader.Reset();
+		m_Texture.Reset();
 		if (m_ShapeComponent)
 		{
-			m_ShapeComponent->m_Texture = nullptr;
-			m_ShapeComponent->m_Shader = nullptr;
+			m_ShapeComponent->m_Texture.Reset();
+			m_ShapeComponent->m_Shader.Reset();
 		}
 		m_CurrentDrawBuffer = nullptr;
 	}
@@ -310,7 +310,7 @@ namespace Kargono::Rendering
 
 	bool Rendering::Shader::GetAssetFromSpec(Assets::Metadata& metadata, const ShaderSpecification& querySpec)
 	{
-		Assets::AssetReference<Shader> currentRef = m_AssetCache.GetAsset(metadata.m_Handle);
+		Assets::AssetReference<Shader> currentRef = Assets::AssetService::m_ShaderManager.GetAssetByHandle(metadata.m_Handle);
 		Shader& currentShader = currentRef.GetAsset();
 
 		if (currentShader.GetSpecification() == querySpec)

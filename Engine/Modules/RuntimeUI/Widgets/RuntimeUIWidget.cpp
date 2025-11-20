@@ -10,7 +10,7 @@
 
 namespace Kargono::Utility
 {
-	Ref<Rendering::Texture2D> WidgetTypeToIcon(RuntimeUI::WidgetTypes widgetType)
+	Assets::AssetRef<Rendering::Texture2D> WidgetTypeToIcon(RuntimeUI::WidgetTypes widgetType)
 	{
 		switch (widgetType)
 		{
@@ -452,7 +452,7 @@ namespace Kargono::RuntimeUI
 		}
 		else
 		{
-			Ref<Rendering::Texture2D> imageRef = Assets::AssetService::GetTexture2D(m_ImageHandle);
+			Assets::AssetRef<Rendering::Texture2D> imageRef = Assets::AssetService::m_Texture2DManager.GetAssetByHandle(m_ImageHandle);
 			if (!imageRef)
 			{
 				KG_WARN("Unable to locate provided image reference");

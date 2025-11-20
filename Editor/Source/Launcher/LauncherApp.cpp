@@ -6,7 +6,7 @@
 #include "Modules/Core/Engine.h"
 #include "Kargono/Utility/OSCommands.h"
 #include "Kargono/Utility/FileDialogs.h"
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 
@@ -171,7 +171,7 @@ namespace Kargono
 		
 		// Draw Background
 		ImVec2 windowSize = ImGui::GetWindowSize();
-		Ref<Rendering::Texture2D> icon {nullptr};
+		Assets::AssetRef<Rendering::Texture2D> icon {};
 		draw_list->AddRectFilled(ImVec2(initialScreenCursorPos.x + windowSize.x - 30.0f, initialScreenCursorPos.y),
 			ImVec2(initialScreenCursorPos.x + (windowSize.x), initialScreenCursorPos.y + 30.0f),
 			ImColor(EditorUI::EditorUIContext::m_ConfigColors.m_DarkBackgroundColor), 12.0f, ImDrawFlags_RoundCornersBottomLeft);

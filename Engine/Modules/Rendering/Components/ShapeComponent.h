@@ -4,6 +4,7 @@
 #include "Modules/ECSInternal/Module/ComponentTag.h"
 
 #include "Modules/Assets/AssetsCommon.h"
+#include "Modules/Assets/AssetReference.h"
 #include "Kargono/Core/Buffer.h"
 
 #include <vector>
@@ -56,10 +57,10 @@ namespace Kargono::Rendering
 		Ref<std::vector<Math::vec2>> m_TextureCoordinates{ nullptr };
 		Ref<std::vector<uint32_t>> m_Indices{ nullptr };
 		Ref<std::vector<Math::vec4>> m_VertexColors{ nullptr };
-		Ref<Rendering::Shader> m_Shader;
+		Assets::TAssetRef<Rendering::Shader> m_Shader;
 		Rendering::ShaderSpecification m_ShaderSpecification{ Rendering::ColorInputType::None, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false };
 		Assets::AssetHandle m_ShaderHandle{ Assets::k_EmptyHandle };
-		Ref<Rendering::Texture2D> m_Texture;
+		Assets::TAssetRef<Rendering::Texture2D> m_Texture;
 		Assets::AssetHandle m_TextureHandle{ Assets::k_EmptyHandle };
 		Buffer m_ShaderData;
 	};

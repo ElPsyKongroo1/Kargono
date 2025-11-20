@@ -193,7 +193,7 @@ namespace Kargono::Assets
 			}
 		}
 
-		void RegisterNotifier(AssetUpdateNotifier<t_AssetType>& notifier, UserCallback preCallback, UserCallback postCallback)
+		void RegisterNotifier(AssetUpdateNotifier<t_AssetType>& notifier, UserCallback<t_AssetType> preCallback, UserCallback<t_AssetType> postCallback)
 		{
 			// Cannot register if already registered (leads to dangling pointers)
 			KG_ASSERT(!IsNotifierRegistered());

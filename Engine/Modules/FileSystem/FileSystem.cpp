@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/FileSystem/FileSystem.h"
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 
 #include "API/ImageProcessing/stbAPI.h"
 

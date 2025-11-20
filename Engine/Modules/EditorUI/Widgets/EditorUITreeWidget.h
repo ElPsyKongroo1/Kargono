@@ -4,7 +4,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/UUID.h"
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiAPI.h"
 

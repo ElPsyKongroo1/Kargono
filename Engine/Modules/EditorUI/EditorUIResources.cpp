@@ -2,7 +2,7 @@
 
 #include "Modules/EditorUI/EditorUIResources.h"
 
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 
 #include "Modules/Core/Engine.h"
 

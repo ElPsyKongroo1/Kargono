@@ -9,6 +9,7 @@
 #include "Kargono/Math/Math.h"
 #include "Modules/Rendering/Module/RenderingModule.h"
 #include "Modules/Assets/Module/AssetTag.h"
+#include "Modules/Assets/AssetReference.h"
 
 #include <string>
 #include <filesystem>
@@ -38,7 +39,7 @@ namespace Kargono::Rendering
 		Buffer m_VertexBuffer{};
 		uint8_t* m_VertexBufferIterator{ m_VertexBuffer.m_Data };
 		std::vector<uint32_t> m_IndexBuffer {};
-		std::vector<Ref<Texture2D>> m_Textures {};
+		std::vector<Assets::AssetRef<Texture2D>> m_Textures {};
 		Shader* m_Shader{ nullptr };
 	};
 
@@ -60,7 +61,7 @@ namespace Kargono::Rendering
 		// Public Fields
 		//==============================
 		Assets::TAssetRef<Shader> m_Shader;
-		Ref<Texture2D> m_Texture;
+		Assets::TAssetRef<Texture2D> m_Texture;
 		Rendering::ShapeComponent* m_ShapeComponent{ nullptr }; // TODO: The shape component is a memory leak...
 		Ref<DrawCallBuffer> m_CurrentDrawBuffer;
 		Buffer m_Buffer;

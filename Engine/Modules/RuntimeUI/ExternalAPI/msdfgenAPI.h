@@ -3,7 +3,7 @@
 #include "msdf-atlas-gen/msdf-atlas-gen.h"
 #include "msdf-atlas-gen/FontGeometry.h"
 
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 
 namespace Kargono::Utility
 {

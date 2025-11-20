@@ -3,7 +3,7 @@
 #include "EditorApp.h"
 
 #include "Kargono/Utility/Operations.h"
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 #include "Kargono/Utility/Time.h"
 #include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/Network/Server.h"

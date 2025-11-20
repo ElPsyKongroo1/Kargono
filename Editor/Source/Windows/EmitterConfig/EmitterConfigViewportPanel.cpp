@@ -4,7 +4,7 @@
 
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Input/InputService.h"
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 #include "Kargono/Utility/Operations.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
 

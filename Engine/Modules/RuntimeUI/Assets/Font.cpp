@@ -107,7 +107,7 @@ namespace Kargono::RuntimeUI
 		spec.m_Height = static_cast<uint32_t>(fontMetadata.m_AtlasHeight);
 		spec.m_Format = Rendering::ImageFormat::RGB8;
 		spec.m_GenerateMipMaps = false;
-		Ref<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
+		Assets::AssetRef<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
 		texture->SetData((void*)currentResource.m_Data, spec.m_Width * spec.m_Height * Utility::ImageFormatToBytes(spec.m_Format));
 		m_AtlasTexture = texture;
 

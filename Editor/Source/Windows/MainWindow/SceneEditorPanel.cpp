@@ -3209,7 +3209,7 @@ namespace Kargono::Panels
 		Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
 		// Get Previous Buffer and Previous Shader
 		Buffer oldBuffer = component.m_ShaderData;
-		Ref<Rendering::Shader> oldShader = component.m_Shader;
+		Assets::AssetRef<Rendering::Shader> oldShader = component.m_Shader;
 		// Get New Shader
 		auto [newShaderAssetHandle, newShader] = Assets::AssetService::GetShader(component.m_ShaderSpecification);
 		// Assign New Shader to Component

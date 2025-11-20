@@ -143,7 +143,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Public Fields
 		//==============================
-		Ref<Rendering::Texture2D> m_AtlasTexture{ nullptr };
+		Assets::TAssetRef<Rendering::Texture2D> m_AtlasTexture{ nullptr };
 		float m_LineHeight{ 0.0f };
 		std::unordered_map<unsigned char, Character> m_Characters{};
 		float m_Ascender{ 0.0f };

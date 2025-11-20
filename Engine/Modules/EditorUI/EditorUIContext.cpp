@@ -7,7 +7,7 @@
 #include "Modules/Input/InputService.h"
 #include "Modules/InputMap/Assets/InputMap.h"
 #include "Kargono/Utility/FileDialogs.h"
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 #include "Kargono/Projects/Project.h"
 #include "Kargono/ProjectData/ColorPalette.h"
 #include "Modules/Assets/AssetService.h"

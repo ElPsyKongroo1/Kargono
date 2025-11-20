@@ -61,7 +61,7 @@
 #include "Modules/Rendering/Assets/Shader.h"
 #include "Modules/Rendering/Shape.h"
 #include "Modules/Rendering/Framebuffer.h"
-#include "Modules/Rendering/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 #include "Modules/Rendering/VertexArray.h"
 #include "Modules/Rendering/EditorPerspectiveCamera.h"
 
