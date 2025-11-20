@@ -4,7 +4,6 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/FixedBufferString.h"
-#include "Modules/Assets/AssetsTypes.h"
 
 #include <functional>
 #include <limits>

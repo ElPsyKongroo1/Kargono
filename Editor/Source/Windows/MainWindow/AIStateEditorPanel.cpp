@@ -1,4 +1,4 @@
-#include "Windows/MainWindow/AIStateEditorPanel.h"
+#include "Windows/MainWindow/StateEditorPanel.h"
 #include "EditorApp.h"
 
 
@@ -10,59 +10,59 @@ namespace Kargono
 
 namespace Kargono::Panels
 {
-	void AIStateEditorPanel::OnOpenAIStateDialog()
+	void StateEditorPanel::OnOpenStateDialog()
 	{
-		m_OpenAIStatePopupSpec.m_OpenPopup = true;
+		m_OpenStatePopupSpec.m_OpenPopup = true;
 	}
-	void AIStateEditorPanel::OnCreateAIStateDialog()
+	void StateEditorPanel::OnCreateStateDialog()
 	{
-		m_SelectAIStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
-		m_CreateAIStatePopupSpec.m_OpenPopup = true;
+		m_SelectStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
+		m_CreateStatePopupSpec.m_OpenPopup = true;
 	}
 
-	void AIStateEditorPanel::OnRefreshData()
+	void StateEditorPanel::OnRefreshData()
 	{
-		if (m_EditorAIState)
+		if (m_EditorState)
 		{
 			// Refresh scripts
-			Ref<Scripting::Script> onUpdateScript = Assets::AssetService::GetScript(m_EditorAIState->OnUpdateHandle);
-			m_SelectOnUpdateScript.m_CurrentOption = onUpdateScript ? EditorUI::OptionEntry(onUpdateScript->m_ScriptName.c_str(), m_EditorAIState->OnUpdateHandle) : EditorUI::OptionEntry("None", Assets::k_EmptyHandle);
+		    Assets::AssetRef<Scripting::Script> onUpdateScript = Assets::AssetService::GetScript(m_EditorState->OnUpdateHandle);
+			m_SelectOnUpdateScript.m_CurrentOption = onUpdateScript ? EditorUI::OptionEntry(onUpdateScript->m_ScriptName.c_str(), m_EditorState->OnUpdateHandle) : EditorUI::OptionEntry("None", Assets::k_EmptyHandle);
 
-			Ref<Scripting::Script> onEnterStateScript = Assets::AssetService::GetScript(m_EditorAIState->OnEnterStateHandle);
-			m_SelectOnEnterStateScript.m_CurrentOption = onEnterStateScript ? EditorUI::OptionEntry(onEnterStateScript->m_ScriptName.c_str(), m_EditorAIState->OnEnterStateHandle) : EditorUI::OptionEntry("None", Assets::k_EmptyHandle);
+		    Assets::AssetRef<Scripting::Script> onEnterStateScript = Assets::AssetService::GetScript(m_EditorState->OnEnterStateHandle);
+			m_SelectOnEnterStateScript.m_CurrentOption = onEnterStateScript ? EditorUI::OptionEntry(onEnterStateScript->m_ScriptName.c_str(), m_EditorState->OnEnterStateHandle) : EditorUI::OptionEntry("None", Assets::k_EmptyHandle);
 
-			Ref<Scripting::Script> onExitStateScript = Assets::AssetService::GetScript(m_EditorAIState->OnExitStateHandle);
-			m_SelectOnExitStateScript.m_CurrentOption = onExitStateScript ? EditorUI::OptionEntry(onExitStateScript->m_ScriptName.c_str(), m_EditorAIState->OnExitStateHandle) : EditorUI::OptionEntry("None", Assets::k_EmptyHandle);
+		    Assets::AssetRef<Scripting::Script> onExitStateScript = Assets::AssetService::GetScript(m_EditorState->OnExitStateHandle);
+			m_SelectOnExitStateScript.m_CurrentOption = onExitStateScript ? EditorUI::OptionEntry(onExitStateScript->m_ScriptName.c_str(), m_EditorState->OnExitStateHandle) : EditorUI::OptionEntry("None", Assets::k_EmptyHandle);
 
-			Ref<Scripting::Script> onAIMessageScript = Assets::AssetService::GetScript(m_EditorAIState->OnMessageHandle);
-			m_SelectOnAIMessageScript.m_CurrentOption = onAIMessageScript ? EditorUI::OptionEntry(onAIMessageScript->m_ScriptName.c_str(), m_EditorAIState->OnMessageHandle) : EditorUI::OptionEntry("None", Assets::k_EmptyHandle);
+		    Assets::AssetRef<Scripting::Script> onAIMessageScript = Assets::AssetService::GetScript(m_EditorState->OnMessageHandle);
+			m_SelectOnAIMessageScript.m_CurrentOption = onAIMessageScript ? EditorUI::OptionEntry(onAIMessageScript->m_ScriptName.c_str(), m_EditorState->OnMessageHandle) : EditorUI::OptionEntry("None", Assets::k_EmptyHandle);
 		}
 	}
 
-	void AIStateEditorPanel::OnOpenAIState(Assets::AssetHandle newHandle)
+	void StateEditorPanel::OnOpenState(Assets::AssetHandle newHandle)
 	{
-		m_EditorAIState = Assets::AssetService::GetAIState(newHandle);
-		m_EditorAIStateHandle = newHandle;
+		m_EditorState = Assets::AssetService::m_StateManager.GetAssetByHandle(newHandle);
+		m_EditorStateHandle = newHandle;
 		m_MainHeader.m_EditColorActive = false;
-		m_MainHeader.m_Label = Assets::AssetService::GetAIStateRegistry().at(
-			m_EditorAIStateHandle).Data.FileLocation.filename().string();
+		m_MainHeader.m_Label = Assets::AssetService::m_StateManager.GetAssetRegistry().at(
+			m_EditorStateHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}
 
-	AIStateEditorPanel::AIStateEditorPanel()
+	StateEditorPanel::StateEditorPanel()
 	{
 		s_EditorApp = EditorApp::GetCurrentApp();
 		s_MainWindow = s_EditorApp->m_MainWindow.get();
 		s_MainWindow->m_PanelToKeyboardInput.insert_or_assign(m_PanelName.CString(),
-			KG_BIND_CLASS_FN(AIStateEditorPanel::OnKeyPressedEditor));
+			KG_BIND_CLASS_FN(StateEditorPanel::OnKeyPressedEditor));
 		InitializeOpeningScreen();
-		InitializeAIStateHeader();
+		InitializeStateHeader();
 		InitializeMainPanel();
 	}
-	void AIStateEditorPanel::OnEditorUIRender()
+	void StateEditorPanel::OnEditorUIRender()
 	{
 		KG_PROFILE_FUNCTION()
-			EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowAIStateEditor);
+			EditorUI::EditorUIContext::StartRenderWindow(m_PanelName, &s_MainWindow->m_ShowStateEditor);
 
 		if (!EditorUI::EditorUIContext::IsCurrentWindowVisible())
 		{
@@ -70,19 +70,19 @@ namespace Kargono::Panels
 			return;
 		}
 
-		if (!m_EditorAIState)
+		if (!m_EditorState)
 		{
 			// Opening/Null State Screen
-			EditorUI::EditorUIContext::NewItemScreen("Open Existing AI State", KG_BIND_CLASS_FN(OnOpenAIStateDialog), "Create New AI State", KG_BIND_CLASS_FN(OnCreateAIStateDialog));
-			m_CreateAIStatePopupSpec.RenderPopup();
-			m_OpenAIStatePopupSpec.RenderOptions();
+			EditorUI::EditorUIContext::NewItemScreen("Open Existing AI State", KG_BIND_CLASS_FN(OnOpenStateDialog), "Create New AI State", KG_BIND_CLASS_FN(OnCreateStateDialog));
+			m_CreateStatePopupSpec.RenderPopup();
+			m_OpenStatePopupSpec.RenderOptions();
 		}
 		else
 		{
 			// Header
 			m_MainHeader.RenderHeader();
-			m_DeleteAIStateWarning.RenderPopup();
-			m_CloseAIStateWarning.RenderPopup();
+			m_DeleteStateWarning.RenderPopup();
+			m_CloseStateWarning.RenderPopup();
 
 			m_SelectOnUpdateScript.RenderOptions();
 			m_SelectOnEnterStateScript.RenderOptions();
@@ -94,12 +94,12 @@ namespace Kargono::Panels
 
 		EditorUI::EditorUIContext::EndRenderWindow();
 	}
-	bool AIStateEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
+	bool StateEditorPanel::OnKeyPressedEditor(Events::KeyPressedEvent event)
 	{
 		return false;
 	}
 
-	bool AIStateEditorPanel::OnAssetEvent(Events::Event* event)
+	bool StateEditorPanel::OnAssetEvent(Events::Event* event)
 	{
 
 		Events::ManageAsset* manageAsset = (Events::ManageAsset*)event;
@@ -127,16 +127,16 @@ namespace Kargono::Panels
 				m_SelectOnAIMessageScript.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			}
 
-			if (m_EditorAIState)
+			if (m_EditorState)
 			{
-				Assets::AssetService::RemoveScriptFromAIState(m_EditorAIState, manageAsset->GetAssetID());
+				Assets::AssetService::RemoveScriptFromState(m_EditorState, manageAsset->GetAssetID());
 			}
 		}
 
 		if (manageAsset->GetAssetType() == Assets::AssetType::State &&
 			manageAsset->GetAction() == Events::ManageAssetAction::PreDelete)
 		{
-			if (manageAsset->GetAssetID() != m_EditorAIStateHandle)
+			if (manageAsset->GetAssetID() != m_EditorStateHandle)
 			{
 				return false;
 			}
@@ -149,37 +149,37 @@ namespace Kargono::Panels
 		if (manageAsset->GetAssetType() == Assets::AssetType::State &&
 			manageAsset->GetAction() == Events::ManageAssetAction::UpdateAssetInfo)
 		{
-			if (manageAsset->GetAssetID() != m_EditorAIStateHandle)
+			if (manageAsset->GetAssetID() != m_EditorStateHandle)
 			{
 				return false;
 			}
 
 			// Update header
-			m_MainHeader.m_Label = Assets::AssetService::GetAIStateFileLocation(manageAsset->GetAssetID()).filename().string();
+			m_MainHeader.m_Label = Assets::AssetService::GetStateFileLocation(manageAsset->GetAssetID()).filename().string();
 			return true;
 		}
 
 		return false;
 	}
 
-	void AIStateEditorPanel::ResetPanelResources()
+	void StateEditorPanel::ResetPanelResources()
 	{
-		m_EditorAIState = nullptr;
-		m_EditorAIStateHandle = Assets::k_EmptyHandle;
+		m_EditorState = nullptr;
+		m_EditorStateHandle = Assets::k_EmptyHandle;
 	}
 
-	void AIStateEditorPanel::OpenCreateDialog(std::filesystem::path& createLocation)
+	void StateEditorPanel::OpenCreateDialog(std::filesystem::path& createLocation)
 	{
 		// Open StateMachines State Window
-		s_MainWindow->m_ShowAIStateEditor = true;
+		s_MainWindow->m_ShowStateEditor = true;
 		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
-		if (!m_EditorAIState)
+		if (!m_EditorState)
 		{
 			// Open dialog to create editor StateMachines State
-			OnCreateAIStateDialog();
-			m_SelectAIStateLocationSpec.m_CurrentOption = createLocation;
+			OnCreateStateDialog();
+			m_SelectStateLocationSpec.m_CurrentOption = createLocation;
 		}
 		else
 		{
@@ -189,7 +189,7 @@ namespace Kargono::Panels
 
 	}
 
-	void AIStateEditorPanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
+	void StateEditorPanel::OpenAssetInEditor(std::filesystem::path& assetLocation)
 	{
 		// Ensure provided path is within the active asset directory
 		std::filesystem::path activeAssetDirectory = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
@@ -201,7 +201,7 @@ namespace Kargono::Panels
 
 		// Look for asset in registry using the file location
 		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
-		Assets::AssetHandle assetHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativePath);
+		Assets::AssetHandle assetHandle = Assets::AssetService::m_StateHandleFromFileLocationManager.GetAssetByHandle(relativePath);
 
 		// Validate resulting handle
 		if (!assetHandle)
@@ -211,21 +211,21 @@ namespace Kargono::Panels
 		}
 
 		// Open the editor panel to be visible
-		s_MainWindow->m_ShowAIStateEditor = true;
+		s_MainWindow->m_ShowStateEditor = true;
 		EditorUI::EditorUIContext::BringWindowToFront(m_PanelName);
 		EditorUI::EditorUIContext::SetFocusedWindow(m_PanelName);
 
 		// Early out if asset is already open
-		if (m_EditorAIStateHandle == assetHandle)
+		if (m_EditorStateHandle == assetHandle)
 		{
 			return;
 		}
 
 		// Check if panel is already occupied by an asset
-		if (!m_EditorAIState)
+		if (!m_EditorState)
 		{
 			// Open dialog to create editor StateMachines State
-			OnOpenAIState(assetHandle);
+			OnOpenState(assetHandle);
 		}
 		else
 		{
@@ -234,131 +234,131 @@ namespace Kargono::Panels
 		}
 	}
 
-	void AIStateEditorPanel::InitializeOpeningScreen()
+	void StateEditorPanel::InitializeOpeningScreen()
 	{
-		m_OpenAIStatePopupSpec.m_Label = "Open AI State";
-		m_OpenAIStatePopupSpec.m_LineCount = 2;
-		m_OpenAIStatePopupSpec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
-		m_OpenAIStatePopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
-		m_OpenAIStatePopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
+		m_OpenStatePopupSpec.m_Label = "Open AI State";
+		m_OpenStatePopupSpec.m_LineCount = 2;
+		m_OpenStatePopupSpec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
+		m_OpenStatePopupSpec.m_Flags |= EditorUI::SelectOption_PopupOnly;
+		m_OpenStatePopupSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
 			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_StateManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 		};
 
-		m_OpenAIStatePopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
+		m_OpenStatePopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
 			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("No AI State Selected");
 				return;
 			}
-			if (!Assets::AssetService::GetAIStateRegistry().contains(selection.m_Handle))
+			if (!Assets::AssetService::m_StateManager.GetAssetRegistry().contains(selection.m_Handle))
 			{
 				KG_WARN("Could not find the AI State specified");
 				return;
 			}
 
-			OnOpenAIState(selection.m_Handle);
+			OnOpenState(selection.m_Handle);
 		};
 
-		m_SelectAIStateNameSpec.m_Label = "New Name";
-		m_SelectAIStateNameSpec.m_CurrentOption = "Empty";
+		m_SelectStateNameSpec.m_Label = "New Name";
+		m_SelectStateNameSpec.m_CurrentOption = "Empty";
 
-		m_SelectAIStateLocationSpec.m_Label = "Location";
-		m_SelectAIStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
-		m_SelectAIStateLocationSpec.m_ConfirmAction = [&](std::string_view path) 
+		m_SelectStateLocationSpec.m_Label = "Location";
+		m_SelectStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
+		m_SelectStateLocationSpec.m_ConfirmAction = [&](std::string_view path) 
 		{
 			if (!Utility::FileSystem::DoesPathContainSubPath(Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory(), path))
 			{
 				KG_WARN("Cannot create an asset outside of the project's asset directory.");
-				m_SelectAIStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
+				m_SelectStateLocationSpec.m_CurrentOption = Projects::ProjectService::GetActiveContext().GetProjectPaths().GetAssetDirectory();
 			}
 		};
 
-		m_CreateAIStatePopupSpec.m_Label = "Create AI State";
-		m_CreateAIStatePopupSpec.m_ConfirmAction = [&]()
+		m_CreateStatePopupSpec.m_Label = "Create AI State";
+		m_CreateStatePopupSpec.m_ConfirmAction = [&]()
 		{
-			if (m_SelectAIStateNameSpec.m_CurrentOption == "")
+			if (m_SelectStateNameSpec.m_CurrentOption == "")
 			{
 				return;
 			}
 
-			m_EditorAIStateHandle = Assets::AssetService::CreateAIState(m_SelectAIStateNameSpec.m_CurrentOption.c_str(), m_SelectAIStateLocationSpec.m_CurrentOption);
-			if (m_EditorAIStateHandle == Assets::k_EmptyHandle)
+			m_EditorStateHandle = Assets::AssetService::CreateState(m_SelectStateNameSpec.m_CurrentOption.c_str(), m_SelectStateLocationSpec.m_CurrentOption);
+			if (m_EditorStateHandle == Assets::k_EmptyHandle)
 			{
 				KG_WARN("AI state was not created");
 				return;
 			}
-			m_EditorAIState = Assets::AssetService::GetAIState(m_EditorAIStateHandle);
+			m_EditorState = Assets::AssetService::m_StateManager.GetAssetByHandle(m_EditorStateHandle);
 			m_MainHeader.m_EditColorActive = false;
-			m_MainHeader.m_Label = Assets::AssetService::GetAIStateRegistry().at(
-				m_EditorAIStateHandle).Data.FileLocation.filename().string();
+			m_MainHeader.m_Label = Assets::AssetService::m_StateManager.GetAssetRegistry().at(
+				m_EditorStateHandle).Data.FileLocation.filename().string();
 			OnRefreshData();
 		};
-		m_CreateAIStatePopupSpec.m_PopupContents = [&]()
+		m_CreateStatePopupSpec.m_PopupContents = [&]()
 		{
-			m_SelectAIStateNameSpec.RenderText();
-			m_SelectAIStateLocationSpec.RenderChooseDir();
+			m_SelectStateNameSpec.RenderText();
+			m_SelectStateLocationSpec.RenderChooseDir();
 		};
 	}
 
-	void AIStateEditorPanel::InitializeAIStateHeader()
+	void StateEditorPanel::InitializeStateHeader()
 	{
 		// Header (Game State Name and Options)
-		m_DeleteAIStateWarning.m_Label = "Delete AI State";
-		m_DeleteAIStateWarning.m_ConfirmAction = [&]()
+		m_DeleteStateWarning.m_Label = "Delete AI State";
+		m_DeleteStateWarning.m_ConfirmAction = [&]()
 		{
-			Assets::AssetService::DeleteAIState(m_EditorAIStateHandle);
-			m_EditorAIStateHandle = 0;
-			m_EditorAIState = nullptr;
+			Assets::AssetService::DeleteState(m_EditorStateHandle);
+			m_EditorStateHandle = 0;
+			m_EditorState = nullptr;
 		};
-		m_DeleteAIStateWarning.m_PopupContents = [&]()
+		m_DeleteStateWarning.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIContext::Text("Are you sure you want to delete this AI state object?");
 		};
 
-		m_CloseAIStateWarning.m_Label = "Close AI State";
-		m_CloseAIStateWarning.m_ConfirmAction = [&]()
+		m_CloseStateWarning.m_Label = "Close AI State";
+		m_CloseStateWarning.m_ConfirmAction = [&]()
 		{
-			m_EditorAIStateHandle = 0;
-			m_EditorAIState = nullptr;
+			m_EditorStateHandle = 0;
+			m_EditorState = nullptr;
 		};
-		m_CloseAIStateWarning.m_PopupContents = [&]()
+		m_CloseStateWarning.m_PopupContents = [&]()
 		{
 			EditorUI::EditorUIContext::Text("Are you sure you want to close this ai state object without saving?");
 		};
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
 			{
-				Assets::AssetService::SaveAIState(m_EditorAIStateHandle, m_EditorAIState);
+				Assets::AssetService::m_StateManager.UpdateAsset(m_EditorState)
 				m_MainHeader.m_EditColorActive = false;
 			});
 		m_MainHeader.AddToSelectionList("Close", [&]()
 			{
 				if (m_MainHeader.m_EditColorActive)
 				{
-					m_CloseAIStateWarning.m_OpenPopup = true;
+					m_CloseStateWarning.m_OpenPopup = true;
 				}
 				else
 				{
-					m_EditorAIStateHandle = 0;
-					m_EditorAIState = nullptr;
+					m_EditorStateHandle = 0;
+					m_EditorState = nullptr;
 				}
 			});
 		m_MainHeader.AddToSelectionList("Delete", [&]()
 			{
-				m_DeleteAIStateWarning.m_OpenPopup = true;
+				m_DeleteStateWarning.m_OpenPopup = true;
 			});
 	}
 
-	void AIStateEditorPanel::InitializeMainPanel()
+	void StateEditorPanel::InitializeMainPanel()
 	{
 		// On Update Script
 		m_SelectOnUpdateScript.m_Label = "On Update Script";
@@ -370,9 +370,9 @@ namespace Kargono::Panels
 			spec.GetAllOptions().clear();
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
 				{
 					continue;
@@ -385,19 +385,19 @@ namespace Kargono::Panels
 			// If empty option is selected, clear script
 			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
-				m_EditorAIState->OnUpdateHandle = Assets::k_EmptyHandle;
-				m_EditorAIState->OnUpdate = nullptr;
+				m_EditorState->OnUpdateHandle = Assets::k_EmptyHandle;
+				m_EditorState->OnUpdate = nullptr;
 				m_MainHeader.m_EditColorActive = true;
 				return;
 			}
 
 			// Get Script
-			Ref<Scripting::Script> selectedScript = Assets::AssetService::GetScript(selection.m_Handle);
+		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(selection.m_Handle);
 			KG_ASSERT(selectedScript);
 
 			// Update ai state's script
-			m_EditorAIState->OnUpdateHandle = selection.m_Handle;
-			m_EditorAIState->OnUpdate = selectedScript;
+			m_EditorState->OnUpdateHandle = selection.m_Handle;
+			m_EditorState->OnUpdate = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
 		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& /*spec*/)
@@ -424,7 +424,7 @@ namespace Kargono::Panels
 							}
 
 							// Ensure function type matches definition
-							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 							if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
 							{
 								KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -432,8 +432,8 @@ namespace Kargono::Panels
 							}
 
 							// Fill the new script handle
-							m_EditorAIState->OnUpdateHandle = scriptHandle;
-							m_EditorAIState->OnUpdate = script;
+							m_EditorState->OnUpdateHandle = scriptHandle;
+							m_EditorState->OnUpdate = script;
 							m_MainHeader.m_EditColorActive = true;
 							m_SelectOnUpdateScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 						}, {"activeEntity", "deltaTime"});
@@ -455,9 +455,9 @@ namespace Kargono::Panels
 			spec.GetAllOptions().clear();
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_Entity)
 				{
 					continue;
@@ -470,19 +470,19 @@ namespace Kargono::Panels
 			// If empty option is selected, clear script
 			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
-				m_EditorAIState->OnEnterStateHandle = Assets::k_EmptyHandle;
-				m_EditorAIState->OnEnterState = nullptr;
+				m_EditorState->OnEnterStateHandle = Assets::k_EmptyHandle;
+				m_EditorState->OnEnterState = nullptr;
 				m_MainHeader.m_EditColorActive = true;
 				return;
 			}
 
 			// Get Script
-			Ref<Scripting::Script> selectedScript = Assets::AssetService::GetScript(selection.m_Handle);
+		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(selection.m_Handle);
 			KG_ASSERT(selectedScript);
 
 			// Update ai state's script
-			m_EditorAIState->OnEnterStateHandle = selection.m_Handle;
-			m_EditorAIState->OnEnterState = selectedScript;
+			m_EditorState->OnEnterStateHandle = selection.m_Handle;
+			m_EditorState->OnEnterState = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
 		m_SelectOnEnterStateScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -511,7 +511,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_Entity)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -519,8 +519,8 @@ namespace Kargono::Panels
 								}
 
 								// Fill the new script handle
-								m_EditorAIState->OnEnterStateHandle = scriptHandle;
-								m_EditorAIState->OnEnterState = script;
+								m_EditorState->OnEnterStateHandle = scriptHandle;
+								m_EditorState->OnEnterState = script;
 								m_MainHeader.m_EditColorActive = true;
 								m_SelectOnEnterStateScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 						}, {"activeEntity"});
@@ -542,9 +542,9 @@ namespace Kargono::Panels
 			spec.GetAllOptions().clear();
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_Entity)
 				{
 					continue;
@@ -557,19 +557,19 @@ namespace Kargono::Panels
 			// If empty option is selected, clear script
 			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
-				m_EditorAIState->OnExitStateHandle = Assets::k_EmptyHandle;
-				m_EditorAIState->OnExitState = nullptr;
+				m_EditorState->OnExitStateHandle = Assets::k_EmptyHandle;
+				m_EditorState->OnExitState = nullptr;
 				m_MainHeader.m_EditColorActive = true;
 				return;
 			}
 
 			// Get Script
-			Ref<Scripting::Script> selectedScript = Assets::AssetService::GetScript(selection.m_Handle);
+		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(selection.m_Handle);
 			KG_ASSERT(selectedScript);
 
 			// Update ai state's script
-			m_EditorAIState->OnExitStateHandle = selection.m_Handle;
-			m_EditorAIState->OnExitState = selectedScript;
+			m_EditorState->OnExitStateHandle = selection.m_Handle;
+			m_EditorState->OnExitState = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
 		m_SelectOnExitStateScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -598,7 +598,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_Entity)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -606,8 +606,8 @@ namespace Kargono::Panels
 								}
 
 								// Fill the new script handle
-								m_EditorAIState->OnExitStateHandle = scriptHandle;
-								m_EditorAIState->OnExitState = script;
+								m_EditorState->OnExitStateHandle = scriptHandle;
+								m_EditorState->OnExitState = script;
 								m_MainHeader.m_EditColorActive = true;
 								m_SelectOnExitStateScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 						}, {"activeEntity"});
@@ -629,9 +629,9 @@ namespace Kargono::Panels
 			spec.GetAllOptions().clear();
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_UInt32EntityEntityFloat)
 				{
 					continue;
@@ -644,19 +644,19 @@ namespace Kargono::Panels
 			// If empty option is selected, clear script
 			if (selection.m_Handle == Assets::k_EmptyHandle)
 			{
-				m_EditorAIState->OnMessageHandle = Assets::k_EmptyHandle;
-				m_EditorAIState->OnMessage = nullptr;
+				m_EditorState->OnMessageHandle = Assets::k_EmptyHandle;
+				m_EditorState->OnMessage = nullptr;
 				m_MainHeader.m_EditColorActive = true;
 				return;
 			}
 
 			// Get Script
-			Ref<Scripting::Script> selectedScript = Assets::AssetService::GetScript(selection.m_Handle);
+		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(selection.m_Handle);
 			KG_ASSERT(selectedScript);
 
 			// Update ai state's script
-			m_EditorAIState->OnMessageHandle = selection.m_Handle;
-			m_EditorAIState->OnMessage = selectedScript;
+			m_EditorState->OnMessageHandle = selection.m_Handle;
+			m_EditorState->OnMessage = selectedScript;
 			m_MainHeader.m_EditColorActive = true;
 		};
 		m_SelectOnAIMessageScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -685,7 +685,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_UInt32EntityEntityFloat)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -693,8 +693,8 @@ namespace Kargono::Panels
 								}
 
 								// Fill the new script handle
-								m_EditorAIState->OnMessageHandle = scriptHandle;
-								m_EditorAIState->OnMessage = script;
+								m_EditorState->OnMessageHandle = scriptHandle;
+								m_EditorState->OnMessage = script;
 								m_MainHeader.m_EditColorActive = true;
 								m_SelectOnAIMessageScript.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 							}, {"messageType", "senderEntity", "receiverEntity", "delayTime"});

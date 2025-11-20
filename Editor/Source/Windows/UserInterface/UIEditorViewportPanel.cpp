@@ -217,7 +217,7 @@ namespace Kargono::Panels
 		// Set up Line Input Specifications for Overlay Calls
 		{
 			Rendering::ShaderSpecification lineShaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawLine, false };
-			auto [uuid, localShader] = Assets::AssetService::GetShader(lineShaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(lineShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			// Add red color to shader

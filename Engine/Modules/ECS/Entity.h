@@ -93,7 +93,7 @@ namespace Kargono::ECS
 		//==============================
 		// Query State
 		//==============================
-		template<typename t_ComponentType>
+		template<ECSInternal::ComponentConcept t_ComponentType>
 		bool HasComponent()
 		{
 			return m_Registry->m_Registry.HasComponent<t_ComponentType>(m_RegistryEntityID);

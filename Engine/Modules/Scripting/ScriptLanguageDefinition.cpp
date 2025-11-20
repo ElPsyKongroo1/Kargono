@@ -469,9 +469,9 @@ namespace Kargono::Scripting
 		newFunctionMember = {};
 
 		// Provide all custom components as member data for the entity type
-		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 		{
-			Ref<ECSInternal::CustomComponent> projectComp = Assets::AssetService::GetCustomComponent(handle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> projectComp = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
 			KG_ASSERT(projectComp);
 
 			// Initialize custom component data
@@ -504,11 +504,11 @@ namespace Kargono::Scripting
 					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
 					KG_ASSERT(projectComponentExpression);
 					Ref<ECSInternal::CustomComponent> component = nullptr;
-					for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+					for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 					{
 						if (asset.Data.GetSpecificMetaData<Assets::CustomComponentMetaData>()->Name == projectComponentExpression->Value.Value)
 						{
-							component = Assets::AssetService::GetCustomComponent(handle);
+							component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
 							generator.m_OutputText << std::to_string(handle);
 							break;
 						}
@@ -548,11 +548,11 @@ namespace Kargono::Scripting
 					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->CurrentNodeExpression->Value);
 					KG_ASSERT(projectComponentExpression);
 					Ref<ECSInternal::CustomComponent> component = nullptr;
-					for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+					for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 					{
 						if (asset.Data.GetSpecificMetaData<Assets::CustomComponentMetaData>()->Name == projectComponentExpression->Value.Value)
 						{
-							component = Assets::AssetService::GetCustomComponent(handle);
+							component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
 							generator.m_OutputText << std::to_string(handle);
 							break;
 						}
@@ -659,7 +659,7 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionMember.Description = "This function changes this entities's global state to the indicated state. This function takes in the location of an AI state component in the current project as a parameter.";
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "ai_state" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
@@ -680,7 +680,7 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::None, "None" };
 		newFunctionMember.Description = "This function changes this entities's current state to the indicated state. This function takes in the location of an AI state component in the current project as a parameter.";
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "ai_state" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
@@ -701,7 +701,7 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newFunctionMember.Description = "This function check whether the global state of this entity is identical to the indicated aistate. This function takes in the location of an AI state component in the current project as a parameter.";
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "ai_state" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "queryAIState" };
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "queryState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
@@ -722,7 +722,7 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newFunctionMember.Description = "This function check whether the current state of this entity is identical to the indicated aistate. This function takes in the location of an AI state component in the current project as a parameter.";
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "ai_state" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
@@ -743,7 +743,7 @@ namespace Kargono::Scripting
 		newFunctionMember.ReturnType = { ScriptTokenType::PrimitiveType, "bool" };
 		newFunctionMember.Description = "This function check whether the previous state of this entity is identical to the indicated aistate. This function takes in the location of an AI state component in the current project as a parameter.";
 		newMemberParameter.AllTypes.push_back({ ScriptTokenType::PrimitiveType, "ai_state" });
-		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newAIState" };
+		newMemberParameter.Identifier = { ScriptTokenType::Identifier, "newState" };
 		newFunctionMember.Parameters.push_back(newMemberParameter);
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
@@ -849,7 +849,7 @@ namespace Kargono::Scripting
 			{
 				FunctionCallNode* funcCall = std::get_if<FunctionCallNode>(&member.ChildMemberNode->ChildMemberNode->CurrentNodeExpression->Value);
 
-				generator.m_OutputText << "Rigidbody2DComponent_SetLinearVelocity(";
+				generator.m_OutputText << "RigidBody2D_SetLinearVelocity(";
 				generator.GenerateExpression(member.CurrentNodeExpression);
 				generator.m_OutputText << ", ";
 				generator.GenerateExpression(funcCall->Arguments.at(0));
@@ -865,7 +865,7 @@ namespace Kargono::Scripting
 		newFunctionMember.Description = "This function gets the current linear velocity of the 2D physics object associated with this entity.";
 		newFunctionMember.OnGenerateGetter = [](ScriptOutputGenerator& generator, MemberNode& member)
 			{
-				generator.m_OutputText << "Rigidbody2DComponent_GetLinearVelocity(";
+				generator.m_OutputText << "RigidBody2D_GetLinearVelocity(";
 				generator.GenerateExpression(member.CurrentNodeExpression);
 				generator.m_OutputText << ")";
 			};
@@ -1112,7 +1112,7 @@ namespace Kargono::Scripting
 		m_AllLiteralTypes.clear();
 		m_AllLiteralTypes =
 		{
-			{"AIStates", {{}, EditorUI::EditorUIContext::m_GenIcons.m_AI}},
+			{"States", {{}, EditorUI::EditorUIContext::m_GenIcons.m_AI}},
 			{"AudioBuffers", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Audio}},
 			{"EmitterConfigs", {{}, EditorUI::EditorUIContext::m_SceneIcons.m_Particles}},
 			{"Fonts", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Font}},
@@ -1128,8 +1128,8 @@ namespace Kargono::Scripting
 		};
 
 		// Load in names of all StateMachines States
-		CustomLiteralNameToIDMap& aiMap = m_AllLiteralTypes.at("AIStates").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAIStateRegistry())
+		CustomLiteralNameToIDMap& aiMap = m_AllLiteralTypes.at("States").m_CustomLiteralNameToID;
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_StateManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "ai_state" };
@@ -1142,7 +1142,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all audio buffers
 		CustomLiteralNameToIDMap& audioMap = m_AllLiteralTypes.at("AudioBuffers").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetAudioBufferRegistry())
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_AudioBufferManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "audio_buffer" };
@@ -1155,7 +1155,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all emitter configs
 		CustomLiteralNameToIDMap& emitterConfigMap = m_AllLiteralTypes.at("EmitterConfigs").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetEmitterConfigRegistry())
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_EmitterConfigManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "emitter_config" };
@@ -1168,7 +1168,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all fonts
 		CustomLiteralNameToIDMap& fontMap = m_AllLiteralTypes.at("Fonts").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetFontRegistry())
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_FontManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "font" };
@@ -1181,7 +1181,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all game states
 		CustomLiteralNameToIDMap& gameStateMap = m_AllLiteralTypes.at("GameStates").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetGameStateRegistry())
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_GameStateManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "game_state" };
@@ -1194,7 +1194,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all input map
 		CustomLiteralNameToIDMap& inputMapMap = m_AllLiteralTypes.at("InputMaps").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetInputMapRegistry())
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_InputMapManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "input_map" };
@@ -1207,7 +1207,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all custom component
 		CustomLiteralNameToIDMap& projectComponentMap = m_AllLiteralTypes.at("CustomComponents").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetCustomComponentRegistry())
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "project_component" };
@@ -1220,10 +1220,10 @@ namespace Kargono::Scripting
 
 		// Load in names of all project enums
 		CustomLiteralNameToIDMap& projectEnumMap = m_AllLiteralTypes.at("Enums").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetProjectEnumRegistry())
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_ProjectEnumManager.GetAssetRegistry())
 		{
 			m_EnumTypes.clear();
-			Ref<ProjectData::ProjectEnum> currentEnum{ Assets::AssetService::GetProjectEnum(configHandle) };
+			Ref<ProjectData::ProjectEnum> currentEnum{ Assets::AssetService::m_ProjectEnumManager.GetAssetByHandle(configHandle) };
 
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "project_enum" };
@@ -1250,10 +1250,10 @@ namespace Kargono::Scripting
 
 		// Load in names of all scene
 		CustomLiteralNameToIDMap& sceneMap = m_AllLiteralTypes.at("Scenes").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetSceneRegistry())
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_SceneManager.GetAssetRegistry())
 		{
 			// Get the active scene
-			Ref<Scenes::Scene> currentScene{ Assets::AssetService::GetScene(configHandle) };
+			Ref<Scenes::Scene> currentScene{ Assets::AssetService::m_SceneManager.GetAssetByHandle(configHandle) };
 			KG_ASSERT(currentScene);
 
 			CustomLiteralMember newMember;
@@ -1284,7 +1284,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all texture 2D's
 		CustomLiteralNameToIDMap& texture2DMap = m_AllLiteralTypes.at("Textures").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetTexture2DRegistry())
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_Texture2DManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "texture_2d" };
@@ -1297,10 +1297,10 @@ namespace Kargono::Scripting
 
 		// Load in names of all UserInterface
 		CustomLiteralNameToIDMap& userInterfaceMap = m_AllLiteralTypes.at("UserInterfaces").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::GetUserInterfaceRegistry())
+		for (auto& [configHandle, configInfo] : Assets::AssetService::m_UserInterfaceManager.GetAssetRegistry())
 		{
 			// Get the active user interface
-			Ref<RuntimeUI::UserInterface> currentUI{ Assets::AssetService::GetUserInterface(configHandle) };
+			Ref<RuntimeUI::UserInterface> currentUI{ Assets::AssetService::m_UserInterfaceManager.GetAssetByHandle(configHandle) };
 			KG_ASSERT(currentUI);
 
 			CustomLiteralMember newMember;

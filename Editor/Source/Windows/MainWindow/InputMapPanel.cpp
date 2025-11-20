@@ -25,10 +25,10 @@ namespace Kargono::Panels
 	void InputMapPanel::OnOpenInputMap(Assets::AssetHandle newHandle)
 	{
 		// Open dialog to create editor input map
-		m_EditorInputMap = Assets::AssetService::GetInputMap(newHandle);
+		m_EditorInputMap = Assets::AssetService::m_InputMapManager.GetAssetByHandle(newHandle);
 		m_EditorInputMapHandle = newHandle;
 		m_MainHeader.m_EditColorActive = false;
-		m_MainHeader.m_Label = Assets::AssetService::GetInputMapRegistry().at(
+		m_MainHeader.m_Label = Assets::AssetService::m_InputMapManager.GetAssetRegistry().at(
 			m_EditorInputMapHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}
@@ -218,7 +218,7 @@ namespace Kargono::Panels
 
 		// Look for asset in registry using the file location
 		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
-		Assets::AssetHandle assetHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(relativePath);
+		Assets::AssetHandle assetHandle = Assets::AssetService::m_InputMapHandleFromFileLocationManager.GetAssetByHandle(relativePath);
 
 		// Validate resulting handle
 		if (!assetHandle)
@@ -262,7 +262,7 @@ namespace Kargono::Panels
 			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetInputMapRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_InputMapManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
@@ -275,7 +275,7 @@ namespace Kargono::Panels
 				KG_WARN("No Input Map Selected");
 				return;
 			}
-			if (!Assets::AssetService::GetInputMapRegistry().contains(selection.m_Handle))
+			if (!Assets::AssetService::m_InputMapManager.GetAssetRegistry().contains(selection.m_Handle))
 			{
 				KG_WARN("Could not find the input map specified");
 				return;
@@ -312,9 +312,9 @@ namespace Kargono::Panels
 				KG_WARN("Input Map was not created");
 				return;
 			}
-			m_EditorInputMap = Assets::AssetService::GetInputMap(m_EditorInputMapHandle);
+			m_EditorInputMap = Assets::AssetService::m_InputMapManager.GetAssetByHandle(m_EditorInputMapHandle);
 			m_MainHeader.m_EditColorActive = false;
-			m_MainHeader.m_Label = Assets::AssetService::GetInputMapRegistry().at(
+			m_MainHeader.m_Label = Assets::AssetService::m_InputMapManager.GetAssetRegistry().at(
 				m_EditorInputMapHandle).Data.FileLocation.filename().string();
 			OnRefreshData();
 		};
@@ -353,7 +353,7 @@ namespace Kargono::Panels
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
-			Assets::AssetService::SaveInputMap(m_EditorInputMapHandle, m_EditorInputMap);
+			Assets::AssetService::m_InputMapManager.UpdateAsset(m_EditorInputMap);
 			m_MainHeader.m_EditColorActive = false;
 		});
 		m_MainHeader.AddToSelectionList("Close", [&]()
@@ -412,7 +412,7 @@ namespace Kargono::Panels
 				}
 				else
 				{
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 					newEntry = {
 						std::string("Key::") + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						script->m_ScriptName,
@@ -458,7 +458,7 @@ namespace Kargono::Panels
 			}
 			else
 			{
-				script = Assets::AssetService::GetScript(m_KeyboardOnUpdateAddFunction.m_CurrentOption.m_Handle);
+				script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_KeyboardOnUpdateAddFunction.m_CurrentOption.m_Handle);
 			}
 			newBinding->SetScript(script, m_KeyboardOnUpdateAddFunction.m_CurrentOption.m_Handle);
 
@@ -484,9 +484,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, assetInfo] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
 				{
 					continue;
@@ -520,7 +520,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_None)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -581,7 +581,7 @@ namespace Kargono::Panels
 			}
 			else
 			{
-				script = Assets::AssetService::GetScript(m_KeyboardOnUpdateEditFunction.m_CurrentOption.m_Handle);
+				script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_KeyboardOnUpdateEditFunction.m_CurrentOption.m_Handle);
 			}
 			newBinding->SetScript(script, m_KeyboardOnUpdateEditFunction.m_CurrentOption.m_Handle);
 
@@ -606,9 +606,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, assetInfo] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None && script->m_FuncType != WrappedFuncType::Void_Float)
 				{
 					continue;
@@ -643,7 +643,7 @@ namespace Kargono::Panels
 							}
 
 							// Ensure function type matches definition
-							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 							if (script->m_FuncType != WrappedFuncType::Void_None)
 							{
 								KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -697,7 +697,7 @@ namespace Kargono::Panels
 				}
 				else
 				{
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 					newEntry = {
 						std::string("Key::") + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
 						script->m_ScriptName,
@@ -743,7 +743,7 @@ namespace Kargono::Panels
 			}
 			else
 			{
-				script = Assets::AssetService::GetScript(m_KeyboardOnKeyPressedAddFunction.m_CurrentOption.m_Handle);
+				script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_KeyboardOnKeyPressedAddFunction.m_CurrentOption.m_Handle);
 			}
 			newBinding->SetScript(script, m_KeyboardOnKeyPressedAddFunction.m_CurrentOption.m_Handle);
 
@@ -769,9 +769,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, assetInfo] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
@@ -805,7 +805,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_None)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -866,7 +866,7 @@ namespace Kargono::Panels
 			}
 			else
 			{
-				script = Assets::AssetService::GetScript(m_KeyboardOnKeyPressedEditFunction.m_CurrentOption.m_Handle);
+				script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_KeyboardOnKeyPressedEditFunction.m_CurrentOption.m_Handle);
 			}
 			newBinding->SetScript(script, m_KeyboardOnKeyPressedEditFunction.m_CurrentOption.m_Handle);
 
@@ -891,9 +891,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, assetInfo] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, assetInfo] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
@@ -927,7 +927,7 @@ namespace Kargono::Panels
 							}
 
 							// Ensure function type matches definition
-							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 							if (script->m_FuncType != WrappedFuncType::Void_None)
 							{
 								KG_WARN("Incorrect function type returned when linking script to usage point");

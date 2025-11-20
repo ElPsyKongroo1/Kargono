@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Modules/Physics2D/Components/RigidBody2DComponent.h"
+#include "Modules/Physics2D/Components/RigidBody2D.h"
 
 #include "box2d/b2_body.h"
 #include "box2d/b2_world.h"
@@ -11,7 +11,7 @@ namespace Kargono::Utility
 	// Simple Conversions
 	//==============================
 
-	inline b2BodyType Rigidbody2DTypeToBox2DBody(Physics2D::BodyType bodyType)
+	inline b2BodyType RigidBody2DTypeToBox2DBody(Physics2D::BodyType bodyType)
 	{
 		switch (bodyType)
 		{
@@ -23,7 +23,7 @@ namespace Kargono::Utility
 		return b2_staticBody;
 	}
 
-	inline Physics2D::BodyType Rigidbody2DTypeFromBox2DBody(b2BodyType bodyType)
+	inline Physics2D::BodyType RigidBody2DTypeFromBox2DBody(b2BodyType bodyType)
 	{
 		switch (bodyType)
 		{

@@ -1,10 +1,10 @@
 #include "kgpch.h"
 
-#include "Modules/Physics2D/Components/RigidBody2DComponent.h"
+#include "Modules/Physics2D/Components/RigidBody2D.h"
 
 namespace Kargono::Physics2D
 {
-	void Rigidbody2DComponent::Serialize(void* context)
+	void RigidBody2D::Serialize(void* context)
 	{
 		// Get context
 		ECSInternal::SerializeComponentContext* serializeContext =
@@ -14,7 +14,7 @@ namespace Kargono::Physics2D
 		// Get serializer
 		YAML::Emitter& out = *serializeContext->m_Serializer;
 		// Serialize component
-		out << YAML::Key << "Rigidbody2DComponent";
+		out << YAML::Key << "RigidBody2D";
 		out << YAML::BeginMap; // Component Map
 		out << YAML::Key << "BodyType" << YAML::Value << Utility::RigidBody2DBodyTypeToString(m_Type);
 		out << YAML::Key << "FixedRotation" << YAML::Value << m_FixedRotation;
@@ -22,7 +22,7 @@ namespace Kargono::Physics2D
 		out << YAML::Key << "OnCollisionEndHandle" << YAML::Value << static_cast<uint64_t>(m_OnCollisionEndScriptHandle);
 		out << YAML::EndMap; // Component Map
 	}
-	void Rigidbody2DComponent::Deserialize(void* context)
+	void RigidBody2D::Deserialize(void* context)
 	{
 		// Get context
 		ECSInternal::DeserializeComponentContext* deserializeContext =
@@ -37,8 +37,8 @@ namespace Kargono::Physics2D
 		m_FixedRotation = node["FixedRotation"].as<bool>();
 
 		m_OnCollisionStartScriptHandle = node["OnCollisionStartHandle"].as<uint64_t>();
-		m_OnCollisionStartScript = Assets::AssetService::GetScript(m_OnCollisionStartScriptHandle);
+		m_OnCollisionStartScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_OnCollisionStartScriptHandle);
 		m_OnCollisionEndScriptHandle = node["OnCollisionEndHandle"].as<uint64_t>();
-		m_OnCollisionEndScript = Assets::AssetService::GetScript(m_OnCollisionEndScriptHandle);
+		m_OnCollisionEndScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_OnCollisionEndScriptHandle);
 	}
 }

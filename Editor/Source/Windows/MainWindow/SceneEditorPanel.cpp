@@ -13,9 +13,9 @@
 
 #include "Modules/Rendering/Components/CameraComponent.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
-#include "Modules/Physics2D/Components/Rigidbody2DComponent.h"
-#include "Modules/Physics2D/Components/BoxCollider2DComponent.h"
-#include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
+#include "Modules/Physics2D/Components/RigidBody2D.h"
+#include "Modules/Physics2D/Components/BoxCollider2D.h"
+#include "Modules/Physics2D/Components/CircleCollider2D.h"
 #include "Modules/Particles/Components/ParticleEmitter.h"
 #include "Modules/Scripting/Components/OnCreate.h"
 #include "Modules/Scripting/Components/OnUpdate.h"
@@ -62,7 +62,7 @@ namespace Kargono::Panels
 				EditorUI::TreePath sceneEntryPath;
 				sceneEntryPath.PushBackNode(0);
 				EditorUI::TreeEntry sceneEntry{};
-				sceneEntry.m_Label = Assets::AssetService::GetSceneRegistry().at(activeSceneHandle).Data.FileLocation.stem().string();
+				sceneEntry.m_Label = Assets::AssetService::m_SceneManager.GetAssetRegistry().at(activeSceneHandle).Data.FileLocation.stem().string();
 				sceneEntry.m_IconHandle = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Scene;
 				sceneEntry.m_Handle = Assets::k_EmptyHandle;
 				sceneEntry.m_OnLeftClick = [&](EditorUI::TreeEntry& entry)
@@ -135,15 +135,15 @@ namespace Kargono::Panels
 			{
 				spec.AddToOptions("Engine Component", "Shape", Assets::k_EmptyHandle);
 			}
-			if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+			if (!entity.HasComponent<Physics2D::RigidBody2D>())
 			{
 				spec.AddToOptions("Engine Component", "Rigidbody 2D", Assets::k_EmptyHandle);
 			}
-			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::BoxCollider2D>())
 			{
 				spec.AddToOptions("Engine Component", "Box Collider 2D", Assets::k_EmptyHandle);
 			}
-			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::CircleCollider2D>())
 			{
 				spec.AddToOptions("Engine Component", "Circle Collider 2D", Assets::k_EmptyHandle);
 			}
@@ -161,9 +161,9 @@ namespace Kargono::Panels
 				spec.AddToOptions("Engine Component", "AI State", Assets::k_EmptyHandle);
 			}
 
-			for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 			{
-				Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(handle);
+			    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
 				KG_ASSERT(customComponentRef);
 				if (!entity.HasCustomComponentData(handle) && customComponentRef->m_ComponentSize != 0)
 				{
@@ -199,7 +199,7 @@ namespace Kargono::Panels
 			if (option.m_Handle != Assets::k_EmptyHandle)
 			{
 				// Add component to entity & update tree
-				Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(option.m_Handle);
+			    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(option.m_Handle);
 				KG_ASSERT(component);
 				entity.AddCustomComponentData(option.m_Handle);
 				componentEntry.m_Label = component->m_Name;
@@ -279,9 +279,9 @@ namespace Kargono::Panels
 			}
 			if (option.m_Label == "Rigidbody 2D")
 			{
-				entity.AddComponent<Physics2D::Rigidbody2DComponent>();
+				entity.AddComponent<Physics2D::RigidBody2D>();
 				componentEntry.m_Label = "Rigidbody 2D";
-				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::Rigidbody2DComponent>(), Assets::k_EmptyHandle);
+				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::RigidBody2D>(), Assets::k_EmptyHandle);
 				componentEntry.m_IconHandle = EditorUI::EditorUIContext::m_SceneIcons.m_RigidBody;
 				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
@@ -289,32 +289,32 @@ namespace Kargono::Panels
 						m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-						ECSInternal::GetComponentIdentifier<Physics2D::Rigidbody2DComponent>());
+						ECSInternal::GetComponentIdentifier<Physics2D::RigidBody2D>());
 				};
 				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 			if (option.m_Label == "Box Collider 2D")
 			{
-				entity.AddComponent<Physics2D::BoxCollider2DComponent>();
+				entity.AddComponent<Physics2D::BoxCollider2D>();
 				componentEntry.m_Label = "Box Collider 2D";
-				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2DComponent>(), Assets::k_EmptyHandle);
+				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2D>(), Assets::k_EmptyHandle);
 				componentEntry.m_IconHandle = EditorUI::EditorUIContext::m_SceneIcons.m_BoxCollider;
 				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-						ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2DComponent>());
+						ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2D>());
 				};
 				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
 			}
 			if (option.m_Label == "Circle Collider 2D")
 			{
-				entity.AddComponent<Physics2D::CircleCollider2DComponent>();
+				entity.AddComponent<Physics2D::CircleCollider2D>();
 				componentEntry.m_Label = "Circle Collider 2D";
-				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2DComponent>(), Assets::k_EmptyHandle);
+				componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2D>(), Assets::k_EmptyHandle);
 				componentEntry.m_IconHandle = EditorUI::EditorUIContext::m_SceneIcons.m_CircleCollider;
 				componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
@@ -322,7 +322,7 @@ namespace Kargono::Panels
 						m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-						ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2DComponent>());
+						ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2D>());
 				};
 				currentEntry->m_SubEntries.push_back(componentEntry);
 				return;
@@ -516,18 +516,18 @@ namespace Kargono::Panels
 		
 	}
 
-	void SceneEditorPanel::InitializeRigidbody2DComponent()
+	void SceneEditorPanel::InitializeRigidBody2D()
 	{
-		m_Rigidbody2DHeader.m_Label = "Rigid Body 2D";
-		m_Rigidbody2DHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
-		m_Rigidbody2DHeader.m_Expanded = true;
-		m_Rigidbody2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderWidget& spec)
+		m_RigidBody2DHeader.m_Label = "Rigid Body 2D";
+		m_RigidBody2DHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		m_RigidBody2DHeader.m_Expanded = true;
+		m_RigidBody2DHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-				if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+				if (entity.HasComponent<Physics2D::RigidBody2D>())
 				{
 					// Search for indicated entity
 					EditorUI::TreeEntry* entityEntry{ m_SceneHierarchyTree.SearchDepth((uint64_t)entity, 1) };
@@ -538,7 +538,7 @@ namespace Kargono::Panels
 					for (EditorUI::TreeEntry& subEntry : entityEntry->m_SubEntries)
 					{
 						SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
-						if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<Physics2D::Rigidbody2DComponent>())
+						if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<Physics2D::RigidBody2D>())
 						{
 							newPath = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
 							break;
@@ -548,31 +548,31 @@ namespace Kargono::Panels
 					
 					// Remove the rigid body component
 					m_SceneHierarchyTree.RemoveEntry(newPath);
-					entity.RemoveComponent<Physics2D::Rigidbody2DComponent>();
+					entity.RemoveComponent<Physics2D::RigidBody2D>();
 				}
 			});
 		});
 
-		m_Rigidbody2DType.m_Label = "Interaction Type";
-		m_Rigidbody2DType.m_FirstOptionLabel = "Static";
-		m_Rigidbody2DType.m_SecondOptionLabel = "Dynamic";
-		m_Rigidbody2DType.m_Flags |= EditorUI::RadioSelect_Indented;
-		m_Rigidbody2DType.m_SelectAction = [&]()
+		m_RigidBody2DType.m_Label = "Interaction Type";
+		m_RigidBody2DType.m_FirstOptionLabel = "Static";
+		m_RigidBody2DType.m_SecondOptionLabel = "Dynamic";
+		m_RigidBody2DType.m_Flags |= EditorUI::RadioSelect_Indented;
+		m_RigidBody2DType.m_SelectAction = [&]()
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+			if (!entity.HasComponent<Physics2D::RigidBody2D>())
 			{
 				KG_ERROR("Attempt to edit entity rigid body 2D component when none exists!");
 				return;
 			}
-			Physics2D::Rigidbody2DComponent& component = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& component = entity.GetComponent<Physics2D::RigidBody2D>();
 
-			if (m_Rigidbody2DType.m_SelectedOption == 0)
+			if (m_RigidBody2DType.m_SelectedOption == 0)
 			{
 				component.m_Type = Physics2D::BodyType::Static;
 				return;
 			}
-			if (m_Rigidbody2DType.m_SelectedOption == 1)
+			if (m_RigidBody2DType.m_SelectedOption == 1)
 			{
 				component.m_Type = Physics2D::BodyType::Dynamic;
 				return;
@@ -588,12 +588,12 @@ namespace Kargono::Panels
 		m_RigidBody2DFixedRotation.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+			if (!entity.HasComponent<Physics2D::RigidBody2D>())
 			{
 				KG_ERROR("Attempt to edit entity rigid body 2D component when none exists!");
 				return;
 			}
-			Physics2D::Rigidbody2DComponent& component = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& component = entity.GetComponent<Physics2D::RigidBody2D>();
 			component.m_FixedRotation = spec.m_CurrentBoolean;
 		};
 
@@ -604,9 +604,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				KG_ASSERT(script);
 
 				if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
@@ -620,12 +620,12 @@ namespace Kargono::Panels
 		m_SelectRigidBody2DCollisionStartScript.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+			if (!entity.HasComponent<Physics2D::RigidBody2D>())
 			{
 				KG_ERROR("Attempt to edit entity CollisionStart component when none exists!");
 				return;
 			}
-			Physics2D::Rigidbody2DComponent& component = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& component = entity.GetComponent<Physics2D::RigidBody2D>();
 
 			// Check for empty entry
 			if (entry.m_Handle == Assets::k_EmptyHandle)
@@ -635,7 +635,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_OnCollisionStartScriptHandle = entry.m_Handle;
-			component.m_OnCollisionStartScript = Assets::AssetService::GetScript(entry.m_Handle);
+			component.m_OnCollisionStartScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		m_SelectRigidBody2DCollisionStartScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -664,7 +664,7 @@ namespace Kargono::Panels
 						}
 
 						// Ensure function type matches definition
-						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+					    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 						if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
 						{
 							KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -672,12 +672,12 @@ namespace Kargono::Panels
 						}
 
 						ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-						if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+						if (!entity.HasComponent<Physics2D::RigidBody2D>())
 						{
 							KG_ERROR("Attempt to edit entity CollisionStart component when none exists!");
 							return;
 						}
-						Physics2D::Rigidbody2DComponent& component = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+						Physics2D::RigidBody2D& component = entity.GetComponent<Physics2D::RigidBody2D>();
 
 						// Check for a valid entry, and Update if applicable
 						component.m_OnCollisionStartScriptHandle = scriptHandle;
@@ -700,9 +700,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				KG_ASSERT(script);
 
 				if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
@@ -716,12 +716,12 @@ namespace Kargono::Panels
 		m_SelectRigidBody2DCollisionEndScript.m_ConfirmAction = [](const EditorUI::OptionEntry& entry)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+			if (!entity.HasComponent<Physics2D::RigidBody2D>())
 			{
 				KG_ERROR("Attempt to edit entity CollisionEnd component when none exists!");
 				return;
 			}
-			Physics2D::Rigidbody2DComponent& component = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& component = entity.GetComponent<Physics2D::RigidBody2D>();
 
 			// Check for empty entry
 			if (entry.m_Handle == Assets::k_EmptyHandle)
@@ -731,7 +731,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_OnCollisionEndScriptHandle = entry.m_Handle;
-			component.m_OnCollisionEndScript = Assets::AssetService::GetScript(entry.m_Handle);
+			component.m_OnCollisionEndScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		m_SelectRigidBody2DCollisionEndScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -760,7 +760,7 @@ namespace Kargono::Panels
 						}
 
 						// Ensure function type matches definition
-						Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+					    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 						if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
 						{
 							KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -768,12 +768,12 @@ namespace Kargono::Panels
 						}
 
 						ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-						if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+						if (!entity.HasComponent<Physics2D::RigidBody2D>())
 						{
 							KG_ERROR("Attempt to edit entity CollisionEnd component when none exists!");
 							return;
 						}
-						Physics2D::Rigidbody2DComponent& component = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+						Physics2D::RigidBody2D& component = entity.GetComponent<Physics2D::RigidBody2D>();
 
 						// Check for a valid entry, and Update if applicable
 						component.m_OnCollisionEndScriptHandle = scriptHandle;
@@ -791,7 +791,7 @@ namespace Kargono::Panels
 
 	}
 
-	void SceneEditorPanel::InitializeBoxCollider2DComponent()
+	void SceneEditorPanel::InitializeBoxCollider2D()
 	{
 		m_BoxCollider2DHeader.m_Label = "Box Collider 2D";
 		m_BoxCollider2DHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
@@ -802,7 +802,7 @@ namespace Kargono::Panels
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-				if (entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+				if (entity.HasComponent<Physics2D::BoxCollider2D>())
 				{
 					// Search for indicated entity
 					EditorUI::TreeEntry* entityEntry{ m_SceneHierarchyTree.SearchDepth((uint64_t)entity, 1) };
@@ -813,7 +813,7 @@ namespace Kargono::Panels
 					for (EditorUI::TreeEntry& subEntry : entityEntry->m_SubEntries)
 					{
 						SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
-						if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2DComponent>())
+						if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2D>())
 						{
 							newPath = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
 							break;
@@ -823,7 +823,7 @@ namespace Kargono::Panels
 
 					// Remove box collider component
 					m_SceneHierarchyTree.RemoveEntry(newPath);
-					entity.RemoveComponent<Physics2D::BoxCollider2DComponent>();
+					entity.RemoveComponent<Physics2D::BoxCollider2D>();
 				}
 			});
 		});
@@ -834,12 +834,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::BoxCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::BoxCollider2DComponent& component = entity.GetComponent<Physics2D::BoxCollider2DComponent>();
+			Physics2D::BoxCollider2D& component = entity.GetComponent<Physics2D::BoxCollider2D>();
 			component.m_Offset = m_BoxColliderOffset.m_CurrentVec2;
 		};
 
@@ -849,12 +849,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::BoxCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::BoxCollider2DComponent& component = entity.GetComponent<Physics2D::BoxCollider2DComponent>();
+			Physics2D::BoxCollider2D& component = entity.GetComponent<Physics2D::BoxCollider2D>();
 			component.m_Size = m_BoxColliderSize.m_CurrentVec2;
 		};
 
@@ -864,12 +864,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::BoxCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::BoxCollider2DComponent& component = entity.GetComponent<Physics2D::BoxCollider2DComponent>();
+			Physics2D::BoxCollider2D& component = entity.GetComponent<Physics2D::BoxCollider2D>();
 			component.m_Density = m_BoxColliderDensity.m_CurrentFloat;
 		};
 
@@ -879,12 +879,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::BoxCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::BoxCollider2DComponent& component = entity.GetComponent<Physics2D::BoxCollider2DComponent>();
+			Physics2D::BoxCollider2D& component = entity.GetComponent<Physics2D::BoxCollider2D>();
 			component.m_Friction = m_BoxColliderFriction.m_CurrentFloat;
 		};
 
@@ -894,12 +894,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::BoxCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::BoxCollider2DComponent& component = entity.GetComponent<Physics2D::BoxCollider2DComponent>();
+			Physics2D::BoxCollider2D& component = entity.GetComponent<Physics2D::BoxCollider2D>();
 			component.m_Restitution = m_BoxColliderRestitution.m_CurrentFloat;
 		};
 
@@ -909,12 +909,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::BoxCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::BoxCollider2DComponent& component = entity.GetComponent<Physics2D::BoxCollider2DComponent>();
+			Physics2D::BoxCollider2D& component = entity.GetComponent<Physics2D::BoxCollider2D>();
 			component.m_RestitutionThreshold = m_BoxColliderRestitutionThreshold.m_CurrentFloat;
 		};
 
@@ -924,16 +924,16 @@ namespace Kargono::Panels
 		m_BoxColliderIsSensor.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::BoxCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity box collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::BoxCollider2DComponent& component = entity.GetComponent<Physics2D::BoxCollider2DComponent>();
+			Physics2D::BoxCollider2D& component = entity.GetComponent<Physics2D::BoxCollider2D>();
 			component.m_IsSensor = spec.m_CurrentBoolean;
 		};
 	}
-	void SceneEditorPanel::InitializeCircleCollider2DComponent()
+	void SceneEditorPanel::InitializeCircleCollider2D()
 	{
 		m_CircleCollider2DHeader.m_Label = "Circle Collider 2D";
 		m_CircleCollider2DHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
@@ -944,7 +944,7 @@ namespace Kargono::Panels
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-				if (entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+				if (entity.HasComponent<Physics2D::CircleCollider2D>())
 				{
 					// Search for indicated entity
 					EditorUI::TreeEntry* entityEntry{ m_SceneHierarchyTree.SearchDepth((uint64_t)entity, 1) };
@@ -955,7 +955,7 @@ namespace Kargono::Panels
 					for (EditorUI::TreeEntry& subEntry : entityEntry->m_SubEntries)
 					{
 						SceneEditorTreeEntryData& entryData = *(SceneEditorTreeEntryData*)subEntry.m_ProvidedData.get();
-						if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2DComponent>())
+						if (entryData.m_ComponentType == ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2D>())
 						{
 							newPath = m_SceneHierarchyTree.GetPathFromEntryReference(&subEntry);
 							break;
@@ -965,7 +965,7 @@ namespace Kargono::Panels
 
 					// Circle collider from tree
 					m_SceneHierarchyTree.RemoveEntry(newPath);
-					entity.RemoveComponent<Physics2D::CircleCollider2DComponent>();
+					entity.RemoveComponent<Physics2D::CircleCollider2D>();
 				}
 			});
 		});
@@ -976,12 +976,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::CircleCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::CircleCollider2DComponent& component = entity.GetComponent<Physics2D::CircleCollider2DComponent>();
+			Physics2D::CircleCollider2D& component = entity.GetComponent<Physics2D::CircleCollider2D>();
 			component.m_Offset = m_CircleColliderOffset.m_CurrentVec2;
 		};
 
@@ -991,12 +991,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::CircleCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::CircleCollider2DComponent& component = entity.GetComponent<Physics2D::CircleCollider2DComponent>();
+			Physics2D::CircleCollider2D& component = entity.GetComponent<Physics2D::CircleCollider2D>();
 			component.m_Radius = m_CircleColliderRadius.m_CurrentFloat;
 		};
 
@@ -1006,12 +1006,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::CircleCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::CircleCollider2DComponent& component = entity.GetComponent<Physics2D::CircleCollider2DComponent>();
+			Physics2D::CircleCollider2D& component = entity.GetComponent<Physics2D::CircleCollider2D>();
 			component.m_Density = m_CircleColliderDensity.m_CurrentFloat;
 		};
 
@@ -1021,12 +1021,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::CircleCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::CircleCollider2DComponent& component = entity.GetComponent<Physics2D::CircleCollider2DComponent>();
+			Physics2D::CircleCollider2D& component = entity.GetComponent<Physics2D::CircleCollider2D>();
 			component.m_Friction = m_CircleColliderFriction.m_CurrentFloat;
 		};
 
@@ -1036,12 +1036,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::CircleCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::CircleCollider2DComponent& component = entity.GetComponent<Physics2D::CircleCollider2DComponent>();
+			Physics2D::CircleCollider2D& component = entity.GetComponent<Physics2D::CircleCollider2D>();
 			component.m_Restitution = m_CircleColliderRestitution.m_CurrentFloat;
 		};
 
@@ -1051,12 +1051,12 @@ namespace Kargono::Panels
 		{
 			UNREFERENCED_PARAMETER(spec);
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::CircleCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::CircleCollider2DComponent& component = entity.GetComponent<Physics2D::CircleCollider2DComponent>();
+			Physics2D::CircleCollider2D& component = entity.GetComponent<Physics2D::CircleCollider2D>();
 			component.m_RestitutionThreshold = m_CircleColliderRestitutionThreshold.m_CurrentFloat;
 		};
 
@@ -1066,12 +1066,12 @@ namespace Kargono::Panels
 		m_CircleColliderIsSensor.m_ConfirmAction = [&](EditorUI::CheckboxWidget& spec)
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
-			if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+			if (!entity.HasComponent<Physics2D::CircleCollider2D>())
 			{
 				KG_ERROR("Attempt to edit entity circle collider 2D component when none exists!");
 				return;
 			}
-			Physics2D::CircleCollider2DComponent& component = entity.GetComponent<Physics2D::CircleCollider2DComponent>();
+			Physics2D::CircleCollider2D& component = entity.GetComponent<Physics2D::CircleCollider2D>();
 			component.m_IsSensor = spec.m_CurrentBoolean;
 		};
 	}
@@ -1307,9 +1307,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetEmitterConfigRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_EmitterConfigManager.GetAssetRegistry())
 			{
-				Ref<Particles::EmitterConfig> emitterConfigRef = Assets::AssetService::GetEmitterConfig(handle);
+			    Assets::AssetRef<Particles::EmitterConfig> emitterConfigRef = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(handle);
 				KG_ASSERT(emitterConfigRef);
 
 				spec.AddToOptions("All Emitters", asset.Data.FileLocation.filename().string(), handle);
@@ -1334,7 +1334,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_EmitterConfigHandle = entry.m_Handle;
-			component.m_EmitterConfigRef = Assets::AssetService::GetEmitterConfig(entry.m_Handle);
+			component.m_EmitterConfigRef = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(entry.m_Handle);
 
 			s_MainWindow->LoadSceneParticleEmitters();
 		};
@@ -1392,9 +1392,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				KG_ASSERT(script);
 
 				if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
@@ -1423,7 +1423,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_OnUpdateScriptHandle = entry.m_Handle;
-			component.m_OnUpdateScript = Assets::AssetService::GetScript(entry.m_Handle);
+			component.m_OnUpdateScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -1452,7 +1452,7 @@ namespace Kargono::Panels
 					}
 
 					// Ensure function type matches definition
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 					if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
 					{
 						KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -1532,9 +1532,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				KG_ASSERT(script);
 
 				if (script->m_FuncType != WrappedFuncType::Void_Entity)
@@ -1563,7 +1563,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Create if applicable
 			component.m_OnCreateScriptHandle = entry.m_Handle;
-			component.m_OnCreateScript = Assets::AssetService::GetScript(entry.m_Handle);
+			component.m_OnCreateScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		m_SelectOnCreateScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -1592,7 +1592,7 @@ namespace Kargono::Panels
 					}
 
 					// Ensure function type matches definition
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 					if (script->m_FuncType != WrappedFuncType::Void_Entity)
 					{
 						KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -1625,10 +1625,10 @@ namespace Kargono::Panels
 	void SceneEditorPanel::InitializeAIComponent()
 	{
 		// Set up StateMachines state header
-		m_AIStateHeader.m_Label = "AI State";
-		m_AIStateHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
-		m_AIStateHeader.m_Expanded = true;
-		m_AIStateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderWidget& spec)
+		m_StateHeader.m_Label = "AI State";
+		m_StateHeader.m_Flags |= EditorUI::CollapsingHeader_UnderlineTitle;
+		m_StateHeader.m_Expanded = true;
+		m_StateHeader.AddToSelectionList("Remove Component", [&](EditorUI::CollapsingHeaderWidget& spec)
 		{
 			UNREFERENCED_PARAMETER(spec);
 			EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
@@ -1674,9 +1674,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_StateManager.GetAssetRegistry())
 			{
-				Ref<States::State> aiStateRef = Assets::AssetService::GetAIState(handle);
+			    Assets::AssetRef<States::State> aiStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(handle);
 				KG_ASSERT(aiStateRef);
 
 				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
@@ -1701,7 +1701,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_GlobalStateHandle = entry.m_Handle;
-			component.m_GlobalStateReference = Assets::AssetService::GetAIState(entry.m_Handle);
+			component.m_GlobalStateReference = Assets::AssetService::m_StateManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		// Set up current state select options widget
@@ -1712,9 +1712,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_StateManager.GetAssetRegistry())
 			{
-				Ref<States::State> aiStateRef = Assets::AssetService::GetAIState(handle);
+			    Assets::AssetRef<States::State> aiStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(handle);
 				KG_ASSERT(aiStateRef);
 
 				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
@@ -1739,7 +1739,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_CurrentStateHandle = entry.m_Handle;
-			component.m_CurrentStateReference = Assets::AssetService::GetAIState(entry.m_Handle);
+			component.m_CurrentStateReference = Assets::AssetService::m_StateManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		// Set up previous state select options widget
@@ -1750,9 +1750,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetAIStateRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_StateManager.GetAssetRegistry())
 			{
-				Ref<States::State> aiStateRef = Assets::AssetService::GetAIState(handle);
+			    Assets::AssetRef<States::State> aiStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(handle);
 				KG_ASSERT(aiStateRef);
 
 				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
@@ -1777,7 +1777,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_PreviousStateHandle = entry.m_Handle;
-			component.m_PreviousStateReference = Assets::AssetService::GetAIState(entry.m_Handle);
+			component.m_PreviousStateReference = Assets::AssetService::m_StateManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 	}
@@ -1995,7 +1995,7 @@ namespace Kargono::Panels
 		m_ShapeSetTexture.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.ClearOptions();
-			for (auto& [handle, asset] : Assets::AssetService::GetTexture2DRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_Texture2DManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Textures", asset.Data.FileLocation.filename().string(), handle);
 			}
@@ -2009,18 +2009,18 @@ namespace Kargono::Panels
 				Buffer textureBuffer{ 4 };
 				textureBuffer.SetDataToByte(0xff);
 				component.m_TextureHandle = Assets::AssetService::ImportNewTextureFromData(textureBuffer, 1, 1, 4);
-				component.m_Texture = Assets::AssetService::GetTexture2D(component.m_TextureHandle);
+				component.m_Texture = Assets::AssetService::m_Texture2DManager.GetAssetByHandle(component.m_TextureHandle);
 				textureBuffer.Release();
 			}
 
-			if (!Assets::AssetService::GetTexture2DRegistry().contains(entry.m_Handle))
+			if (!Assets::AssetService::m_Texture2DManager.GetAssetRegistry().contains(entry.m_Handle))
 			{
 				KG_WARN("Could not locate texture in asset registry!");
 				return;
 			}
 
 			component.m_TextureHandle = entry.m_Handle;
-			component.m_Texture = Assets::AssetService::GetTexture2D(entry.m_Handle);
+			component.m_Texture = Assets::AssetService::m_Texture2DManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		m_ShapeTilingFactor.m_Label = "Tiling Factor";
@@ -2128,7 +2128,7 @@ namespace Kargono::Panels
 
 	void SceneEditorPanel::InitializeCustomComponents()
 	{
-		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 		{
 			InitializeCustomComponent(handle);
 		}
@@ -2137,7 +2137,7 @@ namespace Kargono::Panels
 
 	void SceneEditorPanel::InitializeCustomComponent(Assets::AssetHandle customComponentHandle)
 	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(customComponentHandle);
+	    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(customComponentHandle);
 		KG_ASSERT(component, "Invalid component provided when initializing SceneEditorPanel");
 
 		// Initialize Collapsing Header
@@ -2203,7 +2203,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2224,7 +2224,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2245,7 +2245,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2266,7 +2266,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2287,7 +2287,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2308,7 +2308,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2329,7 +2329,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2350,7 +2350,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-					Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2382,12 +2382,12 @@ namespace Kargono::Panels
 		InitializeSceneOptions();
 		InitializeTagComponent();
 		InitializeTransformComponent();
-		InitializeRigidbody2DComponent();
+		InitializeRigidBody2D();
 		InitializeOnUpdate();
 		InitializeOnCreate();
 		InitializeParticleEmitter();
-		InitializeBoxCollider2DComponent();
-		InitializeCircleCollider2DComponent();
+		InitializeBoxCollider2D();
+		InitializeCircleCollider2D();
 		InitializeAIComponent();
 		InitializeCameraComponent();
 		InitializeShapeComponent();
@@ -2407,7 +2407,7 @@ namespace Kargono::Panels
 		if (Scenes::SceneService::GetActiveContext().GetActiveScene())
 		{
 			//TODO: Why, fix this plzzz
-			m_MainSceneHeader.m_Label = Assets::AssetService::GetSceneRegistry().at(
+			m_MainSceneHeader.m_Label = Assets::AssetService::m_SceneManager.GetAssetRegistry().at(
 				Scenes::SceneService::GetActiveContext().GetActiveSceneHandle()).Data.FileLocation.filename().string();
 			
 			m_MainSceneHeader.RenderHeader();
@@ -2559,7 +2559,7 @@ namespace Kargono::Panels
 		if (manageAsset->GetAssetType() == Assets::AssetType::CustomComponent &&
 			manageAsset->GetAction() == Events::ManageAssetAction::UpdateAsset)
 		{
-			Ref<ECSInternal::CustomComponent> currentComponent = Assets::AssetService::GetCustomComponent(manageAsset->GetAssetID());
+		    Assets::AssetRef<ECSInternal::CustomComponent> currentComponent = Assets::AssetService::GetCustomComponent(manageAsset->GetAssetID());
 
 			if (currentComponent->m_DataOffsets.size() > 0)
 			{
@@ -2692,16 +2692,16 @@ namespace Kargono::Panels
 	{
 		DrawTagComponent(entity);
 		DrawTransformComponent(entity);
-		DrawRigidbody2DComponent(entity);
-		DrawBoxCollider2DComponent(entity);
+		DrawRigidBody2D(entity);
+		DrawBoxCollider2D(entity);
 		DrawOnUpdate(entity);
 		DrawOnCreate(entity);
 		DrawStateMachine(entity);
-		DrawCircleCollider2DComponent(entity);
+		DrawCircleCollider2D(entity);
 		DrawCameraComponent(entity);
 		DrawParticleEmitter(entity);
 		DrawShapeComponent(entity);
-		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 		{
 			DrawCustomComponent(entity, handle);
 		}
@@ -2716,14 +2716,14 @@ namespace Kargono::Panels
 		case ECSInternal::GetComponentIdentifier<Transform>():
 			DrawTransformComponent(entity);
 			return;
-		case ECSInternal::GetComponentIdentifier<Physics2D::Rigidbody2DComponent>():
-			DrawRigidbody2DComponent(entity);
+		case ECSInternal::GetComponentIdentifier<Physics2D::RigidBody2D>():
+			DrawRigidBody2D(entity);
 			return;
-		case ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2DComponent>():
-			DrawBoxCollider2DComponent(entity);
+		case ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2D>():
+			DrawBoxCollider2D(entity);
 			return;
-		case ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2DComponent>():
-			DrawCircleCollider2DComponent(entity);
+		case ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2D>():
+			DrawCircleCollider2D(entity);
 			return;
 		case ECSInternal::GetComponentIdentifier<Rendering::CameraComponent>():
 			DrawCameraComponent(entity);
@@ -2788,43 +2788,43 @@ namespace Kargono::Panels
 			m_TransformEditRotation.RenderVec3();
 		}
 	}
-	void SceneEditorPanel::DrawRigidbody2DComponent(ECS::Entity entity)
+	void SceneEditorPanel::DrawRigidBody2D(ECS::Entity entity)
 	{
-		if (!entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+		if (!entity.HasComponent<Physics2D::RigidBody2D>())
 		{
 			return;
 		}
-		Physics2D::Rigidbody2DComponent& component = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
-		m_Rigidbody2DHeader.RenderHeader();
-		if (m_Rigidbody2DHeader.m_Expanded)
+		Physics2D::RigidBody2D& component = entity.GetComponent<Physics2D::RigidBody2D>();
+		m_RigidBody2DHeader.RenderHeader();
+		if (m_RigidBody2DHeader.m_Expanded)
 		{
-			m_Rigidbody2DType.m_SelectedOption = component.m_Type == Physics2D::BodyType::Static ?
+			m_RigidBody2DType.m_SelectedOption = component.m_Type == Physics2D::BodyType::Static ?
 				0 : 1;
-			m_Rigidbody2DType.RenderRadio();
+			m_RigidBody2DType.RenderRadio();
 			m_RigidBody2DFixedRotation.m_CurrentBoolean = component.m_FixedRotation;
 			m_RigidBody2DFixedRotation.RenderCheckbox();
 
 			// Display collision script functions
-			Ref<Scripting::Script> collisionStartScript = Assets::AssetService::GetScript(component.m_OnCollisionStartScriptHandle);
+		    Assets::AssetRef<Scripting::Script> collisionStartScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(component.m_OnCollisionStartScriptHandle);
 			m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = component.m_OnCollisionStartScriptHandle == Assets::k_EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(collisionStartScript).c_str(), component.m_OnCollisionStartScriptHandle);
 			m_SelectRigidBody2DCollisionStartScript.RenderOptions();
 
-			Ref<Scripting::Script> collisionEndScript = Assets::AssetService::GetScript(component.m_OnCollisionEndScriptHandle);
+		    Assets::AssetRef<Scripting::Script> collisionEndScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(component.m_OnCollisionEndScriptHandle);
 			m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = component.m_OnCollisionEndScriptHandle == Assets::k_EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(collisionEndScript).c_str(), component.m_OnCollisionEndScriptHandle);
 			m_SelectRigidBody2DCollisionEndScript.RenderOptions();
 		}
 	}
-	void SceneEditorPanel::DrawBoxCollider2DComponent(ECS::Entity entity)
+	void SceneEditorPanel::DrawBoxCollider2D(ECS::Entity entity)
 	{
-		if (!entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+		if (!entity.HasComponent<Physics2D::BoxCollider2D>())
 		{
 			return;
 		}
-		Physics2D::BoxCollider2DComponent& component = entity.GetComponent<Physics2D::BoxCollider2DComponent>();
+		Physics2D::BoxCollider2D& component = entity.GetComponent<Physics2D::BoxCollider2D>();
 		m_BoxCollider2DHeader.RenderHeader();
 		if (m_BoxCollider2DHeader.m_Expanded)
 		{
@@ -2846,13 +2846,13 @@ namespace Kargono::Panels
 		}
 		
 	}
-	void SceneEditorPanel::DrawCircleCollider2DComponent(ECS::Entity entity)
+	void SceneEditorPanel::DrawCircleCollider2D(ECS::Entity entity)
 	{
-		if (!entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+		if (!entity.HasComponent<Physics2D::CircleCollider2D>())
 		{
 			return;
 		}
-		Physics2D::CircleCollider2DComponent& component = entity.GetComponent<Physics2D::CircleCollider2DComponent>();
+		Physics2D::CircleCollider2D& component = entity.GetComponent<Physics2D::CircleCollider2D>();
 		m_CircleCollider2DHeader.RenderHeader();
 		if (m_CircleCollider2DHeader.m_Expanded)
 		{
@@ -2923,8 +2923,8 @@ namespace Kargono::Panels
 		m_ParticleEmitterHeader.RenderHeader();
 		if (m_ParticleEmitterHeader.m_Expanded)
 		{
-			Ref<Particles::EmitterConfig> emitterConfig = Assets::AssetService::GetEmitterConfig(component.m_EmitterConfigHandle);
-			Assets::AssetInfo emitterInfo = Assets::AssetService::GetEmitterConfigInfo(component.m_EmitterConfigHandle);
+		    Assets::AssetRef<Particles::EmitterConfig> emitterConfig = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(component.m_EmitterConfigHandle);
+			Assets::AssetInfo emitterInfo = Assets::AssetService::m_EmitterConfigInfoManager.GetAssetByHandle(component.m_EmitterConfigHandle);
 			m_SelectParticleEmitter.m_CurrentOption = component.m_EmitterConfigHandle == Assets::k_EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(emitterInfo.Data.FileLocation.filename().string().c_str(), component.m_EmitterConfigHandle);
@@ -2941,7 +2941,7 @@ namespace Kargono::Panels
 		m_OnUpdateHeader.RenderHeader();
 		if (m_OnUpdateHeader.m_Expanded)
 		{
-			Ref<Scripting::Script> script = Assets::AssetService::GetScript(component.m_OnUpdateScriptHandle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(component.m_OnUpdateScriptHandle);
 			m_SelectOnUpdateScript.m_CurrentOption = component.m_OnUpdateScriptHandle == Assets::k_EmptyHandle ? 
 				EditorUI::OptionEntry( "None", Assets::k_EmptyHandle ) :
 				EditorUI::OptionEntry(Utility::ScriptToString(script).c_str(), component.m_OnUpdateScriptHandle);
@@ -2955,14 +2955,14 @@ namespace Kargono::Panels
 			return;
 		}
 		States::StateMachine& component = entity.GetComponent<States::StateMachine>();
-		m_AIStateHeader.RenderHeader();
-		if (m_AIStateHeader.m_Expanded)
+		m_StateHeader.RenderHeader();
+		if (m_StateHeader.m_Expanded)
 		{
 			// Select global state
 			bool optionValid = component.m_GlobalStateHandle != Assets::k_EmptyHandle;
 			if (optionValid)
 			{
-				Assets::AssetInfo& globalAsset = Assets::AssetService::GetAIStateRegistry().at(component.m_GlobalStateHandle);
+				Assets::AssetInfo& globalAsset = Assets::AssetService::m_StateManager.GetAssetRegistry().at(component.m_GlobalStateHandle);
 				m_SelectGlobalState.m_CurrentOption = { globalAsset.Data.FileLocation.filename().string().c_str(),
 					component.m_GlobalStateHandle };
 			}
@@ -2976,7 +2976,7 @@ namespace Kargono::Panels
 			optionValid = component.m_CurrentStateHandle != Assets::k_EmptyHandle;
 			if (optionValid)
 			{
-				Assets::AssetInfo& currentAsset = Assets::AssetService::GetAIStateRegistry().at(component.m_CurrentStateHandle);
+				Assets::AssetInfo& currentAsset = Assets::AssetService::m_StateManager.GetAssetRegistry().at(component.m_CurrentStateHandle);
 				m_SelectCurrentState.m_CurrentOption = { currentAsset.Data.FileLocation.filename().string().c_str(), 
 					component.m_CurrentStateHandle };
 			}
@@ -2990,7 +2990,7 @@ namespace Kargono::Panels
 			optionValid = component.m_PreviousStateHandle != Assets::k_EmptyHandle;
 			if (optionValid)
 			{
-				Assets::AssetInfo& previousAsset = Assets::AssetService::GetAIStateRegistry().at(component.m_PreviousStateHandle);
+				Assets::AssetInfo& previousAsset = Assets::AssetService::m_StateManager.GetAssetRegistry().at(component.m_PreviousStateHandle);
 				m_SelectPreviousState.m_CurrentOption = { previousAsset.Data.FileLocation.filename().string().c_str(), 
 					component.m_PreviousStateHandle };
 			}
@@ -3011,7 +3011,7 @@ namespace Kargono::Panels
 		m_OnCreateHeader.RenderHeader();
 		if (m_OnCreateHeader.m_Expanded)
 		{
-			Ref<Scripting::Script> script = Assets::AssetService::GetScript(component.m_OnCreateScriptHandle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(component.m_OnCreateScriptHandle);
 			m_SelectOnCreateScript.m_CurrentOption = component.m_OnCreateScriptHandle == Assets::k_EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(script).c_str(), component.m_OnCreateScriptHandle);
@@ -3061,7 +3061,7 @@ namespace Kargono::Panels
 		{
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-			Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -3078,7 +3078,7 @@ namespace Kargono::Panels
 		{
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-			Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -3095,7 +3095,7 @@ namespace Kargono::Panels
 		{
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-			Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -3131,7 +3131,7 @@ namespace Kargono::Panels
 		{
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-			Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -3153,7 +3153,7 @@ namespace Kargono::Panels
 		{
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-			Ref<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::GetCustomComponent(projectCompFieldInfo.m_CustomComponentHandle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -3211,7 +3211,7 @@ namespace Kargono::Panels
 		Buffer oldBuffer = component.m_ShaderData;
 		Assets::AssetRef<Rendering::Shader> oldShader = component.m_Shader;
 		// Get New Shader
-		auto [newShaderAssetHandle, newShader] = Assets::AssetService::GetShader(component.m_ShaderSpecification);
+		auto [newShaderAssetHandle, newShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(component.m_ShaderSpecification);
 		// Assign New Shader to Component
 		component.m_ShaderHandle = newShaderAssetHandle;
 		component.m_Shader = newShader;
@@ -3296,7 +3296,7 @@ namespace Kargono::Panels
 			{
 				m_ShapeSetTexture.m_CurrentOption =
 				{
-					Assets::AssetService::GetTexture2DRegistry().at(component.m_TextureHandle).Data.FileLocation.filename().string().c_str(),
+					Assets::AssetService::m_Texture2DManager.GetAssetRegistry().at(component.m_TextureHandle).Data.FileLocation.filename().string().c_str(),
 					component.m_TextureHandle
 				};
 			}
@@ -3435,47 +3435,47 @@ namespace Kargono::Panels
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
-		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+		if (entity.HasComponent<Physics2D::RigidBody2D>())
 		{
 			componentEntry.m_Label = "Rigid Body 2D";
-			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::Rigidbody2DComponent>(), Assets::k_EmptyHandle);
+			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::RigidBody2D>(), Assets::k_EmptyHandle);
 			componentEntry.m_IconHandle = EditorUI::EditorUIContext::m_SceneIcons.m_RigidBody;
 			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-						ECSInternal::GetComponentIdentifier<Physics2D::Rigidbody2DComponent>());
+						ECSInternal::GetComponentIdentifier<Physics2D::RigidBody2D>());
 				};
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
-		if (entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+		if (entity.HasComponent<Physics2D::BoxCollider2D>())
 		{
 			componentEntry.m_Label = "Box Collider 2D";
-			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2DComponent>(), Assets::k_EmptyHandle);
+			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2D>(), Assets::k_EmptyHandle);
 			componentEntry.m_IconHandle = EditorUI::EditorUIContext::m_SceneIcons.m_BoxCollider;
 			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-						ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2DComponent>());
+						ECSInternal::GetComponentIdentifier<Physics2D::BoxCollider2D>());
 				};
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}
 
-		if (entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+		if (entity.HasComponent<Physics2D::CircleCollider2D>())
 		{
 			componentEntry.m_Label = "Circle Collider 2D";
-			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2DComponent>(), Assets::k_EmptyHandle);
+			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2D>(), Assets::k_EmptyHandle);
 			componentEntry.m_IconHandle = EditorUI::EditorUIContext::m_SceneIcons.m_CircleCollider;
 			componentEntry.m_OnLeftClick = [](EditorUI::TreeEntry& entry)
 				{
 					ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
 					s_MainWindow->m_SceneEditorPanel->SetSelectedEntity(entity);
 					s_MainWindow->m_SceneEditorPanel->SetDisplayedComponent(
-						ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2DComponent>());
+						ECSInternal::GetComponentIdentifier<Physics2D::CircleCollider2D>());
 				};
 			newEntry.m_SubEntries.push_back(componentEntry);
 		}
@@ -3571,14 +3571,14 @@ namespace Kargono::Panels
 		}
 
 		// Handle adding custom components
-		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 		{
 			if (!entity.HasCustomComponentData(handle))
 			{
 				continue;
 			}
 			// Add component to entity & update tree
-			Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(handle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
 			KG_ASSERT(component);
 			componentEntry.m_Label = component->m_Name;
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(GetModuleTypeIdentifier<ECSInternal::CustomComponent>(), handle);

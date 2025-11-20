@@ -13,7 +13,7 @@ namespace Kargono::RuntimeUI
 		{
 			// TODO: Unreleased Heap Data with Buffer
 			Rendering::ShaderSpecification textShaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::TextTexture, false, true, true, Rendering::RenderingType::DrawTriangle, false };
-			auto [uuid, localShader] = Assets::AssetService::GetShader(textShaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(textShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f },

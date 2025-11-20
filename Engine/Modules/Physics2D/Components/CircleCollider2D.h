@@ -6,22 +6,22 @@
 
 namespace Kargono::Physics2D
 {
-	struct CircleCollider2DComponent
+	struct CircleCollider2D
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		CircleCollider2DComponent() = default;
-		~CircleCollider2DComponent() = default;
+		CircleCollider2D() = default;
+		~CircleCollider2D() = default;
 	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
-		void CopyTo(CircleCollider2DComponent* dst)
+		void CopyTo(CircleCollider2D* dst)
 		{
 			// Create the component in place
-			std::construct_at<CircleCollider2DComponent>(dst);
+			std::construct_at<CircleCollider2D>(dst);
 
 			dst->m_Offset = m_Offset;
 			dst->m_Radius = m_Radius;
@@ -55,5 +55,5 @@ namespace Kargono::Physics2D
 		void* m_RuntimeFixture{ nullptr };
 	};
 
-	Register_Module_Type(CircleCollider2DComponent, ECSInternal::ComponentTag)
+	Register_Module_Type(CircleCollider2D, ECSInternal::ComponentTag)
 }

@@ -4,8 +4,7 @@
 #include "Modules/ECSInternal/RegistryInternal.h"
 #include "Modules/ECSInternal/Module/ECSInternalModule.h"
 #include "Modules/ECSInternal/EntityRegistry.h"
-
-#include "Kargono/Memory/IAllocator.h"
+#include "Modules/Memory/IAllocator.h"
 
 #include <array>
 #include <unordered_map>

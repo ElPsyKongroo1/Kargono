@@ -318,7 +318,7 @@ namespace Kargono::RuntimeUI
 		}
 		else
 		{
-			Ref<Scripting::Script> onPressScript = Assets::AssetService::GetScript(m_FunctionPointers.m_OnPressHandle);
+		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_FunctionPointers.m_OnPressHandle);
 			if (!onPressScript)
 			{
 				KG_WARN("Unable to locate OnPress Script!");

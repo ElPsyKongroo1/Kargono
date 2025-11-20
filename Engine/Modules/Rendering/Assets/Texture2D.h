@@ -8,6 +8,7 @@
 
 #include <string>
 #include <filesystem>
+#include <span>
 
 
 namespace Kargono::Rendering
@@ -86,7 +87,6 @@ namespace Kargono::Rendering
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.ClearFlag(Assets::AssetFlag::RequireUniqueName);
-			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 

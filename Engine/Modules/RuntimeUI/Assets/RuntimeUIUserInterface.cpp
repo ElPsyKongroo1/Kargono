@@ -506,7 +506,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Ensure the texture provided is valid
-		Ref<Rendering::Texture2D> textureRef{ Assets::AssetService::GetTexture2D(textureHandle) };
+		Ref<Rendering::Texture2D> textureRef{ Assets::AssetService::m_Texture2DManager.GetAssetByHandle(textureHandle) };
 		if (!textureRef)
 		{
 			KG_WARN("Attempt to modify the image of a widget, however, the provided image is invalid!");

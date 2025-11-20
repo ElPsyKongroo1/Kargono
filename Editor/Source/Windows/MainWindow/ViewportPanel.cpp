@@ -14,9 +14,9 @@
 #include "Modules/Rendering/Components/CameraComponent.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
 #include "Modules/Core/Components/Transform.h"
-#include "Modules/Physics2D/Components/BoxCollider2DComponent.h"
-#include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
-#include "Modules/Physics2D/Components/RigidBody2DComponent.h"
+#include "Modules/Physics2D/Components/BoxCollider2D.h"
+#include "Modules/Physics2D/Components/CircleCollider2D.h"
+#include "Modules/Physics2D/Components/RigidBody2D.h"
 
 static Kargono::EditorApp* s_EditorApp { nullptr };
 static Kargono::Windows::MainWindow* s_MainWindow{ nullptr };
@@ -615,7 +615,7 @@ namespace Kargono::Panels
 		// Set up Line Input Specifications for Overlay Calls
 		{
 			Rendering::ShaderSpecification lineShaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawLine, false };
-			auto [uuid, localShader] = Assets::AssetService::GetShader(lineShaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(lineShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, 
@@ -633,7 +633,7 @@ namespace Kargono::Panels
 		// Set up Circle Input Specification for Overlay Calls
 		{
 			Rendering::ShaderSpecification shaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, true, true, false, Rendering::RenderingType::DrawIndex, false };
-			auto [uuid, localShader] = Assets::AssetService::GetShader(shaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, 
@@ -659,7 +659,7 @@ namespace Kargono::Panels
 		// Set up Point Input Specifications for Overlay Calls
 		{
 			Rendering::ShaderSpecification pointShaderSpec{Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawPoint, false };
-			auto [uuid, localShader] = Assets::AssetService::GetShader(pointShaderSpec);
+			auto [uuid, localShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(pointShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, 
@@ -726,11 +726,11 @@ namespace Kargono::Panels
 			Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 			// Circle Colliders
 			{
-				auto view = activeScene->m_EntityRegistry.GetView<Transform, Physics2D::CircleCollider2DComponent>();
+				auto view = activeScene->m_EntityRegistry.GetView<Transform, Physics2D::CircleCollider2D>();
 				for (ECSInternal::EntityID entity : view)
 				{
 					Transform& tc = activeScene->m_EntityRegistry.m_Registry.GetComponent<Transform>(entity).value();
-					Physics2D::CircleCollider2DComponent& cc2d = activeScene->m_EntityRegistry.m_Registry.GetComponent<Physics2D::CircleCollider2DComponent>(entity).value();
+					Physics2D::CircleCollider2D& cc2d = activeScene->m_EntityRegistry.m_Registry.GetComponent<Physics2D::CircleCollider2D>(entity).value();
 
 					Math::vec3 translation = tc.m_Translation + Math::vec3(cc2d.m_Offset.x, cc2d.m_Offset.y, 0.001f);
 
@@ -745,11 +745,11 @@ namespace Kargono::Panels
 			}
 			// Box Colliders
 			{
-				auto view = activeScene->m_EntityRegistry.GetView<Transform, Physics2D::BoxCollider2DComponent>();
+				auto view = activeScene->m_EntityRegistry.GetView<Transform, Physics2D::BoxCollider2D>();
 				for (ECSInternal::EntityID entity : view)
 				{
 					Transform& tc = activeScene->m_EntityRegistry.m_Registry.GetComponent<Transform>(entity).value();
-					Physics2D::BoxCollider2DComponent& bc2d = activeScene->m_EntityRegistry.m_Registry.GetComponent<Physics2D::BoxCollider2DComponent>(entity).value();
+					Physics2D::BoxCollider2D& bc2d = activeScene->m_EntityRegistry.m_Registry.GetComponent<Physics2D::BoxCollider2D>(entity).value();
 
 					Math::vec3 translation = tc.m_Translation + Math::vec3(bc2d.m_Offset.x, bc2d.m_Offset.y, 0.001f);
 					Math::vec3 scale = tc.m_Scale * Math::vec3(bc2d.m_Size * 2.0f, 1.0f);

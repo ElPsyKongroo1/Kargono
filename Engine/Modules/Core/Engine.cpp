@@ -256,9 +256,9 @@ namespace Kargono
 		Math::vec3 translation = e.GetTranslation();
 		entity.GetComponent<Transform>().m_Translation = translation;
 
-		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+		if (entity.HasComponent<Physics2D::RigidBody2D>())
 		{
-			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& rb2d = entity.GetComponent<Physics2D::RigidBody2D>();
 			b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());
 		}
@@ -275,9 +275,9 @@ namespace Kargono
 		Math::vec2 linearVelocity = e.GetLinearVelocity();
 		entity.GetComponent<Transform>().m_Translation = translation;
 
-		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+		if (entity.HasComponent<Physics2D::RigidBody2D>())
 		{
-			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& rb2d = entity.GetComponent<Physics2D::RigidBody2D>();
 			b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
 			KG_ASSERT(body);
 			body->SetTransform({ translation.x, translation.y }, body->GetAngle());

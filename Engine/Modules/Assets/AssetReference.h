@@ -4,12 +4,14 @@
 #include "Modules/Assets/Module/AssetTag.h"
 #include "Kargono/Core/Notifier.h"
 
+#include <functional>
+
 namespace Kargono::Assets
 {
-	template<AssetConcept t_AssetType>
+	template<typename t_AssetType>
 	using UserCallback = std::function<void(LoadState, t_AssetType*)>;
 
-	template<AssetConcept t_AssetType>
+	template<typename t_AssetType>
 	using AssetUpdateNotifier = MultiNotifier<LoadState, t_AssetType*>;
 
 	template<typename t_AssetType>
@@ -25,12 +27,6 @@ namespace Kargono::Assets
 		{
 			KG_ASSERT((state == LoadState::Loaded && asset) ||
 				(state != LoadState::Loaded && !asset));
-		}
-		AssetReference(GenericAssetReference& data)
-			: m_Handle(data.m_Handle), m_LoadState(data.m_LoadState), m_Asset((t_AssetType*)data.m_DataPtr)
-		{
-			KG_ASSERT((data.m_LoadState == LoadState::Loaded && data.m_DataPtr) ||
-				(data.m_LoadState != LoadState::Loaded && !data.m_DataPtr));
 		}
 		~AssetReference() {}
 	public:
@@ -150,7 +146,7 @@ namespace Kargono::Assets
 	template<typename t_AssetType>
 	using AssetRef = AssetReference<t_AssetType>;
 
-	template<AssetConcept t_AssetType>
+	template<typename t_AssetType>
 	struct TrackedAssetReference
 	{
 	public:

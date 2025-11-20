@@ -156,12 +156,12 @@ namespace Kargono::Panels
 		m_RightClickTooltip.ClearEntries();
 		if (fileType == BrowserFileType::State)
 		{
-			EditorUI::TooltipEntry openAIStateTooltipEntry{ "Open AI State", [&](EditorUI::TooltipEntry& currentEntry)
+			EditorUI::TooltipEntry openStateTooltipEntry{ "Open AI State", [&](EditorUI::TooltipEntry& currentEntry)
 			{
 				UNREFERENCED_PARAMETER(currentEntry);
-				s_MainWindow->m_AIStatePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
+				s_MainWindow->m_StatePanel->OpenAssetInEditor(m_CurrentFileToModifyCache);
 			} };
-			m_RightClickTooltip.AddTooltipEntry(openAIStateTooltipEntry);
+			m_RightClickTooltip.AddTooltipEntry(openStateTooltipEntry);
 		}
 		else if (fileType == BrowserFileType::GameState)
 		{
@@ -302,7 +302,7 @@ namespace Kargono::Panels
 			{
 				UNREFERENCED_PARAMETER(currentEntry);
 				Assets::AssetHandle currentHandle = Assets::AssetService::ImportFontFromFile(m_CurrentFileToModifyCache);
-				Ref<RuntimeUI::Font> font = Assets::AssetService::GetFont(currentHandle);
+			    Assets::AssetRef<RuntimeUI::Font> font = Assets::AssetService::m_FontManager.GetAssetByHandle(currentHandle);
 				if (font)
 				{
 					RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_Config.SetFont(font, currentHandle);
@@ -374,7 +374,7 @@ namespace Kargono::Panels
 		if (fileExtension == ".kgstate")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_GameStateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If game state in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -397,7 +397,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kggstate")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetGlobalStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_GlobalStateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If global state in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -420,7 +420,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgaistate")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_StateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If StateMachines state in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -430,7 +430,7 @@ namespace Kargono::Panels
 			else
 			{
 				// Handle revalidating internal registry
-				bool success = Assets::AssetService::SetAIStateFileLocation(resultHandle, newRelativePath);
+				bool success = Assets::AssetService::SetStateFileLocation(resultHandle, newRelativePath);
 				if (success)
 				{
 					KG_INFO("Updated location of AI state asset {} to {}", relativeToAssetsDirFilePath.string(), newRelativePath.string());
@@ -444,7 +444,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgaudio")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetAudioBufferHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_AudioBufferHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If audio buffer in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -468,7 +468,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgparticle")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetEmitterConfigHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_EmitterConfigHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If EmitterConfig in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -491,7 +491,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgpalette")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetColorPaletteHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_ColorPaletteHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If ColorPalette in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -514,7 +514,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgfont")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetFontHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_FontHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If font in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -538,7 +538,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kginput")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_InputMapHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If input map in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -562,7 +562,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgcomponent")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetCustomComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_CustomComponentHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If custom component in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -586,7 +586,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgscene")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetSceneHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_SceneHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If scene in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -610,7 +610,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgscript")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetScriptHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_ScriptHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If script in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -634,7 +634,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgenum")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectEnumHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_ProjectEnumHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If ProjectEnum in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -658,7 +658,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgtexture")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetTexture2DHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_Texture2DHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If texture in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -683,7 +683,7 @@ namespace Kargono::Panels
 		else if (fileExtension == ".kgui")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetUserInterfaceHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_UserInterfaceHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If user interface in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -716,7 +716,7 @@ namespace Kargono::Panels
 		if (currentExtension == ".kgstate")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetGameStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_GameStateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If game state in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -730,7 +730,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kggstate")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetGlobalStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_GlobalStateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If global state in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -744,7 +744,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgaistate")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetAIStateHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_StateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If game state in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -753,12 +753,12 @@ namespace Kargono::Panels
 				return;
 			}
 
-			Assets::AssetService::DeleteAIState(resultHandle);
+			Assets::AssetService::DeleteState(resultHandle);
 		}
 		else if (currentExtension == ".kgaudio")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetAudioBufferHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_AudioBufferHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If audio in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -772,7 +772,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgparticle")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetEmitterConfigHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_EmitterConfigHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If EmitterConfig in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -787,7 +787,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgpalette")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetColorPaletteHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_ColorPaletteHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If ColorPalette in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -802,7 +802,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgfont")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetFontHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_FontHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If font in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -816,7 +816,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgenum")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetProjectEnumHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_ProjectEnumHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If ProjectEnum in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -830,7 +830,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kginput")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetInputMapHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_InputMapHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If input map in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -843,7 +843,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgcomponent")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetCustomComponentHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_CustomComponentHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If custom component in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -856,7 +856,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgscene")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetSceneHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_SceneHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If scene in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -870,7 +870,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgscript")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetScriptHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_ScriptHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If script in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -883,7 +883,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgtexture")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetTexture2DHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_Texture2DHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If texture in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -896,7 +896,7 @@ namespace Kargono::Panels
 		else if (currentExtension == ".kgui")
 		{
 			// Search registry for asset with identical file location
-			Assets::AssetHandle resultHandle = Assets::AssetService::GetUserInterfaceHandleFromFileLocation(relativeToAssetsDirFilePath);
+			Assets::AssetHandle resultHandle = Assets::AssetService::m_UserInterfaceHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If user interface in registry is not found, simply delete the file
 			if (resultHandle == Assets::k_EmptyHandle)
 			{
@@ -1203,7 +1203,7 @@ namespace Kargono::Panels
 			{
 				UNREFERENCED_PARAMETER(currentEntry);
 				// Open create ai state dialog
-				s_MainWindow->m_AIStatePanel->OpenCreateDialog(m_CurrentDirectory);
+				s_MainWindow->m_StatePanel->OpenCreateDialog(m_CurrentDirectory);
 			});
 
 			// Add create game state

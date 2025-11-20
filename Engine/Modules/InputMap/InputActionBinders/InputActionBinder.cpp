@@ -12,7 +12,7 @@ namespace Kargono::InputMap
 			return;
 		}
 
-		Ref<Scripting::Script> newScript{ Assets::AssetService::GetScript(handle) };
+		Ref<Scripting::Script> newScript{ Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle) };
 		KG_ASSERT(newScript);
 		m_Script = newScript;
 		m_ScriptHandle = handle;

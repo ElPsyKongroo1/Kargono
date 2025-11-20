@@ -303,14 +303,14 @@ namespace Kargono::Rendering
 	void Texture2D::ValidateDelete(Assets::Metadata& metadata)
 	{
 		// Check user interface assets
-		for (auto& [uiHandle, metadata] : Assets::AssetService::GetUserInterfaceRegistry())
+		for (auto& [uiHandle, metadata] : Assets::AssetService::m_UserInterfaceManager.GetAssetRegistry())
 		{
 			// Handle UI level function pointers
-			Ref<RuntimeUI::UserInterface> userInterfaceRef = Assets::AssetService::GetUserInterface(uiHandle);
-			bool uiModified = Assets::AssetService::RemoveTextureFromUserInterface(userInterfaceRef, metadata.m_Handle);
+		    Assets::AssetRef<RuntimeUI::UserInterface> userInterfaceRef = Assets::AssetService::m_UserInterfaceManager.GetAssetByHandle(uiHandle);
+			bool uiModified = userInterfaceRef->RemoveTexture(metadata.m_Handle);
 			if (uiModified)
 			{
-				Assets::AssetService::SaveUserInterface(uiHandle, userInterfaceRef);
+				Assets::AssetService::m_UserInterfaceManager.UpdateAsset(userInterfaceRef);
 			}
 		}
 	}

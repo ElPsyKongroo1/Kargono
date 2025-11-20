@@ -18,7 +18,7 @@ namespace Kargono::Panels
 				spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-				for (auto& [handle, asset] : Assets::AssetService::GetGlobalStateRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::m_GlobalStateManager.GetAssetRegistry())
 				{
 					spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 				}
@@ -31,7 +31,7 @@ namespace Kargono::Panels
 					KG_WARN("No global state Selected");
 					return;
 				}
-				if (!Assets::AssetService::GetGlobalStateRegistry().contains(selection.m_Handle))
+				if (!Assets::AssetService::m_GlobalStateManager.GetAssetRegistry().contains(selection.m_Handle))
 				{
 					KG_WARN("Could not find on global state in global state editor");
 					return;
@@ -62,7 +62,7 @@ namespace Kargono::Panels
 					return;
 				}
 
-				for (auto& [id, asset] : Assets::AssetService::GetGlobalStateRegistry())
+				for (auto& [id, asset] : Assets::AssetService::m_GlobalStateManager.GetAssetRegistry())
 				{
 					if (asset.Data.GetSpecificMetaData<Assets::GlobalStateMetaData>()->Name == m_SelectGlobalStateNameSpec.m_CurrentOption)
 					{
@@ -70,9 +70,9 @@ namespace Kargono::Panels
 					}
 				}
 				m_EditorGlobalStateHandle = Assets::AssetService::CreateGlobalState(m_SelectGlobalStateNameSpec.m_CurrentOption.c_str(), m_SelectGlobalStateLocationSpec.m_CurrentOption);
-				m_EditorGlobalState = Assets::AssetService::GetGlobalState(m_EditorGlobalStateHandle);
+				m_EditorGlobalState = Assets::AssetService::m_GlobalStateManager.GetAssetByHandle(m_EditorGlobalStateHandle);
 				m_MainHeader.m_EditColorActive = false;
-				m_MainHeader.m_Label = Assets::AssetService::GetGlobalStateRegistry().at(
+				m_MainHeader.m_Label = Assets::AssetService::m_GlobalStateManager.GetAssetRegistry().at(
 					m_EditorGlobalStateHandle).Data.FileLocation.filename().string();
 			};
 		m_CreateGlobalStatePopup.m_PopupContents = [&]()
@@ -110,7 +110,7 @@ namespace Kargono::Panels
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
-			Assets::AssetService::SaveGlobalState(m_EditorGlobalStateHandle, m_EditorGlobalState);
+			Assets::AssetService::m_GlobalStateManager.UpdateAsset(m_EditorGlobalState);
 			m_MainHeader.m_EditColorActive = false;
 		});
 		m_MainHeader.AddToSelectionList("Close", [&]()
@@ -271,7 +271,7 @@ namespace Kargono::Panels
 
 		// Look for asset in registry using the file location
 		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
-		Assets::AssetHandle assetHandle = Assets::AssetService::GetGlobalStateHandleFromFileLocation(relativePath);
+		Assets::AssetHandle assetHandle = Assets::AssetService::m_GlobalStateHandleFromFileLocationManager.GetAssetByHandle(relativePath);
 
 		// Validate resulting handle
 		if (!assetHandle)
@@ -601,10 +601,10 @@ namespace Kargono::Panels
 	}
 	void GlobalStatePanel::OnOpenGlobalState(Assets::AssetHandle newHandle)
 	{
-		m_EditorGlobalState = Assets::AssetService::GetGlobalState(newHandle);
+		m_EditorGlobalState = Assets::AssetService::m_GlobalStateManager.GetAssetByHandle(newHandle);
 		m_EditorGlobalStateHandle = newHandle;
 		m_MainHeader.m_EditColorActive = false;
-		m_MainHeader.m_Label = Assets::AssetService::GetGlobalStateRegistry().at(
+		m_MainHeader.m_Label = Assets::AssetService::m_GlobalStateManager.GetAssetRegistry().at(
 			m_EditorGlobalStateHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}

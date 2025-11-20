@@ -20,7 +20,7 @@ namespace Kargono::Panels
 			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetColorPaletteRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ColorPaletteManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
@@ -33,7 +33,7 @@ namespace Kargono::Panels
 				KG_WARN("No Color Palette Selected");
 				return;
 			}
-			if (!Assets::AssetService::GetColorPaletteRegistry().contains(selection.m_Handle))
+			if (!Assets::AssetService::m_ColorPaletteManager.GetAssetRegistry().contains(selection.m_Handle))
 			{
 				KG_WARN("Could not find on Color Palette in Color Palette editor");
 				return;
@@ -66,7 +66,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			for (auto& [id, asset] : Assets::AssetService::GetColorPaletteRegistry())
+			for (auto& [id, asset] : Assets::AssetService::m_ColorPaletteManager.GetAssetRegistry())
 			{
 				if (asset.Data.GetSpecificMetaData<Assets::ColorPaletteMetaData>()->Name == m_SelectColorPaletteNameSpec.m_CurrentOption)
 				{
@@ -74,9 +74,9 @@ namespace Kargono::Panels
 				}
 			}
 			m_EditorColorPaletteHandle = Assets::AssetService::CreateColorPalette(m_SelectColorPaletteNameSpec.m_CurrentOption.c_str(), m_SelectColorPaletteLocationSpec.m_CurrentOption);
-			m_EditorColorPalette = Assets::AssetService::GetColorPalette(m_EditorColorPaletteHandle);
+			m_EditorColorPalette = Assets::AssetService::m_ColorPaletteManager.GetAssetByHandle(m_EditorColorPaletteHandle);
 			m_MainHeader.m_EditColorActive = false;
-			m_MainHeader.m_Label = Assets::AssetService::GetColorPaletteRegistry().at(
+			m_MainHeader.m_Label = Assets::AssetService::m_ColorPaletteManager.GetAssetRegistry().at(
 				m_EditorColorPaletteHandle).Data.FileLocation.filename().string();
 		};
 		m_CreateColorPalettePopup.m_PopupContents = [&]()
@@ -114,7 +114,7 @@ namespace Kargono::Panels
 		m_MainHeader.AddToSelectionList("Add White", KG_BIND_CLASS_FN(OnAddWhite));
 		m_MainHeader.AddToSelectionList("Save", [&]()
 			{
-				Assets::AssetService::SaveColorPalette(m_EditorColorPaletteHandle, m_EditorColorPalette);
+				Assets::AssetService::m_ColorPaletteManager.UpdateAsset(m_EditorColorPalette);
 				m_MainHeader.m_EditColorActive = false;
 			});
 		m_MainHeader.AddToSelectionList("Close", [&]()
@@ -259,7 +259,7 @@ namespace Kargono::Panels
 
 		// Look for asset in registry using the file location
 		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
-		Assets::AssetHandle assetHandle = Assets::AssetService::GetColorPaletteHandleFromFileLocation(relativePath);
+		Assets::AssetHandle assetHandle = Assets::AssetService::m_ColorPaletteHandleFromFileLocationManager.GetAssetByHandle(relativePath);
 
 		// Validate resulting handle
 		if (!assetHandle)
@@ -456,10 +456,10 @@ namespace Kargono::Panels
 	}
 	void ColorPalettePanel::OnOpenColorPalette(Assets::AssetHandle newHandle)
 	{
-		m_EditorColorPalette = Assets::AssetService::GetColorPalette(newHandle);
+		m_EditorColorPalette = Assets::AssetService::m_ColorPaletteManager.GetAssetByHandle(newHandle);
 		m_EditorColorPaletteHandle = newHandle;
 		m_MainHeader.m_EditColorActive = false;
-		m_MainHeader.m_Label = Assets::AssetService::GetColorPaletteRegistry().at(
+		m_MainHeader.m_Label = Assets::AssetService::m_ColorPaletteManager.GetAssetRegistry().at(
 			m_EditorColorPaletteHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}

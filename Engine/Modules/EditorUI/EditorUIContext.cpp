@@ -135,9 +135,9 @@ namespace Kargono::EditorUI
 			s_ActivePalettes.clear();
 
 			// Add all color palettes from the active registry
-			for (auto& [handle, assetInfo] : Assets::AssetService::GetColorPaletteRegistry())
+			for (auto& [handle, assetInfo] : Assets::AssetService::m_ColorPaletteManager.GetAssetRegistry())
 			{
-				Ref<ProjectData::ColorPalette> palette = Assets::AssetService::GetColorPalette(handle);
+			    Assets::AssetRef<ProjectData::ColorPalette> palette = Assets::AssetService::m_ColorPaletteManager.GetAssetByHandle(handle);
 				KG_ASSERT(palette);
 				s_ActivePalettes.push_back
 				({

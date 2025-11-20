@@ -545,24 +545,24 @@ namespace Kargono::Scripting
 		ScriptBinderService::GetActiveContext().CloseActiveScriptModule();
 
 		// Load in ScriptRegistry if not already loaded
-		if (Assets::AssetService::GetScriptRegistry().size() == 0)
+		if (Assets::AssetService::m_ScriptManager.GetAssetRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
 			Assets::AssetService::DeserializeScriptRegistry();
 		}
 
 		// Load in custom components if not already loaded
-		if (Assets::AssetService::GetCustomComponentRegistry().size() == 0)
+		if (Assets::AssetService::m_CustomComponentManager.GetAssetRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
 			Assets::AssetService::DeserializeCustomComponentRegistry();
 		}
 
 		// Load in ai states if not already loaded
-		if (Assets::AssetService::GetAIStateRegistry().size() == 0)
+		if (Assets::AssetService::m_StateManager.GetAssetRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
-			Assets::AssetService::DeserializeAIStateRegistry();
+			Assets::AssetService::DeserializeStateRegistry();
 		}
 
 		KG_INFO("Creating Script Module CPP Files...");
@@ -725,9 +725,9 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
 		// Add Script Function Declarations
-		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+		for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 		{
-			Ref<Script> script = Assets::AssetService::GetScript(handle);
+		    Assets::AssetRef<Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 			WrappedVarType returnValue;
 			std::vector<WrappedVarType> parameterTypes;
 			std::vector<FixedBufStr32> parameterNames;
@@ -842,11 +842,11 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileOneParameters(TransitionSceneFromHandle, void, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(TagComponent_GetTag, std::string_view, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(TransformComponent_GetTranslation, Math::vec3, uint64_t)
-		AddEngineFunctionToCPPFileOneParameters(Rigidbody2DComponent_GetLinearVelocity, Math::vec2, uint64_t)
+		AddEngineFunctionToCPPFileOneParameters(RigidBody2D_GetLinearVelocity, Math::vec2, uint64_t)
 		AddEngineFunctionToCPPFileOneParameters(FindEntityHandleByName, uint64_t, std::string_view)
 		AddEngineFunctionToCPPFileTwoParameters(CheckHasComponent, bool, uint64_t, std::string_view)
 		AddEngineFunctionToCPPFileTwoParameters(SendAllEntityLocation, void, uint64_t, Math::vec3)
-		AddEngineFunctionToCPPFileTwoParameters(Rigidbody2DComponent_SetLinearVelocity, void, uint64_t, Math::vec2)
+		AddEngineFunctionToCPPFileTwoParameters(RigidBody2D_SetLinearVelocity, void, uint64_t, Math::vec2)
 		AddEngineFunctionToCPPFileTwoParameters(TransformComponent_SetTranslation, void, uint64_t, Math::vec3)
 		AddEngineFunctionToCPPFileThreeParameters(Scenes_GetCustomComponentField, void*, uint64_t, uint64_t, uint64_t)
 		AddEngineFunctionToCPPFileFourParameters(Scenes_SetCustomComponentField, void, uint64_t, uint64_t, uint64_t, void*)
@@ -975,7 +975,7 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(VoidUInt64Vec2, void, uint64_t, Math::vec2)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(Rigidbody2DComponent_SetLinearVelocity)
+		AddEngineFunctionToCPPFileEnd(RigidBody2D_SetLinearVelocity)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(BoolUInt64String, bool, uint64_t, std::string_view)
 		outputStream << "{\n";
@@ -994,7 +994,7 @@ namespace Kargono::Scripting
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(Vec2UInt64, Math::vec2, uint64_t)
 		outputStream << "{\n";
-		AddEngineFunctionToCPPFileEnd(Rigidbody2DComponent_GetLinearVelocity)
+		AddEngineFunctionToCPPFileEnd(RigidBody2D_GetLinearVelocity)
 		outputStream << "}\n";
 		AddImportFunctionToCPPFile(UInt64String, uint64_t, std::string_view)
 		outputStream << "{\n";
@@ -1088,7 +1088,7 @@ namespace Kargono::Scripting
 
 		// Write scripts into a single cpp file
 		bool compilationSuccess{ true };
-		for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+		for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 		{
 			if (asset.Data.GetSpecificMetaData<Assets::ScriptMetaData>()->m_ScriptType == ScriptType::Engine)
 			{
@@ -1354,13 +1354,13 @@ namespace Kargono::Scripting
 			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 		}, VoidNone)
 		// Artificial Intelligence
-		AddEngineFunctionPointerToDll(AI_ChangeGlobalState, [](UUID entityID, Assets::AssetHandle newAIStateHandle)
+		AddEngineFunctionPointerToDll(AI_ChangeGlobalState, [](UUID entityID, Assets::AssetHandle newStateHandle)
 		{
-			States::AIService::GetActiveContext().ChangeGlobalState(entityID, newAIStateHandle);
+			States::AIService::GetActiveContext().ChangeGlobalState(entityID, newStateHandle);
 		}, VoidUInt64UInt64)
-		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, [](UUID entityID, Assets::AssetHandle newAIStateHandle)
+		AddEngineFunctionPointerToDll(AI_ChangeCurrentState, [](UUID entityID, Assets::AssetHandle newStateHandle)
 		{
-			States::AIService::GetActiveContext().ChangeCurrentState(entityID, newAIStateHandle);
+			States::AIService::GetActiveContext().ChangeCurrentState(entityID, newStateHandle);
 		}, VoidUInt64UInt64)
 		AddEngineFunctionPointerToDll(AI_RevertPreviousState, [](UUID entityID) 
 		{
@@ -1577,13 +1577,13 @@ namespace Kargono::Scripting
 		{
 			Scenes::SceneService::GetActiveContext().GetActiveScene()->TransformComponentSetTranslation(entityHandle, translation);
 		}, VoidUInt64Vec3)
-		AddEngineFunctionPointerToDll(Rigidbody2DComponent_SetLinearVelocity, [](UUID entityHandle, Math::vec2 linearVel) 
+		AddEngineFunctionPointerToDll(RigidBody2D_SetLinearVelocity, [](UUID entityHandle, Math::vec2 linearVel) 
 		{
-			Scenes::SceneService::GetActiveContext().GetActiveScene()->Rigidbody2DComponent_SetLinearVelocity(entityHandle, linearVel);
+			Scenes::SceneService::GetActiveContext().GetActiveScene()->RigidBody2D_SetLinearVelocity(entityHandle, linearVel);
 		}, VoidUInt64Vec2)
-		AddEngineFunctionPointerToDll(Rigidbody2DComponent_GetLinearVelocity, [](UUID entityHandle)
+		AddEngineFunctionPointerToDll(RigidBody2D_GetLinearVelocity, [](UUID entityHandle)
 		{
-			return Scenes::SceneService::GetActiveContext().GetActiveScene()->Rigidbody2DComponent_GetLinearVelocity(entityHandle);
+			return Scenes::SceneService::GetActiveContext().GetActiveScene()->RigidBody2D_GetLinearVelocity(entityHandle);
 		}, Vec2UInt64)
 		AddEngineFunctionPointerToDll(Scenes_GetCustomComponentField, [](UUID entityID, Assets::AssetHandle CustomComponentID, uint64_t fieldLocation)
 		{

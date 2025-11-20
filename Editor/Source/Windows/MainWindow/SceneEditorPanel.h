@@ -51,9 +51,9 @@ namespace Kargono::Panels
 		void InitializeSceneOptions();
 		void InitializeTagComponent();
 		void InitializeTransformComponent();
-		void InitializeRigidbody2DComponent();
-		void InitializeBoxCollider2DComponent();
-		void InitializeCircleCollider2DComponent();
+		void InitializeRigidBody2D();
+		void InitializeBoxCollider2D();
+		void InitializeCircleCollider2D();
 		void InitializeCameraComponent();
 		void InitializeParticleEmitter();
 		void InitializeOnUpdate();
@@ -100,9 +100,9 @@ namespace Kargono::Panels
 		void DrawSingleComponent(ECS::Entity entity);
 		void DrawTagComponent(ECS::Entity entity);
 		void DrawTransformComponent(ECS::Entity entity);
-		void DrawRigidbody2DComponent(ECS::Entity entity);
-		void DrawBoxCollider2DComponent(ECS::Entity entity);
-		void DrawCircleCollider2DComponent(ECS::Entity entity);
+		void DrawRigidBody2D(ECS::Entity entity);
+		void DrawBoxCollider2D(ECS::Entity entity);
+		void DrawCircleCollider2D(ECS::Entity entity);
 		void DrawCameraComponent(ECS::Entity entity);
 		void DrawParticleEmitter(ECS::Entity entity);
 		void DrawOnUpdate(ECS::Entity entity);
@@ -173,8 +173,8 @@ namespace Kargono::Panels
 		EditorUI::EditVariableWidget m_EditFieldValue {};
 
 		// Rigid Body 2D Component
-		EditorUI::CollapsingHeaderWidget m_Rigidbody2DHeader{};
-		EditorUI::RadioSelectWidget m_Rigidbody2DType {};
+		EditorUI::CollapsingHeaderWidget m_RigidBody2DHeader{};
+		EditorUI::RadioSelectWidget m_RigidBody2DType {};
 		EditorUI::CheckboxWidget m_RigidBody2DFixedRotation {};
 		EditorUI::SelectOptionWidget m_SelectRigidBody2DCollisionStartScript{};
 		EditorUI::SelectOptionWidget m_SelectRigidBody2DCollisionEndScript{};
@@ -204,7 +204,7 @@ namespace Kargono::Panels
 		EditorUI::SelectOptionWidget m_SelectOnUpdateScript{};
 
 		// StateMachines State Component
-		EditorUI::CollapsingHeaderWidget m_AIStateHeader{};
+		EditorUI::CollapsingHeaderWidget m_StateHeader{};
 		EditorUI::SelectOptionWidget m_SelectCurrentState{};
 		EditorUI::SelectOptionWidget m_SelectPreviousState{};
 		EditorUI::SelectOptionWidget m_SelectGlobalState{};

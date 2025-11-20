@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Kargono/Core/Base.h"
+#include "Modules/Assets/AssetsCommon.h"
+#include "Modules/Assets/AssetReference.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiAPI.h"
 

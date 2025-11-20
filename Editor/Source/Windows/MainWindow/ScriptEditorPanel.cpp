@@ -11,7 +11,7 @@ namespace Kargono::Panels
 {
 	void ScriptEditorPanel::UpdateScript ()
 	{
-		Ref<Scripting::Script> script = Assets::AssetService::GetScript(m_ActiveScriptHandle);
+	    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_ActiveScriptHandle);
 		if (!script)
 		{
 			KG_WARN("No script pointer available from asset manager when editing script in script editor");
@@ -24,7 +24,7 @@ namespace Kargono::Panels
 		spec.Type = Scripting::ScriptType::Project;
 		spec.m_SectionLabel = m_EditWidgets.m_SelectSectionLabel.m_CurrentOption.m_Label;
 
-		bool successful = Assets::AssetService::SaveScript(m_ActiveScriptHandle, spec);
+		bool successful = Assets::AssetService::m_ScriptManager.UpdateAsset(spec);
 		if (!successful)
 		{
 			KG_ERROR("Unsuccessful at updating script");
@@ -394,8 +394,8 @@ namespace Kargono::Panels
 		m_EditWidgets.m_MainPopup.m_Label = "Edit Script";
 		m_EditWidgets.m_MainPopup.m_PopupAction = [&]()
 		{
-			m_EditWidgets.m_EditName.m_CurrentOption = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_ScriptName;
-			m_EditWidgets.m_SelectSectionLabel.m_CurrentOption.m_Label = Assets::AssetService::GetScript(m_ActiveScriptHandle)->m_SectionLabel;
+			m_EditWidgets.m_EditName.m_CurrentOption = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_ActiveScriptHandle)->m_ScriptName;
+			m_EditWidgets.m_SelectSectionLabel.m_CurrentOption.m_Label = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_ActiveScriptHandle)->m_SectionLabel;
 		};
 		m_EditWidgets.m_MainPopup.m_PopupContents = [&]()
 		{
@@ -418,7 +418,7 @@ namespace Kargono::Panels
 		};
 		m_EditWidgets.m_DeleteWarning.m_ConfirmAction = [&]()
 		{
-			Ref<Scripting::Script> script = Assets::AssetService::GetScript(m_ActiveScriptHandle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_ActiveScriptHandle);
 			std::string sectionLabel = script->m_SectionLabel;
 
 			bool success = Assets::AssetService::DeleteScript(m_ActiveScriptHandle);

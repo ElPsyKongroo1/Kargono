@@ -69,7 +69,7 @@ namespace Kargono::Panels
 			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
@@ -82,7 +82,7 @@ namespace Kargono::Panels
 				KG_WARN("No  Selected");
 				return;
 			}
-			if (!Assets::AssetService::GetCustomComponentRegistry().contains(selection.m_Handle))
+			if (!Assets::AssetService::m_CustomComponentManager.GetAssetRegistry().contains(selection.m_Handle))
 			{
 				KG_WARN("Could not find component in component editor");
 				return;
@@ -116,7 +116,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			for (auto& [id, asset] : Assets::AssetService::GetCustomComponentRegistry())
+			for (auto& [id, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 			{
 				if (asset.Data.GetSpecificMetaData<Assets::CustomComponentMetaData>()->Name == m_SelectComponentName.m_CurrentOption)
 				{
@@ -124,9 +124,9 @@ namespace Kargono::Panels
 				}
 			}
 			m_EditorCustomComponentHandle = Assets::AssetService::CreateCustomComponent(m_SelectComponentName.m_CurrentOption.c_str(), m_SelectCustomComponentLocationSpec.m_CurrentOption);
-			m_EditorCustomComponent = CreateRef<ECSInternal::CustomComponent>(*Assets::AssetService::GetCustomComponent(m_EditorCustomComponentHandle));
+			m_EditorCustomComponent = CreateRef<ECSInternal::CustomComponent>(*Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(m_EditorCustomComponentHandle));
 			m_MainHeader.m_EditColorActive = false;
-			m_MainHeader.m_Label = Assets::AssetService::GetCustomComponentRegistry().at(
+			m_MainHeader.m_Label = Assets::AssetService::m_CustomComponentManager.GetAssetRegistry().at(
 				m_EditorCustomComponentHandle).Data.FileLocation.filename().string();
 			RefreshData();
 			Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
@@ -166,7 +166,7 @@ namespace Kargono::Panels
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
-			Assets::AssetService::SaveCustomComponent(m_EditorCustomComponentHandle, m_EditorCustomComponent);
+			Assets::AssetService::m_CustomComponentManager.UpdateAsset(m_EditorCustomComponent);
 			Scripting::ScriptCompilerService::GetActiveContext().m_ActiveLanguageDefinition.CreateLanguageDef();
 			m_MainHeader.m_EditColorActive = false;
 		});
@@ -392,7 +392,7 @@ namespace Kargono::Panels
 
 		// Look for asset in registry using the file location
 		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
-		Assets::AssetHandle assetHandle = Assets::AssetService::GetCustomComponentHandleFromFileLocation(relativePath);
+		Assets::AssetHandle assetHandle = Assets::AssetService::m_CustomComponentHandleFromFileLocationManager.GetAssetByHandle(relativePath);
 
 		// Validate resulting handle
 		if (!assetHandle)
@@ -440,9 +440,9 @@ namespace Kargono::Panels
 	}
 	void CustomComponentPanel::OnOpenComponent(Assets::AssetHandle newHandle)
 	{
-		m_EditorCustomComponent = CreateRef<ECSInternal::CustomComponent>(*Assets::AssetService::GetCustomComponent(newHandle));
+		m_EditorCustomComponent = CreateRef<ECSInternal::CustomComponent>(*Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(newHandle));
 		m_EditorCustomComponentHandle = newHandle;
-		m_MainHeader.m_Label = Assets::AssetService::GetCustomComponentRegistry().at(
+		m_MainHeader.m_Label = Assets::AssetService::m_CustomComponentManager.GetAssetRegistry().at(
 			newHandle).Data.FileLocation.filename().string();
 		m_MainHeader.m_EditColorActive = false;
 		RefreshData();

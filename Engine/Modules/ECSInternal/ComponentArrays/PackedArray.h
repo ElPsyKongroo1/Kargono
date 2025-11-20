@@ -3,7 +3,6 @@
 #include "Modules/ECSInternal/ComponentArrays/IComponentStore.h"
 #include "Modules/ECSInternal/Views/PackedView.h"
 #include "Modules/ECSInternal/EntityRegistry.h"
-
 #include "Modules/Core/DataStructures/SparseSet.h"
 
 #include "Kargono/Utility/Operations.h"

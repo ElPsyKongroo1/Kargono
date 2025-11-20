@@ -9,16 +9,16 @@
 
 namespace Kargono::Panels
 {
-	class AIStateEditorPanel
+	class StateEditorPanel
 	{
 	public:
 		//=========================
 		// Constructor/Destructor
 		//=========================
-		AIStateEditorPanel();
+		StateEditorPanel();
 	private:
 		void InitializeOpeningScreen();
-		void InitializeAIStateHeader();
+		void InitializeStateHeader();
 		void InitializeMainPanel();
 
 	public:
@@ -40,32 +40,32 @@ namespace Kargono::Panels
 		//=========================
 		// Internal Functionality
 		//=========================
-		void OnOpenAIStateDialog();
-		void OnCreateAIStateDialog();
+		void OnOpenStateDialog();
+		void OnCreateStateDialog();
 		void OnRefreshData();
 
-		void OnOpenAIState(Assets::AssetHandle newHandle);
+		void OnOpenState(Assets::AssetHandle newHandle);
 	public:
 		//=========================
 		// Core Panel Data
 		//=========================
-		Ref<States::State> m_EditorAIState{ nullptr };
-		Assets::AssetHandle m_EditorAIStateHandle { Assets::k_EmptyHandle };
+		Ref<States::State> m_EditorState{ nullptr };
+		Assets::AssetHandle m_EditorStateHandle { Assets::k_EmptyHandle };
 		FixedBufStr32 m_PanelName{ "AI State Editor" };
 	private:
 		//=========================
 		// Widgets
 		//=========================
 		// Opening Panel w/ Popups
-		EditorUI::SelectOptionWidget m_OpenAIStatePopupSpec {};
-		EditorUI::GenericPopupWidget m_CreateAIStatePopupSpec {};
-		EditorUI::EditTextSpec m_SelectAIStateNameSpec {};
-		EditorUI::ChooseDirectoryWidget m_SelectAIStateLocationSpec {};
+		EditorUI::SelectOptionWidget m_OpenStatePopupSpec {};
+		EditorUI::GenericPopupWidget m_CreateStatePopupSpec {};
+		EditorUI::EditTextSpec m_SelectStateNameSpec {};
+		EditorUI::ChooseDirectoryWidget m_SelectStateLocationSpec {};
 
 		// Input Mode Header
 		EditorUI::PanelHeaderWidget m_MainHeader {};
-		EditorUI::GenericPopupWidget m_DeleteAIStateWarning {};
-		EditorUI::GenericPopupWidget m_CloseAIStateWarning {};
+		EditorUI::GenericPopupWidget m_DeleteStateWarning {};
+		EditorUI::GenericPopupWidget m_CloseStateWarning {};
 
 		// Edit Scripts Options
 		EditorUI::SelectOptionWidget m_SelectOnUpdateScript {};

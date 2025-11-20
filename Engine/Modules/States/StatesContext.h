@@ -43,15 +43,15 @@ namespace Kargono::States
 		//=========================
 		// Query Entity's State
 		//=========================
-		bool IsGlobalState(UUID entityID, Assets::AssetHandle queryAIStateHandle);
-		bool IsCurrentState(UUID entityID, Assets::AssetHandle queryAIStateHandle);
-		bool IsPreviousState(UUID entityID, Assets::AssetHandle queryAIStateHandle);
+		bool IsGlobalState(UUID entityID, Assets::AssetHandle queryStateHandle);
+		bool IsCurrentState(UUID entityID, Assets::AssetHandle queryStateHandle);
+		bool IsPreviousState(UUID entityID, Assets::AssetHandle queryStateHandle);
 
 		//=========================
 		// Manage Entity's State
 		//=========================
-		void ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle);
-		void ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIStateHandle);
+		void ChangeGlobalState(UUID entityID, Assets::AssetHandle newStateHandle);
+		void ChangeCurrentState(UUID entityID, Assets::AssetHandle newStateHandle);
 		void RevertPreviousState(UUID entityID);
 		void ClearGlobalState(UUID entityID);
 		void ClearCurrentState(UUID entityID);

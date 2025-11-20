@@ -2,13 +2,13 @@
 
 #include "Kargono/Math/MathAliases.h"
 #include "Kargono/Core/Base.h"
+#include "Modules/Assets/AssetReference.h"
+#include "Modules/Audio/Assets/AudioBuffer.h"
 
 #include <cstdint>
 
 namespace Kargono::Audio
 {
-	class AudioBuffer;
-
 	using SourceID = uint32_t;
 	constexpr SourceID k_InvalidSourceID{ 0 }; // TODO: Maybe change to upperbound??
 
@@ -20,7 +20,7 @@ namespace Kargono::Audio
 		float m_Pitch{ 1.0f };
 		float m_Gain{ 1.0f };
 		bool m_IsLooping{ false };
-		Assets::TAssetRef<AudioBuffer> m_CurrentBuffer{ nullptr };
+		Assets::TAssetRef<AudioBuffer> m_CurrentBuffer{};
 	};
 
 	class AudioSource

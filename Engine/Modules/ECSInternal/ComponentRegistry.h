@@ -10,7 +10,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Modules/FileSystem/FileSystem.h"
-#include "Kargono/Memory/IAllocator.h"
+#include "Modules/Memory/IAllocator.h"
 
 #include <unordered_map>
 #include <memory>
@@ -211,7 +211,7 @@ namespace Kargono::ECSInternal
 			// If this is a custom component, get the custom component data
 			if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
 			{
-				customComp = Assets::AssetService::GetCustomComponent(metadata.m_CustomComponentHandle).get();
+				customComp = &Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
 				KG_ASSERT(customComp);
 			}
 
@@ -256,7 +256,7 @@ namespace Kargono::ECSInternal
 			// If this is a custom component, get the custom component data
 			if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
 			{
-				customComp = Assets::AssetService::GetCustomComponent(metadata.m_CustomComponentHandle).get();
+				customComp = &Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
 				KG_ASSERT(customComp);
 			}
 
@@ -437,7 +437,7 @@ namespace Kargono::ECSInternal
 				// If this is a custom component, get the custom component data
 				if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
 				{
-					customComp = Assets::AssetService::GetCustomComponent(metadata.m_CustomComponentHandle).get();
+					customComp = &Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
 					KG_ASSERT(customComp);
 				}
 

@@ -6,7 +6,7 @@
 #include "Kargono/Core/FixedBufferString.h"
 
 #include "Windows/MainWindow/AssetViewerPanel.h"
-#include "Windows/MainWindow/AIStateEditorPanel.h"
+#include "Windows/MainWindow/StateEditorPanel.h"
 #include "Windows/MainWindow/ContentBrowserPanel.h"
 #include "Windows/MainWindow/ColorPalettePanel.h"
 #include "Windows/MainWindow/GameStatePanel.h"
@@ -149,7 +149,7 @@ namespace Kargono::Windows
 		// Panels for this Window
 		//=========================
 		Scope<Panels::AssetViewerPanel> m_AssetViewerPanel;
-		Scope<Panels::AIStateEditorPanel>  m_AIStatePanel;
+		Scope<Panels::StateEditorPanel>  m_StatePanel;
 		Scope<Panels::ContentBrowserPanel>  m_ContentBrowserPanel;
 		Scope<Panels::ColorPalettePanel>  m_ColorPalettePanel;
 		Scope<Panels::GameStatePanel>  m_GameStatePanel;
@@ -234,7 +234,7 @@ namespace Kargono::Windows
 		bool m_ShowGameStateEditor = false;
 		bool m_ShowGlobalStateEditor = false;
 		bool m_ShowInputMapEditor = false;
-		bool m_ShowAIStateEditor = false;
+		bool m_ShowStateEditor = false;
 
 		//=========================
 		// General Editor Settings
@@ -247,7 +247,7 @@ namespace Kargono::Windows
 		//=========================
 		// Friend Declarations
 		//=========================
-		friend Panels::AIStateEditorPanel;
+		friend Panels::StateEditorPanel;
 		friend Panels::AssetViewerPanel;
 		friend Panels::ColorPalettePanel;
 		friend Panels::GameStatePanel;

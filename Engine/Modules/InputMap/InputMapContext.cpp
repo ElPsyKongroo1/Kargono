@@ -23,7 +23,7 @@ namespace Kargono::InputMap
 		static Ref<InputMap> s_InputRef{ nullptr };
 		static Assets::AssetHandle s_InputHandle{ 0 };
 
-		Ref<InputMap> inputReference = Assets::AssetService::GetInputMap(inputMapHandle);
+	    Assets::AssetRef<InputMap> inputReference = Assets::AssetService::m_InputMapManager.GetAssetByHandle(inputMapHandle);
 		s_InputRef = inputReference;
 		s_InputHandle = inputMapHandle;
 

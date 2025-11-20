@@ -2,6 +2,7 @@
 
 #include "Modules/ECSInternal/Assets/CustomComponent.h"
 #include "Kargono/Projects/Project.h"
+#include "Modules/Assets/AssetService.h"
 
 namespace Kargono::ECSInternal
 {
@@ -284,9 +285,9 @@ namespace Kargono::ECSInternal
 		newReallocationInstructions->m_NewDataLocations = newAsset->m_DataOffsets;
 
 		newReallocationInstructions->m_NewDataSize = newAsset->m_ComponentSize;
-		for (auto& [sceneHandle, asset] : Assets::AssetService::GetSceneRegistry())
+		for (auto& [sceneHandle, asset] : Assets::AssetService::m_SceneManager.GetAssetRegistry())
 		{
-			newReallocationInstructions->m_OldScenes.push_back(Assets::AssetService::GetScene(sceneHandle));
+			newReallocationInstructions->m_OldScenes.push_back(Assets::AssetService::m_SceneManager.GetAssetByHandle(sceneHandle));
 			newReallocationInstructions->m_OldSceneHandles.push_back(sceneHandle);
 		}
 
@@ -353,17 +354,18 @@ namespace Kargono::ECSInternal
 	void CustomComponent::ValidateDelete(Assets::Metadata& metadata)
 	{
 		// Handle deleting the custom component by removing entity data from all scenes
-		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::GetSceneRegistry())
+		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::m_SceneManager.GetAssetRegistry())
 		{
 			// Get scene
-			Ref<Scenes::Scene> currentScene = Assets::AssetService::GetScene(sceneHandle);
+		    Assets::AssetRef<Scenes::Scene> currentScene = Assets::AssetService::m_SceneManager.GetAssetByHandle(sceneHandle);
 
-			bool sceneModified = Assets::AssetService::RemoveCustomComponentFromScene(currentScene, metadata.m_Handle);
+			bool sceneModified = currentScene->RemoveCustomComponent(metadata.m_Handle);
+			currentScene->RemoveCustomComponent(metadata.m_Handle);
 
 			if (sceneModified)
 			{
 				// Save scene asset on-disk 
-				Assets::AssetService::SaveScene(sceneHandle, currentScene);
+				Assets::AssetService::m_SceneManager.UpdateAsset(currentScene);
 			}
 		}
 	}

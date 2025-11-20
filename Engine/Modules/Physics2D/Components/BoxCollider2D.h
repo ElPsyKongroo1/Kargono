@@ -7,23 +7,23 @@
 
 namespace Kargono::Physics2D
 {
-	struct BoxCollider2DComponent
+	struct BoxCollider2D
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		BoxCollider2DComponent() = default;
-		~BoxCollider2DComponent() = default;
+		BoxCollider2D() = default;
+		~BoxCollider2D() = default;
 
 	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
-		void CopyTo(BoxCollider2DComponent* dst)
+		void CopyTo(BoxCollider2D* dst)
 		{
 			// Create the component in place
-			std::construct_at<BoxCollider2DComponent>(dst);
+			std::construct_at<BoxCollider2D>(dst);
 
 			// Copy data
 			dst->m_Offset = m_Offset;
@@ -58,5 +58,5 @@ namespace Kargono::Physics2D
 		void* m_RuntimeFixture{ nullptr };
 	};
 
-	Register_Module_Type(BoxCollider2DComponent, ECSInternal::ComponentTag)
+	Register_Module_Type(BoxCollider2D, ECSInternal::ComponentTag)
 }

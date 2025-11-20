@@ -266,9 +266,9 @@ namespace Kargono
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<Physics2D::Rigidbody2DComponent>())
+		if (entityOne.HasComponent<Physics2D::RigidBody2D>())
 		{
-			Physics2D::Rigidbody2DComponent& component = entityOne.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& component = entityOne.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle = component.m_OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionStartScript.get();
 			if (scriptHandle != Assets::k_EmptyHandle)
@@ -277,9 +277,9 @@ namespace Kargono
 			}
 		}
 
-		if (!collisionHandled && entityTwo.HasComponent<Physics2D::Rigidbody2DComponent>())
+		if (!collisionHandled && entityTwo.HasComponent<Physics2D::RigidBody2D>())
 		{
-			Physics2D::Rigidbody2DComponent& component = entityTwo.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& component = entityTwo.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle = component. m_OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionStartScript.get();
 			if (scriptHandle != Assets::k_EmptyHandle)
@@ -302,9 +302,9 @@ namespace Kargono
 		KG_ASSERT(entityTwo);
 
 		bool collisionHandled = false;
-		if (entityOne.HasComponent<Physics2D::Rigidbody2DComponent>())
+		if (entityOne.HasComponent<Physics2D::RigidBody2D>())
 		{
-			Physics2D::Rigidbody2DComponent& component = entityOne.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& component = entityOne.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle = component.m_OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionEndScript.get();
 			if (scriptHandle != Assets::k_EmptyHandle)
@@ -313,9 +313,9 @@ namespace Kargono
 			}
 		}
 
-		if (!collisionHandled && entityOne.HasComponent<Physics2D::Rigidbody2DComponent>())
+		if (!collisionHandled && entityOne.HasComponent<Physics2D::RigidBody2D>())
 		{
-			Physics2D::Rigidbody2DComponent& component = entityTwo.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& component = entityTwo.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle =  component.m_OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionEndScript.get();
 			if (scriptHandle != Assets::k_EmptyHandle)

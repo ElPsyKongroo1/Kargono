@@ -19,9 +19,9 @@
 #include "Modules/Scripting/Components/OnUpdate.h"
 #include "Modules/Cameras/Components/CameraComponent.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
-#include "Modules/Physics2D/Components/BoxCollider2DComponent.h"
-#include "Modules/Physics2D/Components/RigidBody2DComponent.h"
-#include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
+#include "Modules/Physics2D/Components/BoxCollider2D.h"
+#include "Modules/Physics2D/Components/RigidBody2D.h"
+#include "Modules/Physics2D/Components/CircleCollider2D.h"
 #include "Modules/Particles/Components/ParticleEmitter.h"
 #include "Modules/States/Components/StateMachine.h"
 #include "Modules/Scenes/SceneContext.h"
@@ -188,11 +188,11 @@ namespace Kargono::Scenes
 		}
 
 		// Rigidbody
-		auto rigidBodyView = m_EntityRegistry.GetView<Physics2D::Rigidbody2DComponent>();
+		auto rigidBodyView = m_EntityRegistry.GetView<Physics2D::RigidBody2D>();
 		for (ECSInternal::EntityID enttEntity : rigidBodyView)
 		{
 			ECS::Entity currentEntity{ m_EntityRegistry.GetEntityByECSID(enttEntity) };
-			Physics2D::Rigidbody2DComponent& component = currentEntity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& component = currentEntity.GetComponent<Physics2D::RigidBody2D>();
 
 			if (component.m_OnCollisionStartScriptHandle == scriptHandle)
 			{
@@ -210,7 +210,7 @@ namespace Kargono::Scenes
 		}
 		return sceneModified;
 	}
-	bool Scene::RemoveAIState(Assets::AssetHandle aiStateHandle)
+	bool Scene::RemoveState(Assets::AssetHandle aiStateHandle)
 	{
 		bool aiStateModified{ false };
 
@@ -325,9 +325,9 @@ namespace Kargono::Scenes
 		m_EntityRegistry.RegisterComponent<Scripting::OnUpdate>();
 		m_EntityRegistry.RegisterComponent<Cameras::CameraComponent>();
 		m_EntityRegistry.RegisterComponent<Rendering::ShapeComponent>();
-		m_EntityRegistry.RegisterComponent<Physics2D::Rigidbody2DComponent>();
-		m_EntityRegistry.RegisterComponent<Physics2D::BoxCollider2DComponent>();
-		m_EntityRegistry.RegisterComponent<Physics2D::CircleCollider2DComponent>();
+		m_EntityRegistry.RegisterComponent<Physics2D::RigidBody2D>();
+		m_EntityRegistry.RegisterComponent<Physics2D::BoxCollider2D>();
+		m_EntityRegistry.RegisterComponent<Physics2D::CircleCollider2D>();
 		m_EntityRegistry.RegisterComponent<Particles::ParticleEmitter>();
 		m_EntityRegistry.RegisterComponent<States::StateMachine>();
 
@@ -432,9 +432,9 @@ namespace Kargono::Scenes
 		KG_ASSERT(entity);
 		KG_ASSERT(entity.HasComponent<Transform>());
 		entity.GetComponent<Transform>().m_Translation = newTranslation;
-		if (entity.HasComponent<Physics2D::Rigidbody2DComponent>())
+		if (entity.HasComponent<Physics2D::RigidBody2D>())
 		{
-			auto& rigidBody2DComp = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			auto& rigidBody2DComp = entity.GetComponent<Physics2D::RigidBody2D>();
 			b2Body* body = (b2Body*)rigidBody2DComp.m_RuntimeBody;
 			body->SetTransform({ newTranslation.x, newTranslation.y }, body->GetAngle());
 		}
@@ -452,21 +452,21 @@ namespace Kargono::Scenes
 		tagBuffer = tagComponent.m_Tag.CString();
 		return tagBuffer;
 	}
-	void Scene::Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity)
+	void Scene::RigidBody2D_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity)
 	{
 		ECS::Entity entity = m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
-		KG_ASSERT(entity.HasComponent<Physics2D::Rigidbody2DComponent>());
-		Physics2D::Rigidbody2DComponent& rigidBody2DComp = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+		KG_ASSERT(entity.HasComponent<Physics2D::RigidBody2D>());
+		Physics2D::RigidBody2D& rigidBody2DComp = entity.GetComponent<Physics2D::RigidBody2D>();
 		b2Body* body = (b2Body*)rigidBody2DComp.m_RuntimeBody;
 		body->SetLinearVelocity(b2Vec2(linearVelocity.x, linearVelocity.y));
 	}
-	Math::vec2 Scene::Rigidbody2DComponent_GetLinearVelocity(UUID entityID)
+	Math::vec2 Scene::RigidBody2D_GetLinearVelocity(UUID entityID)
 	{
 		ECS::Entity entity = m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity);
-		KG_ASSERT(entity.HasComponent<Physics2D::Rigidbody2DComponent>());
-		Physics2D::Rigidbody2DComponent& rigidBody2DComp = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+		KG_ASSERT(entity.HasComponent<Physics2D::RigidBody2D>());
+		Physics2D::RigidBody2D& rigidBody2DComp = entity.GetComponent<Physics2D::RigidBody2D>();
 		b2Body* body = (b2Body*)rigidBody2DComp.m_RuntimeBody;
 		const b2Vec2& linearVelocity = body->GetLinearVelocity();
 		return Math::vec2(linearVelocity.x, linearVelocity.y);

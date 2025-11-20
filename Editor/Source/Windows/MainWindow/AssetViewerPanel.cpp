@@ -93,7 +93,7 @@ namespace Kargono::Panels
 				}
 
 				// Get the relevant asset registry and ensure it is valid
-				Assets::AssetRegistry* currentRegistryRef = Assets::AssetService::GetAssetRegistry(type);
+				Assets::AssetRegistry* currentRegistryRef = Assets::AssetService::m_AssetRegistryManager.GetAssetByHandle(type);
 				KG_ASSERT(currentRegistryRef);
 
 				// Add each asset from the found registry to the asset list

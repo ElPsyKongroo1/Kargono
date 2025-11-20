@@ -83,7 +83,7 @@ namespace Kargono::Scenes
 		// Remove Asset References
 		//====================
 		bool RemoveScript(Assets::AssetHandle scriptHandle);
-		bool RemoveAIState(Assets::AssetHandle aiStateHandle);
+		bool RemoveState(Assets::AssetHandle aiStateHandle);
 		bool RemoveCustomComponent(Assets::AssetHandle projectCompHandle);
 		bool RemoveEmitterConfig(Assets::AssetHandle emitterConfigHandle);
 	public:
@@ -99,8 +99,8 @@ namespace Kargono::Scenes
 		Math::vec3 TransformComponentGetTranslation(UUID entityID);
 		void TransformComponentSetTranslation(UUID entityID, Math::vec3 newTranslation);
 		std::string_view TagComponentGetTag(UUID entityID);
-		void Rigidbody2DComponent_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
-		Math::vec2 Rigidbody2DComponent_GetLinearVelocity(UUID entityID);
+		void RigidBody2D_SetLinearVelocity(UUID entityID, Math::vec2 linearVelocity);
+		Math::vec2 RigidBody2D_GetLinearVelocity(UUID entityID);
 		void SetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation, void* value);
 		void* GetCustomComponentField(UUID entityID, Assets::AssetHandle projectComponentID, uint64_t fieldLocation);
 

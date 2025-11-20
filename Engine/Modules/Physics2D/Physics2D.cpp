@@ -6,9 +6,9 @@
 #include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/ECS/Entity.h"
 #include "Modules/Core/Components/Transform.h"
-#include "Modules/Physics2D/Components/BoxCollider2DComponent.h"
-#include "Modules/Physics2D/Components/CircleCollider2DComponent.h"
-#include "Modules/Physics2D/Components/RigidBody2DComponent.h"
+#include "Modules/Physics2D/Components/BoxCollider2D.h"
+#include "Modules/Physics2D/Components/CircleCollider2D.h"
+#include "Modules/Physics2D/Components/RigidBody2D.h"
 
 #include "Modules/Physics2D/ExternalAPI/Box2DBackend.h"
 
@@ -51,15 +51,15 @@ namespace Kargono::Physics
 		m_PhysicsWorld->SetContactListener(m_ContactListener.get());
 
 		// Register each entity into the Physics2DWorld
-		auto rigidBodyView = scene->m_EntityRegistry.GetView<Physics2D::Rigidbody2DComponent>();
+		auto rigidBodyView = scene->m_EntityRegistry.GetView<Physics2D::RigidBody2D>();
 		for (auto enttID : rigidBodyView)
 		{
 			ECS::Entity entity = scene->m_EntityRegistry.GetEntityByECSID(enttID);
 			Transform& transform = entity.GetComponent<Transform>();
-			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& rb2d = entity.GetComponent<Physics2D::RigidBody2D>();
 
 			b2BodyDef bodyDef;
-			bodyDef.type = Utility::Rigidbody2DTypeToBox2DBody(rb2d.m_Type);
+			bodyDef.type = Utility::RigidBody2DTypeToBox2DBody(rb2d.m_Type);
 			bodyDef.position.Set(transform.m_Translation.x, transform.m_Translation.y);
 			bodyDef.angle = transform.m_Rotation.z;
 
@@ -69,9 +69,9 @@ namespace Kargono::Physics
 			bodyUser.UUID = entity.GetUUID();
 			rb2d.m_RuntimeBody = body;
 
-			if (entity.HasComponent<Physics2D::BoxCollider2DComponent>())
+			if (entity.HasComponent<Physics2D::BoxCollider2D>())
 			{
-				Physics2D::BoxCollider2DComponent& boxColliderComp = entity.GetComponent<Physics2D::BoxCollider2DComponent>();
+				Physics2D::BoxCollider2D& boxColliderComp = entity.GetComponent<Physics2D::BoxCollider2D>();
 				b2Vec2 offsets{ boxColliderComp.m_Offset.y, -boxColliderComp.m_Offset.x };
 				b2PolygonShape boxShape;
 				boxShape.SetAsBox(boxColliderComp.m_Size.x * transform.m_Scale.x, boxColliderComp.m_Size.y * transform.m_Scale.y,
@@ -87,9 +87,9 @@ namespace Kargono::Physics
 				body->CreateFixture(&fixtureDef);
 			}
 
-			if (entity.HasComponent<Physics2D::CircleCollider2DComponent>())
+			if (entity.HasComponent<Physics2D::CircleCollider2D>())
 			{
-				Physics2D::CircleCollider2DComponent& circleColliderComponent = entity.GetComponent<Physics2D::CircleCollider2DComponent>();
+				Physics2D::CircleCollider2D& circleColliderComponent = entity.GetComponent<Physics2D::CircleCollider2D>();
 
 				b2CircleShape circleShape;
 				circleShape.m_p.Set(circleColliderComponent.m_Offset.x, circleColliderComponent.m_Offset.y);
@@ -124,12 +124,12 @@ namespace Kargono::Physics
 		m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
 		// Retrieve transform from Box2D
-		auto view = i_Scene->m_EntityRegistry.GetView<Physics2D::Rigidbody2DComponent>();
+		auto view = i_Scene->m_EntityRegistry.GetView<Physics2D::RigidBody2D>();
 		for (auto enttID : view)
 		{
 			ECS::Entity entity = i_Scene->m_EntityRegistry.GetEntityByECSID(enttID);
 			Transform& transform = entity.GetComponent<Transform>();
-			Physics2D::Rigidbody2DComponent& rb2d = entity.GetComponent<Physics2D::Rigidbody2DComponent>();
+			Physics2D::RigidBody2D& rb2d = entity.GetComponent<Physics2D::RigidBody2D>();
 
 			b2Body* body = (b2Body*)rb2d.m_RuntimeBody;
 			const auto& position = body->GetPosition();

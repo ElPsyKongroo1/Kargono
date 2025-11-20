@@ -28,7 +28,7 @@ namespace Kargono::Panels
 			KG_ASSERT(Assets::AssetService::GetSceneRegistrySize() != 0);
 			
 			// Set the start scene to a random available scene
-			const Assets::AssetRegistry& sceneRegistry = Assets::AssetService::GetSceneRegistry();
+			const Assets::AssetRegistry& sceneRegistry = Assets::AssetService::m_SceneManager.GetAssetRegistry();
 			auto iter = sceneRegistry.begin();
 			KG_ASSERT(iter != sceneRegistry.end());
 
@@ -36,28 +36,28 @@ namespace Kargono::Panels
 		}
 		
 		m_SelectStartSceneSpec.m_CurrentOption = {
-			 Assets::AssetService::GetSceneRegistry().at(startSceneHandle).Data.FileLocation.filename().string().c_str(),
+			 Assets::AssetService::m_SceneManager.GetAssetRegistry().at(startSceneHandle).Data.FileLocation.filename().string().c_str(),
 			startSceneHandle};
 		m_SelectStartSceneSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			spec.GetAllOptions().clear();
-			for (auto& [handle, asset] : Assets::AssetService::GetSceneRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_SceneManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 			spec.m_CurrentOption = {
-				Assets::AssetService::GetSceneRegistry().at(Projects::ProjectService::GetActiveContext().GetStartSceneHandle()).Data.FileLocation.filename().string().c_str(),
+				Assets::AssetService::m_SceneManager.GetAssetRegistry().at(Projects::ProjectService::GetActiveContext().GetStartSceneHandle()).Data.FileLocation.filename().string().c_str(),
 			Projects::ProjectService::GetActiveContext().GetStartSceneHandle()};
 		};
 		m_SelectStartSceneSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& entry)
 		{
-			if (!Assets::AssetService::GetSceneRegistry().contains(entry.m_Handle))
+			if (!Assets::AssetService::m_SceneManager.GetAssetRegistry().contains(entry.m_Handle))
 			{
 				KG_WARN("Could not find scene using asset handle in Project Panel");
 				return;
 			}
 
-			const Assets::AssetInfo asset = Assets::AssetService::GetSceneRegistry().at(entry.m_Handle);
+			const Assets::AssetInfo asset = Assets::AssetService::m_SceneManager.GetAssetRegistry().at(entry.m_Handle);
 			Projects::ProjectService::GetActiveContext().SetStartingSceneHandle(entry.m_Handle);
 		};
 
@@ -118,7 +118,7 @@ namespace Kargono::Panels
 		m_SelectStartGameStateSpec.m_LineCount = 3;
 		if (Projects::ProjectService::GetActiveContext().GetStartGameStateHandle() != 0)
 		{
-			m_SelectStartGameStateSpec.m_CurrentOption = { Assets::AssetService::GetGameStateRegistry().at
+			m_SelectStartGameStateSpec.m_CurrentOption = { Assets::AssetService::m_GameStateManager.GetAssetRegistry().at
 			(Projects::ProjectService::GetActiveContext().GetStartGameStateHandle()).Data.FileLocation.filename().string().c_str(),
 			Projects::ProjectService::GetActiveContext().GetStartGameStateHandle()};
 		}
@@ -130,14 +130,14 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetGameStateRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_GameStateManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
 
 			if (Projects::ProjectService::GetActiveContext().GetStartGameStateHandle() != Assets::k_EmptyHandle)
 			{
-				spec.m_CurrentOption = { Assets::AssetService::GetGameStateRegistry().at
+				spec.m_CurrentOption = { Assets::AssetService::m_GameStateManager.GetAssetRegistry().at
 				(Projects::ProjectService::GetActiveContext().GetStartGameStateHandle()).Data.FileLocation.filename().string().c_str(),
 				Projects::ProjectService::GetActiveContext().GetStartGameStateHandle() };
 			}
@@ -150,7 +150,7 @@ namespace Kargono::Panels
 
 		m_SelectStartGameStateSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (!Assets::AssetService::GetGameState(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+			if (!Assets::AssetService::m_GameStateManager.GetAssetByHandle(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 			{
 				KG_WARN("Could not locate starting game state in ProjectPanel");
 				return;
@@ -171,10 +171,10 @@ namespace Kargono::Panels
 			spec.ClearOptions();
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
 				KG_ASSERT(handle != Assets::k_EmptyHandle);
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
 					continue;
@@ -189,7 +189,7 @@ namespace Kargono::Panels
 		};
 		m_SelectRuntimeStartSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (!Assets::AssetService::GetScriptRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+			if (!Assets::AssetService::m_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 			{
 				KG_WARN("Could not find runtime start function in Project Panel");
 				return;
@@ -222,7 +222,7 @@ namespace Kargono::Panels
 					}
 
 					// Ensure function type matches definition
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
 						KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -680,7 +680,7 @@ namespace Kargono::Panels
 			| EditorUI::SelectOption_Indented;
 		m_SelectUpdateUserCountSpec.m_LineCount = 3;
 		m_SelectUpdateUserCountSpec.m_CurrentOption = { clientScripts.m_OnUpdateUserCount ?
-			Assets::AssetService::GetScript(clientScripts.m_OnUpdateUserCount)->m_ScriptName.c_str() : "None", clientScripts.m_OnUpdateUserCount };
+			Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnUpdateUserCount)->m_ScriptName.c_str() : "None", clientScripts.m_OnUpdateUserCount };
 		m_SelectUpdateUserCountSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 		{
 			Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
@@ -688,10 +688,10 @@ namespace Kargono::Panels
 			spec.ClearOptions();
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 			{
 				KG_ASSERT(handle != Assets::k_EmptyHandle);
-				Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_UInt32)
 				{
 					continue;
@@ -701,13 +701,13 @@ namespace Kargono::Panels
 			}
 
 			spec.m_CurrentOption = { clientScripts.m_OnUpdateUserCount ?
-				Assets::AssetService::GetScript(clientScripts.m_OnUpdateUserCount)->m_ScriptName.c_str() : "None", clientScripts.m_OnUpdateUserCount };
+				Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnUpdateUserCount)->m_ScriptName.c_str() : "None", clientScripts.m_OnUpdateUserCount };
 		};
 		m_SelectUpdateUserCountSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
 			Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
-			if (!Assets::AssetService::GetScriptRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+			if (!Assets::AssetService::m_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 			{
 				KG_WARN("Could not find Update User Count function in Project Panel");
 				return;
@@ -743,7 +743,7 @@ namespace Kargono::Panels
 							}
 
 							// Ensure function type matches definition
-							Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+						    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 							if (script->m_FuncType != WrappedFuncType::Void_UInt32)
 							{
 								KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -770,17 +770,17 @@ namespace Kargono::Panels
 			| EditorUI::SelectOption_Indented;
 		m_SelectApproveJoinSessionSpec.m_LineCount = 3;
 		m_SelectApproveJoinSessionSpec.m_CurrentOption = { clientScripts.m_OnApproveJoinSession ?
-			Assets::AssetService::GetScript(clientScripts.m_OnApproveJoinSession)->m_ScriptName.c_str() : "None",
+			Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnApproveJoinSession)->m_ScriptName.c_str() : "None",
 			clientScripts.m_OnApproveJoinSession };
 		m_SelectApproveJoinSessionSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 				{
 					KG_ASSERT(handle != Assets::k_EmptyHandle);
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 					{
 						continue;
@@ -792,11 +792,11 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 				spec.m_CurrentOption = { clientScripts.m_OnApproveJoinSession ?
-					Assets::AssetService::GetScript(clientScripts.m_OnApproveJoinSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnApproveJoinSession };
+					Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnApproveJoinSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnApproveJoinSession };
 			};
 		m_SelectApproveJoinSessionSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::AssetService::GetScriptRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::AssetService::m_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 				{
 					KG_WARN("Could not find Approve Join Session function in Project Panel");
 					return;
@@ -832,7 +832,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -860,16 +860,16 @@ namespace Kargono::Panels
 			| EditorUI::SelectOption_Indented;
 		m_SelectUserLeftSessionSpec.m_LineCount = 3;
 		m_SelectUserLeftSessionSpec.m_CurrentOption = { clientScripts.m_OnUserLeftSession ?
-			Assets::AssetService::GetScript(clientScripts.m_OnUserLeftSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnUserLeftSession };
+			Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnUserLeftSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnUserLeftSession };
 		m_SelectUserLeftSessionSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 				{
 					KG_ASSERT(handle != Assets::k_EmptyHandle);
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 					{
 						continue;
@@ -881,11 +881,11 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 				spec.m_CurrentOption = { clientScripts.m_OnUserLeftSession ?
-					Assets::AssetService::GetScript(clientScripts.m_OnUserLeftSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnUserLeftSession };
+					Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnUserLeftSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnUserLeftSession };
 			};
 		m_SelectUserLeftSessionSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::AssetService::GetScriptRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::AssetService::m_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 				{
 					KG_WARN("Could not find User Left Session function in Project Panel");
 					return;
@@ -920,7 +920,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -947,17 +947,17 @@ namespace Kargono::Panels
 		m_SelectSessionInitSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally | EditorUI::SelectOption_Indented;
 		m_SelectSessionInitSpec.m_LineCount = 3;
 		m_SelectSessionInitSpec.m_CurrentOption = { clientScripts.m_OnCurrentSessionInit ?
-			Assets::AssetService::GetScript(clientScripts.m_OnCurrentSessionInit)->m_ScriptName.c_str() : "None",
+			Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnCurrentSessionInit)->m_ScriptName.c_str() : "None",
 			clientScripts.m_OnCurrentSessionInit };
 		m_SelectSessionInitSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 				{
 					KG_ASSERT(handle != Assets::k_EmptyHandle);
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
 						continue;
@@ -969,11 +969,11 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 				spec.m_CurrentOption = { clientScripts.m_OnCurrentSessionInit ?
-					Assets::AssetService::GetScript(clientScripts.m_OnCurrentSessionInit)->m_ScriptName.c_str() : "None", clientScripts.m_OnCurrentSessionInit };
+					Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnCurrentSessionInit)->m_ScriptName.c_str() : "None", clientScripts.m_OnCurrentSessionInit };
 			};
 		m_SelectSessionInitSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::AssetService::GetScriptRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::AssetService::m_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 				{
 					KG_WARN("Could not find Session Initialization function in Project Panel");
 					return;
@@ -1008,7 +1008,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_None)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -1036,17 +1036,17 @@ namespace Kargono::Panels
 			| EditorUI::SelectOption_Indented;
 		m_SelectConnectionTerminatedSpec.m_LineCount = 3;
 		m_SelectConnectionTerminatedSpec.m_CurrentOption = { clientScripts.m_OnConnectionTerminated ?
-			Assets::AssetService::GetScript(clientScripts.m_OnConnectionTerminated)->m_ScriptName.c_str() : "None",
+			Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnConnectionTerminated)->m_ScriptName.c_str() : "None",
 			clientScripts.m_OnConnectionTerminated };
 		m_SelectConnectionTerminatedSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 				{
 					KG_ASSERT(handle != Assets::k_EmptyHandle);
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
 						continue;
@@ -1058,11 +1058,11 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 				spec.m_CurrentOption = { clientScripts.m_OnConnectionTerminated ?
-					Assets::AssetService::GetScript(clientScripts.m_OnConnectionTerminated)->m_ScriptName.c_str() : "None", clientScripts.m_OnConnectionTerminated };
+					Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnConnectionTerminated)->m_ScriptName.c_str() : "None", clientScripts.m_OnConnectionTerminated };
 			};
 		m_SelectConnectionTerminatedSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::AssetService::GetScriptRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::AssetService::m_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 				{
 					KG_WARN("Could not find Connection Terminated function in Project Panel");
 					return;
@@ -1096,7 +1096,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_None)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -1121,17 +1121,17 @@ namespace Kargono::Panels
 		m_SelectUpdateSessionSlotSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally | EditorUI::SelectOption_Indented;
 		m_SelectUpdateSessionSlotSpec.m_LineCount = 3;
 		m_SelectUpdateSessionSlotSpec.m_CurrentOption = { clientScripts.m_OnUpdateSessionUserSlot ?
-			Assets::AssetService::GetScript(clientScripts.m_OnUpdateSessionUserSlot)->m_ScriptName.c_str() : "None",
+			Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnUpdateSessionUserSlot)->m_ScriptName.c_str() : "None",
 			clientScripts.m_OnUpdateSessionUserSlot };
 		m_SelectUpdateSessionSlotSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 				{
 					KG_ASSERT(handle != Assets::k_EmptyHandle);
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 					{
 						continue;
@@ -1143,11 +1143,11 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 				spec.m_CurrentOption = { clientScripts.m_OnUpdateSessionUserSlot ?
-					Assets::AssetService::GetScript(clientScripts.m_OnUpdateSessionUserSlot)->m_ScriptName.c_str() : "None", clientScripts.m_OnUpdateSessionUserSlot };
+					Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnUpdateSessionUserSlot)->m_ScriptName.c_str() : "None", clientScripts.m_OnUpdateSessionUserSlot };
 			};
 		m_SelectUpdateSessionSlotSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::AssetService::GetScriptRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::AssetService::m_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 				{
 					KG_WARN("Could not find Update Session User Slot function in Project Panel");
 					return;
@@ -1182,7 +1182,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -1210,16 +1210,16 @@ namespace Kargono::Panels
 			EditorUI::SelectOption_Indented;
 		m_SelectStartSessionSpec.m_LineCount = 3;
 		m_SelectStartSessionSpec.m_CurrentOption = { clientScripts.m_OnStartSession ?
-			Assets::AssetService::GetScript(clientScripts.m_OnStartSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnStartSession };
+			Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnStartSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnStartSession };
 		m_SelectStartSessionSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 				{
 					KG_ASSERT(handle != Assets::k_EmptyHandle);
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
 						continue;
@@ -1230,11 +1230,11 @@ namespace Kargono::Panels
 
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 				spec.m_CurrentOption = { clientScripts.m_OnStartSession ?
-					Assets::AssetService::GetScript(clientScripts.m_OnStartSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnStartSession };
+					Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnStartSession)->m_ScriptName.c_str() : "None", clientScripts.m_OnStartSession };
 			};
 		m_SelectStartSessionSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::AssetService::GetScriptRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::AssetService::m_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 				{
 					KG_WARN("Could not find Start Session function in Project Panel");
 					return;
@@ -1269,7 +1269,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_None)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -1295,16 +1295,16 @@ namespace Kargono::Panels
 		m_SelectSessionReadyCheckSpec.m_Flags |= EditorUI::SelectOption_HandleEditButtonExternally | EditorUI::SelectOption_Indented;
 		m_SelectSessionReadyCheckSpec.m_LineCount = 3;
 		m_SelectSessionReadyCheckSpec.m_CurrentOption = { clientScripts.m_OnSessionReadyCheckConfirm ?
-			Assets::AssetService::GetScript(clientScripts.m_OnSessionReadyCheckConfirm)->m_ScriptName.c_str() : "None", clientScripts.m_OnSessionReadyCheckConfirm };
+			Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnSessionReadyCheckConfirm)->m_ScriptName.c_str() : "None", clientScripts.m_OnSessionReadyCheckConfirm };
 		m_SelectSessionReadyCheckSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 				{
 					KG_ASSERT(handle != Assets::k_EmptyHandle);
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
 						continue;
@@ -1316,11 +1316,11 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 				spec.m_CurrentOption = { clientScripts.m_OnSessionReadyCheckConfirm ?
-					Assets::AssetService::GetScript(clientScripts.m_OnSessionReadyCheckConfirm)->m_ScriptName.c_str() : "None", clientScripts.m_OnSessionReadyCheckConfirm };
+					Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnSessionReadyCheckConfirm)->m_ScriptName.c_str() : "None", clientScripts.m_OnSessionReadyCheckConfirm };
 			};
 		m_SelectSessionReadyCheckSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::AssetService::GetScriptRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::AssetService::m_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 				{
 					KG_WARN("Could not find Session Ready Check function in Project Panel");
 					return;
@@ -1355,7 +1355,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_None)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -1382,16 +1382,16 @@ namespace Kargono::Panels
 			EditorUI::SelectOption_Indented;
 		m_SelectReceiveSignalSpec.m_LineCount = 3;
 		m_SelectReceiveSignalSpec.m_CurrentOption = { clientScripts.m_OnReceiveSignal ?
-			Assets::AssetService::GetScript(clientScripts.m_OnReceiveSignal)->m_ScriptName.c_str() : "None", clientScripts.m_OnReceiveSignal };
+			Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnReceiveSignal)->m_ScriptName.c_str() : "None", clientScripts.m_OnReceiveSignal };
 		m_SelectReceiveSignalSpec.m_PopupAction = [&](EditorUI::SelectOptionWidget& spec)
 			{
 				spec.ClearOptions();
 
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-				for (auto& [handle, asset] : Assets::AssetService::GetScriptRegistry())
+				for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
 				{
 					KG_ASSERT(handle != Assets::k_EmptyHandle);
-					Ref<Scripting::Script> script = Assets::AssetService::GetScript(handle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 					{
 						continue;
@@ -1403,11 +1403,11 @@ namespace Kargono::Panels
 				Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 				spec.m_CurrentOption = { clientScripts.m_OnReceiveSignal ?
-					Assets::AssetService::GetScript(clientScripts.m_OnReceiveSignal)->m_ScriptName.c_str() : "None", clientScripts.m_OnReceiveSignal };
+					Assets::AssetService::m_ScriptManager.GetAssetByHandle(clientScripts.m_OnReceiveSignal)->m_ScriptName.c_str() : "None", clientScripts.m_OnReceiveSignal };
 			};
 		m_SelectReceiveSignalSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::AssetService::GetScriptRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::AssetService::m_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
 				{
 					KG_WARN("Could not find On Receive Signal function in Project Panel");
 					return;
@@ -1442,7 +1442,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-								Ref<Scripting::Script> script = Assets::AssetService::GetScript(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");

@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Modules/Rendering/Assets/Shader.h"
 #include "Kargono/Core/WrappedData.h"
-#include "Modules/Scripting/ScriptingCommon.h"
-#include "Kargono/Core/UUID.h"
 #include "Modules/Core/Module.h"
 #include "Kargono/Core/FixedBufferString.h"
 #include "Modules/Assets/AssetsCommon.h"
@@ -54,7 +51,7 @@ namespace Kargono::Assets
 		{
 			KG_ASSERT(!m_Name.IsEmpty());
 			KG_ASSERT(!m_FileDirectory.empty());
-			return m_FileDirectory / m_Name + t_AssetType::GetFileExtension();
+			return m_FileDirectory / m_Name.StringView() + t_AssetType::GetFileExtension();
 		}
 		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
 		std::filesystem::path GetAssetFullIntermediatePath(std::string_view extension)

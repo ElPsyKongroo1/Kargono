@@ -53,7 +53,7 @@ namespace Kargono::States
 		// Check/Handle StatesContext's delayed messages queue
 		HandleDelayedMessages();
 	}
-	bool StatesContext::IsGlobalState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	bool StatesContext::IsGlobalState(UUID entityID, Assets::AssetHandle queryStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -65,9 +65,9 @@ namespace Kargono::States
 		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Return whether the component aiState is the same as query aiState
-		return aiComponent.m_GlobalStateReference.GetAssetHandle() == queryAIStateHandle;
+		return aiComponent.m_GlobalStateReference.GetAssetHandle() == queryStateHandle;
 	}
-	bool StatesContext::IsCurrentState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	bool StatesContext::IsCurrentState(UUID entityID, Assets::AssetHandle queryStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -79,9 +79,9 @@ namespace Kargono::States
 		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Return whether the component aiState is the same as query aiState
-		return aiComponent.m_CurrentStateReference.GetAssetHandle() == queryAIStateHandle;
+		return aiComponent.m_CurrentStateReference.GetAssetHandle() == queryStateHandle;
 	}
-	bool StatesContext::IsPreviousState(UUID entityID, Assets::AssetHandle queryAIStateHandle)
+	bool StatesContext::IsPreviousState(UUID entityID, Assets::AssetHandle queryStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -93,9 +93,9 @@ namespace Kargono::States
 		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
 
 		// Return whether the component aiState is the same as query aiState
-		return aiComponent.m_PreviousStateReference.GetAssetHandle() == queryAIStateHandle;
+		return aiComponent.m_PreviousStateReference.GetAssetHandle() == queryStateHandle;
 	}
-	void StatesContext::ChangeGlobalState(UUID entityID, Assets::AssetHandle newAIStateHandle)
+	void StatesContext::ChangeGlobalState(UUID entityID, Assets::AssetHandle newStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -104,8 +104,8 @@ namespace Kargono::States
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Ensure new State is valid
-		Assets::AssetRef<State> newAIStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(newAIStateHandle);
-		KG_ASSERT(newAIStateRef, "Invalid new AI state provided inside AIService");
+		Assets::AssetRef<State> newStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(newStateHandle);
+		KG_ASSERT(newStateRef, "Invalid new AI state provided inside AIService");
 
 		// Get ai component to be modified
 		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
@@ -117,7 +117,7 @@ namespace Kargono::States
 		}
 
 		// Switch to new global State
-		aiComponent.m_GlobalStateReference = newAIStateRef;
+		aiComponent.m_GlobalStateReference = newStateRef;
 
 		// Call OnEnter for new global state
 		if (aiComponent.m_GlobalStateReference && aiComponent.m_GlobalStateReference->m_OnEnterState)
@@ -126,7 +126,7 @@ namespace Kargono::States
 		}
 
 	}
-	void StatesContext::ChangeCurrentState(UUID entityID, Assets::AssetHandle newAIStateHandle)
+	void StatesContext::ChangeCurrentState(UUID entityID, Assets::AssetHandle newStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
 		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
@@ -135,8 +135,8 @@ namespace Kargono::States
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Ensure new State is valid
-		Assets::AssetReference<State> newAIStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(newAIStateHandle);
-		KG_ASSERT(newAIStateRef);
+		Assets::AssetReference<State> newStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(newStateHandle);
+		KG_ASSERT(newStateRef);
 
 		// Get ai component to be modified
 		States::StateMachine& aiComponent = entity.GetComponent<States::StateMachine>();
@@ -151,7 +151,7 @@ namespace Kargono::States
 		}
 
 		// Switch to new State
-		aiComponent.m_CurrentStateReference = newAIStateRef;
+		aiComponent.m_CurrentStateReference = newStateRef;
 
 		// Call OnEnter for new state
 		if (aiComponent.m_CurrentStateReference && aiComponent.m_CurrentStateReference->m_OnEnterState)

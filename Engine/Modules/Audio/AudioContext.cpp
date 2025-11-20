@@ -86,7 +86,8 @@ namespace Kargono::Audio
 	void AudioContext::PlaySound(Assets::AssetRef<AudioBuffer> audioBuffer)
 	{
 		m_DefaultSourceSpec.m_CurrentBuffer = audioBuffer;
-		PlaySound(m_DefaultSourceSpec);
+		static AudioListenerSpecification defaultListenerSpec{};
+		PlaySound(m_DefaultSourceSpec, defaultListenerSpec);
 	}
 
 	void AudioContext::PlaySoundFromHandle(Assets::AssetHandle audioHandle)

@@ -15,22 +15,22 @@ namespace Kargono::Physics2D
 		Kinematic
 	};
 
-	struct Rigidbody2DComponent
+	struct RigidBody2D
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		Rigidbody2DComponent() = default;
-		~Rigidbody2DComponent() = default;
+		RigidBody2D() = default;
+		~RigidBody2D() = default;
 	public:
 		//==============================
 		// Copy Function(s)
 		//==============================
-		void CopyTo(Rigidbody2DComponent* dst)
+		void CopyTo(RigidBody2D* dst)
 		{
 			// Create the component in place
-			std::construct_at<Rigidbody2DComponent>(dst);
+			std::construct_at<RigidBody2D>(dst);
 
 			// Copy fields
 			dst->m_Type = m_Type;
@@ -63,5 +63,5 @@ namespace Kargono::Physics2D
 		Ref<Scripting::Script> m_OnCollisionEndScript{ nullptr };
 	};
 
-	Register_Module_Type(Rigidbody2DComponent, ECSInternal::ComponentTag)
+	Register_Module_Type(RigidBody2D, ECSInternal::ComponentTag)
 }

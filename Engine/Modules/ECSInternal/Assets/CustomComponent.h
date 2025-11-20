@@ -29,7 +29,7 @@ namespace Kargono::ECSInternal
 		std::vector<uint64_t> m_OldDataLocations;
 		std::vector<uint64_t> m_NewDataLocations;
 		size_t m_NewDataSize;
-		std::vector<Ref<Scenes::Scene>> m_OldScenes;
+		std::vector<Assets::AssetRef<Scenes::Scene>> m_OldScenes;
 		std::vector<Assets::AssetHandle> m_OldSceneHandles;
 	};
 
@@ -49,7 +49,6 @@ namespace Kargono::ECSInternal
 			Assets::AssetFlags flags{};
 			flags.SetFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
-			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 

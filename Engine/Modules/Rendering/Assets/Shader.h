@@ -10,6 +10,7 @@
 #include "Modules/Rendering/Module/RenderingModule.h"
 #include "Modules/Assets/Module/AssetTag.h"
 #include "Modules/Assets/AssetReference.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 
 #include <string>
 #include <filesystem>
@@ -17,6 +18,7 @@
 #include <vector>
 #include <functional>
 #include <tuple>
+#include <span>
 
 namespace Kargono::Rendering
 {
@@ -32,7 +34,6 @@ namespace Kargono::Rendering
 	typedef unsigned int GLenum;
 
 	class Shader;
-	class Texture2D;
 
 	struct DrawCallBuffer
 	{

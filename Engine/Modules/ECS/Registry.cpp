@@ -136,7 +136,7 @@ namespace Kargono::ECS
 
 	bool Registry::RegisterCustomComponent(Assets::AssetHandle customComponentHandle)
 	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(customComponentHandle);
+		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(customComponentHandle);
 		KG_ASSERT(component);
 
 		if (component->m_ComponentSize == 0 || m_Registry.IsComponentRegistered(component->m_Identifier))
@@ -150,7 +150,7 @@ namespace Kargono::ECS
 	}
 	bool Registry::UnRegisterCustomComponent(Assets::AssetHandle customComponentHandle)
 	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(customComponentHandle);
+	    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(customComponentHandle);
 		KG_ASSERT(component);
 
 		if (component->m_ComponentSize == 0 || !m_Registry.IsComponentRegistered(component->m_Identifier))
@@ -163,7 +163,7 @@ namespace Kargono::ECS
 	}
 	size_t Registry::GetCustomComponentCount(Assets::AssetHandle customComponentHandle)
 	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(customComponentHandle);
+		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(customComponentHandle);
 		KG_ASSERT(component);
 
 		if (component->m_ComponentSize == 0 || !m_Registry.IsComponentRegistered(customComponentHandle));

@@ -10,11 +10,11 @@
 #include "Modules/Scripting/Components/OnUpdate.h"
 #include "Modules/States/Components/StateMachine.h"
 #include "Modules/Particles/Components/ParticleEmitter.h"
-#include "Modules/Cameras/Components/Camera.h"
+#include "Modules/Cameras/Components/CameraComponent.h"
 #include "Modules/Physics2D/Components/BoxCollider2D.h"
 #include "Modules/Physics2D/Components/CircleCollider2D.h"
 #include "Modules/Physics2D/Components/RigidBody2D.h"
-#include "Modules/Rendering/Components/Shape.h"
+#include "Modules/Rendering/Components/ShapeComponent.h"
 
 namespace Kargono::ECS
 {
@@ -59,10 +59,9 @@ namespace Kargono::ECS
 			transform.Serialize((void*)&componentContext);
 		}
 
-		if (HasComponent<States::State>())
+		if (HasComponent<States::StateMachine>())
 		{
-			States::StateMachine& aiStateComp =
-				GetComponent<States::State>();
+			States::StateMachine& aiStateComp = GetComponent<States::StateMachine>();
 			out << YAML::Key << GetTypeName<States::State>();
 			aiStateComp.Serialize((void*)&componentContext);
 		}
@@ -75,33 +74,33 @@ namespace Kargono::ECS
 			particleEmitterComp.Serialize((void*)&componentContext);
 		}
 
-		if (HasComponent<Cameras::Camera>())
+		if (HasComponent<Cameras::CameraComponent>())
 		{
 			Cameras::CameraComponent& cameraComponent =
-				GetComponent<Cameras::Camera>();
-			out << YAML::Key << GetTypeName<Cameras::Camera>();
+				GetComponent<Cameras::CameraComponent>();
+			out << YAML::Key << GetTypeName<Cameras::CameraComponent>();
 			cameraComponent.Serialize((void*)&componentContext);
 		}
 
-		if (HasComponent<Rendering::Shape>())
+		if (HasComponent<Rendering::ShapeComponent>())
 		{
 			Rendering::ShapeComponent& shapeComponent =
-				GetComponent<Rendering::Shape>();
-			out << YAML::Key << GetTypeName<Rendering::Shape>();
+				GetComponent<Rendering::ShapeComponent>();
+			out << YAML::Key << GetTypeName<Rendering::ShapeComponent>();
 			shapeComponent.Serialize((void*)&componentContext);
 		}
 
-		if (HasComponent<Physics2D::Rigidbody2D>())
+		if (HasComponent<Physics2D::RigidBody2D>())
 		{
-			Physics2D::Rigidbody2DComponent& rb2dComponent =
-				GetComponent<Physics2D::Rigidbody2D>();
-			out << YAML::Key << GetTypeName<Physics2D::Rigidbody2D>();
+			Physics2D::RigidBody2D& rb2dComponent =
+				GetComponent<Physics2D::RigidBody2D>();
+			out << YAML::Key << GetTypeName<Physics2D::RigidBody2D>();
 			rb2dComponent.Serialize((void*)&componentContext);
 		}
 
 		if (HasComponent<Physics2D::BoxCollider2D>())
 		{
-			Physics2D::BoxCollider2DComponent& bc2dComponent =
+			Physics2D::BoxCollider2D& bc2dComponent =
 				GetComponent<Physics2D::BoxCollider2D>();
 			out << YAML::Key << GetTypeName<Physics2D::BoxCollider2D>();
 			bc2dComponent.Serialize((void*)&componentContext);
@@ -109,20 +108,21 @@ namespace Kargono::ECS
 
 		if (HasComponent<Physics2D::CircleCollider2D>())
 		{
-			Physics2D::CircleCollider2DComponent& cc2dComponent =
+			Physics2D::CircleCollider2D& cc2dComponent =
 				GetComponent<Physics2D::CircleCollider2D>();
 			out << YAML::Key << GetTypeName<Physics2D::CircleCollider2D>();
 			cc2dComponent.Serialize((void*)&componentContext);
 		}
 
 		// Handle all custom components
-		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 		{
 			if (!HasCustomComponentData(handle))
 			{
 				continue;
 			}
-			Ref<ECSInternal::Custom> projectComponent = Assets::AssetService::GetCustomComponent(handle);
+			Assets::AssetRef<ECSInternal::CustomComponent> projectComponent = 
+				Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
 			uint8_t* componentRef = (uint8_t*)GetCustomComponentData(handle);
 
 			out << YAML::Key << projectComponent->m_Name + "Component";
@@ -179,7 +179,7 @@ namespace Kargono::ECS
 		YAML::Node aiStateNode = entityNode[GetTypeName<States::State>()];
 		if (aiStateNode)
 		{
-			States::StateMachine& component = AddComponent<States::State>();
+			States::StateMachine& component = AddComponent<States::StateMachine>();
 			component.Deserialize((void*)&componentContext);
 		}
 
@@ -197,45 +197,46 @@ namespace Kargono::ECS
 			component.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node cameraComponent = entityNode[GetTypeName<Cameras::Camera>()];
+		YAML::Node cameraComponent = entityNode[GetTypeName<Cameras::CameraComponent>()];
 		if (cameraComponent)
 		{
-			Cameras::CameraComponent& cc = AddComponent<Cameras::Camera>();
+			Cameras::CameraComponent& cc = AddComponent<Cameras::CameraComponent>();
 			cc.Deserialize((void*)&componentContext);
 		}
 
 		YAML::Node shapeComponent = entityNode[GetTypeName<Rendering::Shape>()];
 		if (shapeComponent)
 		{
-			Rendering::ShapeComponent& sc = AddComponent<Rendering::Shape>();
+			Rendering::ShapeComponent& sc = AddComponent<Rendering::ShapeComponent>();
 			sc.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node rigidbody2DComponent = entityNode[GetTypeName<Physics2D::Rigidbody2D>()];
+		YAML::Node rigidbody2DComponent = entityNode[GetTypeName<Physics2D::RigidBody2D>()];
 		if (rigidbody2DComponent)
 		{
-			Physics2D::Rigidbody2DComponent& rb2d = AddComponent<Physics2D::Rigidbody2D>();
+			Physics2D::RigidBody2D& rb2d = AddComponent<Physics2D::RigidBody2D>();
 			rb2d.Deserialize((void*)&componentContext);
 		}
 
 		YAML::Node boxCollider2DComponent = entityNode[GetTypeName<Physics2D::BoxCollider2D>()];
 		if (boxCollider2DComponent)
 		{
-			Physics2D::BoxCollider2DComponent& bc2d = AddComponent<Physics2D::BoxCollider2D>();
+			Physics2D::BoxCollider2D& bc2d = AddComponent<Physics2D::BoxCollider2D>();
 			bc2d.Deserialize((void*)&componentContext);
 		}
 
 		YAML::Node circleCollider2DComponent = entityNode[GetTypeName<Physics2D::CircleCollider2D>()];
 		if (circleCollider2DComponent)
 		{
-			Physics2D::CircleCollider2DComponent& cc2d = AddComponent<Physics2D::CircleCollider2D>();
+			Physics2D::CircleCollider2D& cc2d = AddComponent<Physics2D::CircleCollider2D>();
 			cc2d.Deserialize((void*)&componentContext);
 		}
 
 		// Handle all custom components
-		for (auto& [handle, asset] : Assets::AssetService::GetCustomComponentRegistry())
+		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
 		{
-			Ref<ECSInternal::CustomComponent> projectComponent = Assets::AssetService::GetCustomComponent(handle);
+			Assets::AssetRef<ECSInternal::CustomComponent> projectComponent = 
+				Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
 			KG_ASSERT(projectComponent);
 
 			YAML::Node projectComponentNode = entityNode[projectComponent->m_Name + "Component"];
@@ -277,14 +278,13 @@ namespace Kargono::ECS
 	void Entity::AddCustomComponentData(Assets::AssetHandle componentHandle)
 	{
 		// Get the custom component
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(componentHandle);
+		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(componentHandle);
 		KG_ASSERT(component);
 		KG_ASSERT(component->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
 		if (component->m_ComponentSize == 0)
 		{
 			return;
 		}
-
 
 		uint8_t* componentReference
 		{
@@ -303,7 +303,8 @@ namespace Kargono::ECS
 	}
 	void* Entity::GetCustomComponentData(Assets::AssetHandle componentHandle)
 	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(componentHandle);
+		Assets::AssetRef<ECSInternal::CustomComponent> component = 
+			Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(componentHandle);
 		KG_ASSERT(component);
 		KG_ASSERT(component->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
 		if (component->m_ComponentSize == 0)
@@ -315,7 +316,8 @@ namespace Kargono::ECS
 	}
 	bool Entity::HasCustomComponentData(Assets::AssetHandle componentHandle)
 	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(componentHandle);
+		Assets::AssetRef<ECSInternal::CustomComponent> component = 
+			Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(componentHandle);
 		KG_ASSERT(component);
 		if (component->m_ComponentSize == 0)
 		{
@@ -325,7 +327,7 @@ namespace Kargono::ECS
 	}
 	void Entity::RemoveCustomComponentData(Assets::AssetHandle componentHandle)
 	{
-		Ref<ECSInternal::CustomComponent> component = Assets::AssetService::GetCustomComponent(componentHandle);
+		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(componentHandle);
 		KG_ASSERT(component);
 		KG_ASSERT(component->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
 		if (component->m_ComponentSize == 0)

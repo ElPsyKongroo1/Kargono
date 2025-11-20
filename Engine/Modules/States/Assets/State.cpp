@@ -122,12 +122,12 @@ namespace Kargono::States
 	void State::CreateFromName(Assets::Metadata& metadata)
 	{
 		// Create default StateMachines State
-		State temporaryAIState{};
+		State temporaryState{};
 
 		// Serialize a default copy
 		Assets::SerializeAssetContext serializeContext{};
 		serializeContext.m_AssetMetadata = &metadata;
-		temporaryAIState.Serialize((void*)&serializeContext);
+		temporaryState.Serialize((void*)&serializeContext);
 	}
 
 	void State::ValidateDelete(Assets::Metadata& metadata)
@@ -138,9 +138,9 @@ namespace Kargono::States
 			// Get scene
 			Assets::AssetRef<Scenes::Scene> currentScene = Assets::AssetService::m_SceneManager.GetAssetByHandle(sceneHandle);
 
-			currentScene->RemoveAIState(metadata.m_Handle);
+			currentScene->RemoveState(metadata.m_Handle);
 
-			bool sceneModified = currentScene->RemoveAIState(metadata.m_Handle);
+			bool sceneModified = currentScene->RemoveState(metadata.m_Handle);
 
 			if (sceneModified)
 			{

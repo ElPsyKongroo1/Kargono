@@ -30,6 +30,6 @@ namespace Kargono::Scripting
 		YAML::Node& node = *deserializeContext->m_Node;
 
 		m_OnCreateScriptHandle = node["OnCreateHandle"].as<uint64_t>();
-		m_OnCreateScript = Assets::AssetService::GetScript(m_OnCreateScriptHandle);
+		m_OnCreateScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_OnCreateScriptHandle);
 	} 
 }
