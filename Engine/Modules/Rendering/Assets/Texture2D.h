@@ -6,6 +6,8 @@
 #include "Modules/Rendering/Module/RenderingModule.h"
 #include "Modules/Assets/Module/AssetTag.h"
 
+#include "API/Platform/gladAPI.h"
+
 #include <string>
 #include <filesystem>
 #include <span>

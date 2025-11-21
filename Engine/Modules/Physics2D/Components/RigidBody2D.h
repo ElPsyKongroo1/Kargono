@@ -64,4 +64,28 @@ namespace Kargono::Physics2D
 	};
 
 	Register_Module_Type(RigidBody2D, ECSInternal::ComponentTag)
+
+	// These are simply here to help with serialization for the rigid body components in an entity
+	inline const char* RigidBody2DBodyTypeToString(Physics2D::BodyType bodyType)
+	{
+		switch (bodyType)
+		{
+		case Physics2D::BodyType::Static:	return "Static";
+		case Physics2D::BodyType::Dynamic:	return "Dynamic";
+		case Physics2D::BodyType::Kinematic:	return "Kinematic";
+		}
+
+		KG_ERROR("Unknown body type")
+			return {};
+	}
+
+	inline Physics2D::BodyType StringToRigidBody2DBodyType(std::string_view bodyTypeString)
+	{
+		if (bodyTypeString == "Static") return Physics2D::BodyType::Static;
+		if (bodyTypeString == "Dynamic") return Physics2D::BodyType::Dynamic;
+		if (bodyTypeString == "Kinematic") return Physics2D::BodyType::Kinematic;
+
+		KG_ERROR("Unknown body type")
+			return Physics2D::BodyType::Static;
+	}
 }

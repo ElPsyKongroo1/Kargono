@@ -3,8 +3,6 @@
 #include "Kargono/Math/Math.h"
 #include "Kargono/Core/WrappedData.h"
 
-#include "Modules/Physics2D/ExternalAPI/Box2DAPI.h"
-
 #include <yaml-cpp/yaml.h>
 #include <string>
 
@@ -13,9 +11,6 @@ namespace YAML
 	//==============================
 	// Engine Specific YAML Conversions
 	//==============================
-	// These templates allow the YAML serialization library (yaml-cpp) to work with
-	//		engine specific data structures (mostly glm). These are mostly useful
-	//		for deserialization.
 	template<>
 	struct convert<Kargono::Math::vec2>
 	{
@@ -170,8 +165,6 @@ namespace YAML
 		}
 	};
 
-	// These operator overloads serve a similar purpose to the templates,
-	//		however, they are more useful for the Serialization part
 	inline YAML::Emitter& operator<<(YAML::Emitter& out, const Kargono::Math::vec2& v)
 	{
 		out << YAML::Flow;
@@ -229,8 +222,6 @@ namespace Kargono::Utility
 	//==============================
 	// Scripting Engine Serialization Macros
 	//==============================
-	// These macros allow for easy serialization of different field types for script entities. 
-
 #define WRITE_SCRIPT_FIELD(FieldType, Type)\
 					case FieldType:\
 						out << scriptField.GetValue<Type>();\
@@ -391,29 +382,5 @@ namespace Kargono::Utility
 		}
 		KG_ERROR("Unknown Type of WrappedVariableType when deserializing");
 		return nullptr;
-	}
-
-	// These are simply here to help with serialization for the rigid body components in an entity
-	inline const char* RigidBody2DBodyTypeToString(Physics2D::BodyType bodyType)
-	{
-		switch (bodyType)
-		{
-		case Physics2D::BodyType::Static:	return "Static";
-		case Physics2D::BodyType::Dynamic:	return "Dynamic";
-		case Physics2D::BodyType::Kinematic:	return "Kinematic";
-		}
-
-		KG_ERROR("Unknown body type")
-			return {};
-	}
-
-	inline Physics2D::BodyType StringToRigidBody2DBodyType(std::string_view bodyTypeString)
-	{
-		if (bodyTypeString == "Static") return Physics2D::BodyType::Static;
-		if (bodyTypeString == "Dynamic") return Physics2D::BodyType::Dynamic;
-		if (bodyTypeString == "Kinematic") return Physics2D::BodyType::Kinematic;
-
-		KG_ERROR("Unknown body type")
-			return Physics2D::BodyType::Static;
 	}
 }

@@ -15,6 +15,7 @@
 #include <bitset>
 #include <tuple>
 #include <unordered_map>
+#include <filesystem>
 
 namespace Kargono::Assets
 {
@@ -416,8 +417,13 @@ namespace Kargono::Assets
 			}
 
 			// Create metadata
-			Metadata newMetadata { CreateAssetMetadata(GetAssetIdentifier<t_AssetType>, creationData.m_AssetName
-				metadataFileDirectory, creationData.m_IsHidden) };
+			Metadata newMetadata 
+			{ 
+				CreateAssetMetadata(GetAssetIdentifier<t_AssetType>, 
+				creationData.m_AssetName, 
+				metadataFileDirectory, 
+				creationData.m_IsHidden) 
+			};
 
 			// Validate metadata
 			if (!newMetadata.IsValid())
