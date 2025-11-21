@@ -5,7 +5,7 @@
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Modules/EditorUI/EditorUIInclude.h"
 
 namespace Kargono::Utility
@@ -318,7 +318,7 @@ namespace Kargono::RuntimeUI
 		}
 		else
 		{
-		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_FunctionPointers.m_OnPressHandle);
+		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(m_FunctionPointers.m_OnPressHandle);
 			if (!onPressScript)
 			{
 				KG_WARN("Unable to locate OnPress Script!");

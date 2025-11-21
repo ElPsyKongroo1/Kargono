@@ -3,7 +3,7 @@
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Rendering/Assets/Texture2D.h"
 #include "Kargono/Projects/Project.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Modules/RuntimeUI/Assets/RuntimeUIUserInterface.h"
 
 #include "API/Platform/gladAPI.h"
@@ -303,14 +303,14 @@ namespace Kargono::Rendering
 	void Texture2D::ValidateDelete(Assets::Metadata& metadata)
 	{
 		// Check user interface assets
-		for (auto& [uiHandle, metadata] : Assets::AssetService::m_UserInterfaceManager.GetAssetRegistry())
+		for (auto& [uiHandle, metadata] : Assets::s_UserInterfaceManager.GetAssetRegistry())
 		{
 			// Handle UI level function pointers
-		    Assets::AssetRef<RuntimeUI::UserInterface> userInterfaceRef = Assets::AssetService::m_UserInterfaceManager.GetAssetByHandle(uiHandle);
+		    Assets::AssetRef<RuntimeUI::UserInterface> userInterfaceRef = Assets::s_UserInterfaceManager.GetAssetByHandle(uiHandle);
 			bool uiModified = userInterfaceRef->RemoveTexture(metadata.m_Handle);
 			if (uiModified)
 			{
-				Assets::AssetService::m_UserInterfaceManager.UpdateAsset(userInterfaceRef);
+				Assets::s_UserInterfaceManager.UpdateAsset(userInterfaceRef);
 			}
 		}
 	}

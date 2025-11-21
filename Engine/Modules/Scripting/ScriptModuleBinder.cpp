@@ -3,7 +3,7 @@
 #include "Modules/Scripting/ScriptModuleBinder.h"
 
 #include "Modules/Core/Engine.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/Scenes/SceneContext.h"
 #include "Modules/FileSystem/FileSystem.h"
@@ -545,21 +545,21 @@ namespace Kargono::Scripting
 		ScriptBinderService::GetActiveContext().CloseActiveScriptModule();
 
 		// Load in ScriptRegistry if not already loaded
-		if (Assets::AssetService::m_ScriptManager.GetAssetRegistry().size() == 0)
+		if (Assets::s_ScriptManager.GetAssetRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
 			Assets::AssetService::DeserializeScriptRegistry();
 		}
 
 		// Load in custom components if not already loaded
-		if (Assets::AssetService::m_CustomComponentManager.GetAssetRegistry().size() == 0)
+		if (Assets::s_CustomComponentManager.GetAssetRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
 			Assets::AssetService::DeserializeCustomComponentRegistry();
 		}
 
 		// Load in ai states if not already loaded
-		if (Assets::AssetService::m_StateManager.GetAssetRegistry().size() == 0)
+		if (Assets::s_StateManager.GetAssetRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
 			Assets::AssetService::DeserializeStateRegistry();
@@ -725,9 +725,9 @@ namespace Kargono::Scripting
 		AddImportFunctionToHeaderFile(RaycastResultVec2Vec2, Physics::RaycastResult, Math::vec2, Math::vec2)
 
 		// Add Script Function Declarations
-		for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+		for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
-		    Assets::AssetRef<Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+		    Assets::AssetRef<Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 			WrappedVarType returnValue;
 			std::vector<WrappedVarType> parameterTypes;
 			std::vector<FixedBufStr32> parameterNames;
@@ -1088,7 +1088,7 @@ namespace Kargono::Scripting
 
 		// Write scripts into a single cpp file
 		bool compilationSuccess{ true };
-		for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+		for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
 			if (asset.Data.GetSpecificMetaData<Assets::ScriptMetaData>()->m_ScriptType == ScriptType::Engine)
 			{

@@ -5,21 +5,21 @@
 #include "Modules/Assets/Module/AssetTag.h"
 #include "Kargono/Core/Base.h"
 
-#include "Modules/States/Assets/State.h"
-#include "Modules/Audio/Assets/AudioBuffer.h"
-#include "Modules/EditorUI/Assets/ColorPalette.h"
-#include "Modules/RuntimeUI/Assets/Font.h"
-#include "Modules/GlobalState/Assets/GlobalState.h"
-#include "Modules/GlobalState/Assets/GameState.h"
-#include "Modules/InputMap/Assets/InputMap.h"
-#include "Modules/Scenes/Assets/Scene.h"
-#include "Modules/Scripting/Assets/Script.h"
-#include "Modules/Rendering/Assets/Shader.h"
-#include "Modules/Rendering/Assets/Texture2D.h"
-#include "Modules/RuntimeUI/Assets/RuntimeUIUserInterface.h"
-#include "Modules/ECSInternal/Assets/CustomComponent.h"
-#include "Modules/Scripting/Assets/CustomEnum.h"
-#include "Modules/Particles/Assets/EmitterConfig.h"
+#include "Modules/Assets/Managers/StateManager.h"
+#include "Modules/Assets/Managers/AudioBufferManager.h"
+#include "Modules/Assets/Managers/ColorPaletteManager.h"
+#include "Modules/Assets/Managers/FontManager.h"
+#include "Modules/Assets/Managers/GlobalStateManager.h"
+#include "Modules/Assets/Managers/GameStateManager.h"
+#include "Modules/Assets/Managers/InputMapManager.h"
+#include "Modules/Assets/Managers/SceneManager.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
+#include "Modules/Assets/Managers/ShaderManager.h"
+#include "Modules/Assets/Managers/Texture2DManager.h"
+#include "Modules/Assets/Managers/RuntimeUIManager.h"
+#include "Modules/Assets/Managers/CustomComponentManager.h"
+#include "Modules/Assets/Managers/CustomEnumManager.h"
+#include "Modules/Assets/Managers/EmitterConfigManager.h"
 
 
 namespace Kargono::Assets
@@ -30,82 +30,82 @@ namespace Kargono::Assets
 		// Deserializes all registries into memory
 		static void DeserializeAll()
 		{
-			m_ShaderManager.DeserializeAssetRegistry();
-			m_Texture2DManager.DeserializeAssetRegistry();
-			m_AudioBufferManager.DeserializeAssetRegistry();
-			m_FontManager.DeserializeAssetRegistry();
-			m_ScriptManager.DeserializeAssetRegistry();
-			m_CustomComponentManager.DeserializeAssetRegistry();
-			m_CustomEnumManager.DeserializeAssetRegistry();
-			m_ColorPaletteManager.DeserializeAssetRegistry();
-			m_InputMapManager.DeserializeAssetRegistry();
-			m_EmitterConfigManager.DeserializeAssetRegistry();
-			m_GameStateManager.DeserializeAssetRegistry();
-			m_GlobalStateManager.DeserializeAssetRegistry();
-			m_UserInterfaceManager.DeserializeAssetRegistry();
-			m_StateManager.DeserializeAssetRegistry();
-			m_SceneManager.DeserializeAssetRegistry(); 
+			s_ShaderManager.DeserializeAssetRegistry();
+			s_Texture2DManager.DeserializeAssetRegistry();
+			s_AudioBufferManager.DeserializeAssetRegistry();
+			s_FontManager.DeserializeAssetRegistry();
+			s_ScriptManager.DeserializeAssetRegistry();
+			s_CustomComponentManager.DeserializeAssetRegistry();
+			s_CustomEnumManager.DeserializeAssetRegistry();
+			s_ColorPaletteManager.DeserializeAssetRegistry();
+			s_InputMapManager.DeserializeAssetRegistry();
+			s_EmitterConfigManager.DeserializeAssetRegistry();
+			s_GameStateManager.DeserializeAssetRegistry();
+			s_GlobalStateManager.DeserializeAssetRegistry();
+			s_UserInterfaceManager.DeserializeAssetRegistry();
+			s_StateManager.DeserializeAssetRegistry();
+			s_SceneManager.DeserializeAssetRegistry(); 
 		}
 
 		// Serializes all registries into disk storage
 		static void SerializeAll()
 		{
-			m_ShaderManager.SerializeAssetRegistry ();
-			m_Texture2DManager.SerializeAssetRegistry();
-			m_AudioBufferManager.SerializeAssetRegistry();
-			m_FontManager.SerializeAssetRegistry();
-			m_ScriptManager.SerializeAssetRegistry();
-			m_CustomComponentManager.SerializeAssetRegistry();
-			m_CustomEnumManager.SerializeAssetRegistry();
-			m_ColorPaletteManager.SerializeAssetRegistry();
-			m_InputMapManager.SerializeAssetRegistry();
-			m_EmitterConfigManager.SerializeAssetRegistry();
-			m_GameStateManager.SerializeAssetRegistry();
-			m_GlobalStateManager.SerializeAssetRegistry();
-			m_UserInterfaceManager.SerializeAssetRegistry();
-			m_StateManager.SerializeAssetRegistry();
-			m_SceneManager.SerializeAssetRegistry();
+			s_ShaderManager.SerializeAssetRegistry ();
+			s_Texture2DManager.SerializeAssetRegistry();
+			s_AudioBufferManager.SerializeAssetRegistry();
+			s_FontManager.SerializeAssetRegistry();
+			s_ScriptManager.SerializeAssetRegistry();
+			s_CustomComponentManager.SerializeAssetRegistry();
+			s_CustomEnumManager.SerializeAssetRegistry();
+			s_ColorPaletteManager.SerializeAssetRegistry();
+			s_InputMapManager.SerializeAssetRegistry();
+			s_EmitterConfigManager.SerializeAssetRegistry();
+			s_GameStateManager.SerializeAssetRegistry();
+			s_GlobalStateManager.SerializeAssetRegistry();
+			s_UserInterfaceManager.SerializeAssetRegistry();
+			s_StateManager.SerializeAssetRegistry();
+			s_SceneManager.SerializeAssetRegistry();
 		}
 
 		// Clears all Registries and In-Memory Assets
 		static void ClearAll()
 		{
-			m_ShaderManager.ClearAssetRegistry();
-			m_Texture2DManager.ClearAssetRegistry();
-			m_AudioBufferManager.ClearAssetRegistry();
-			m_FontManager.ClearAssetRegistry();
-			m_ScriptManager.ClearAssetRegistry();
-			m_CustomComponentManager.ClearAssetRegistry();
-			m_CustomEnumManager.ClearAssetRegistry();
-			m_ColorPaletteManager.ClearAssetRegistry();
-			m_InputMapManager.ClearAssetRegistry();
-			m_EmitterConfigManager.ClearAssetRegistry();
-			m_GameStateManager.ClearAssetRegistry();
-			m_GlobalStateManager.ClearAssetRegistry();
-			m_UserInterfaceManager.ClearAssetRegistry();
-			m_StateManager.ClearAssetRegistry();
-			m_SceneManager.ClearAssetRegistry();
+			s_ShaderManager.ClearAssetRegistry();
+			s_Texture2DManager.ClearAssetRegistry();
+			s_AudioBufferManager.ClearAssetRegistry();
+			s_FontManager.ClearAssetRegistry();
+			s_ScriptManager.ClearAssetRegistry();
+			s_CustomComponentManager.ClearAssetRegistry();
+			s_CustomEnumManager.ClearAssetRegistry();
+			s_ColorPaletteManager.ClearAssetRegistry();
+			s_InputMapManager.ClearAssetRegistry();
+			s_EmitterConfigManager.ClearAssetRegistry();
+			s_GameStateManager.ClearAssetRegistry();
+			s_GlobalStateManager.ClearAssetRegistry();
+			s_UserInterfaceManager.ClearAssetRegistry();
+			s_StateManager.ClearAssetRegistry();
+			s_SceneManager.ClearAssetRegistry();
 		}
 
 		static Metadata GetAssetFromAllRegistries(AssetHandle handle, AssetIdentifier identifier)
 		{
 			switch (identifier)
 			{
-			case GetAssetIdentifier<States::State>(): return m_StateManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<Audio::AudioBuffer>(): return m_AudioBufferManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<EditorUI::ColorPalette>(): return m_ColorPaletteManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<RuntimeUI::Font>(): return m_FontManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<GlobalState::GameState>(): return m_GameStateManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<GlobalState::GlobalState>(): return m_GlobalStateManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<InputMap::InputMap>(): return m_InputMapManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<Scenes::Scene>(): return m_SceneManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<Scripting::Script>(): return m_ScriptManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<Rendering::Shader>(): return m_ShaderManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<Rendering::Texture2D>(): return m_ShaderManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<RuntimeUI::UserInterface>(): return m_UserInterfaceManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<ECSInternal::CustomComponent>(): return m_CustomComponentManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<Scripting::CustomEnum>(): return m_CustomEnumManager.GetAssetRegistry().at(handle);
-			case GetAssetIdentifier<Particles::EmitterConfig>(): return m_EmitterConfigManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<States::State>(): return s_StateManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<Audio::AudioBuffer>(): return s_AudioBufferManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<EditorUI::ColorPalette>(): return s_ColorPaletteManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<RuntimeUI::Font>(): return s_FontManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<GlobalState::GameState>(): return s_GameStateManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<GlobalState::GlobalState>(): return s_GlobalStateManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<InputMap::InputMap>(): return s_InputMapManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<Scenes::Scene>(): return s_SceneManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<Scripting::Script>(): return s_ScriptManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<Rendering::Shader>(): return s_ShaderManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<Rendering::Texture2D>(): return s_ShaderManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<RuntimeUI::UserInterface>(): return s_UserInterfaceManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<ECSInternal::CustomComponent>(): return s_CustomComponentManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<Scripting::CustomEnum>(): return s_CustomEnumManager.GetAssetRegistry().at(handle);
+			case GetAssetIdentifier<Particles::EmitterConfig>(): return s_EmitterConfigManager.GetAssetRegistry().at(handle);
 			default:
 				KG_ERROR("Invalid asset type provided to GetAssetFromAllRegistry function");
 				return {};
@@ -116,42 +116,25 @@ namespace Kargono::Assets
 		{
 			switch (identifier)
 			{
-			case GetAssetIdentifier<States::State>(): return &m_StateManager.GetAssetRegistry();
-			case GetAssetIdentifier<Audio::AudioBuffer>(): return &m_AudioBufferManager.GetAssetRegistry();
-			case GetAssetIdentifier<EditorUI::ColorPalette>(): return &m_ColorPaletteManager.GetAssetRegistry();
-			case GetAssetIdentifier<RuntimeUI::Font>(): return &m_FontManager.GetAssetRegistry();
-			case GetAssetIdentifier<GlobalState::GameState>(): return &m_GameStateManager.GetAssetRegistry();
-			case GetAssetIdentifier<GlobalState::GlobalState>(): return &m_GlobalStateManager.GetAssetRegistry();
-			case GetAssetIdentifier<InputMap::InputMap>(): return &m_InputMapManager.GetAssetRegistry();
-			case GetAssetIdentifier<Scenes::Scene>(): return &m_SceneManager.GetAssetRegistry();
-			case GetAssetIdentifier<Scripting::Script>(): return &m_ScriptManager.GetAssetRegistry();
-			case GetAssetIdentifier<Rendering::Shader>(): return &m_ShaderManager.GetAssetRegistry();
-			case GetAssetIdentifier<Rendering::Texture2D>(): return &m_ShaderManager.GetAssetRegistry();
-			case GetAssetIdentifier<RuntimeUI::UserInterface>(): return &m_UserInterfaceManager.GetAssetRegistry();
-			case GetAssetIdentifier<ECSInternal::CustomComponent>(): return &m_CustomComponentManager.GetAssetRegistry();
-			case GetAssetIdentifier<Scripting::CustomEnum>(): return &m_CustomEnumManager.GetAssetRegistry();
-			case GetAssetIdentifier<Particles::EmitterConfig>(): return &m_EmitterConfigManager.GetAssetRegistry();
+			case GetAssetIdentifier<States::State>(): return &s_StateManager.GetAssetRegistry();
+			case GetAssetIdentifier<Audio::AudioBuffer>(): return &s_AudioBufferManager.GetAssetRegistry();
+			case GetAssetIdentifier<EditorUI::ColorPalette>(): return &s_ColorPaletteManager.GetAssetRegistry();
+			case GetAssetIdentifier<RuntimeUI::Font>(): return &s_FontManager.GetAssetRegistry();
+			case GetAssetIdentifier<GlobalState::GameState>(): return &s_GameStateManager.GetAssetRegistry();
+			case GetAssetIdentifier<GlobalState::GlobalState>(): return &s_GlobalStateManager.GetAssetRegistry();
+			case GetAssetIdentifier<InputMap::InputMap>(): return &s_InputMapManager.GetAssetRegistry();
+			case GetAssetIdentifier<Scenes::Scene>(): return &s_SceneManager.GetAssetRegistry();
+			case GetAssetIdentifier<Scripting::Script>(): return &s_ScriptManager.GetAssetRegistry();
+			case GetAssetIdentifier<Rendering::Shader>(): return &s_ShaderManager.GetAssetRegistry();
+			case GetAssetIdentifier<Rendering::Texture2D>(): return &s_ShaderManager.GetAssetRegistry();
+			case GetAssetIdentifier<RuntimeUI::UserInterface>(): return &s_UserInterfaceManager.GetAssetRegistry();
+			case GetAssetIdentifier<ECSInternal::CustomComponent>(): return &s_CustomComponentManager.GetAssetRegistry();
+			case GetAssetIdentifier<Scripting::CustomEnum>(): return &s_CustomEnumManager.GetAssetRegistry();
+			case GetAssetIdentifier<Particles::EmitterConfig>(): return &s_EmitterConfigManager.GetAssetRegistry();
 			default:
 				KG_ERROR("Invalid asset type provided to GetAssetRegistry function");
 				return nullptr;
 			}
 		}
-
-		public:
-			static inline AssetManager<States::State> m_StateManager;
-			static inline AssetManager<Audio::AudioBuffer> m_AudioBufferManager;
-			static inline AssetManager<EditorUI::ColorPalette> m_ColorPaletteManager;
-			static inline AssetManager<RuntimeUI::Font> m_FontManager;
-			static inline AssetManager<GlobalState::GameState> m_GameStateManager;
-			static inline AssetManager<GlobalState::GlobalState> m_GlobalStateManager;
-			static inline AssetManager<InputMap::InputMap> m_InputMapManager;
-			static inline AssetManager<ECSInternal::CustomComponent> m_CustomComponentManager;
-			static inline AssetManager<Scripting::CustomEnum> m_CustomEnumManager;
-			static inline AssetManager<Scenes::Scene> m_SceneManager;
-			static inline AssetManager<Scripting::Script> m_ScriptManager;
-			static inline AssetManager<Rendering::Shader> m_ShaderManager;
-			static inline AssetManager<Rendering::Texture2D> m_Texture2DManager;
-			static inline AssetManager<RuntimeUI::UserInterface> m_UserInterfaceManager;
-			static inline AssetManager<Particles::EmitterConfig> m_EmitterConfigManager;
 	};
 }

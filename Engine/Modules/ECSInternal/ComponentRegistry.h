@@ -6,7 +6,8 @@
 #include "Modules/ECSInternal/Views/PackedView.h"
 #include "Modules/ECSInternal/Views/FlatView.h"
 #include "Modules/ECSInternal/EntityRegistry.h"
-#include "Modules/Assets/AssetService.h"
+#include "Modules/Assets/Managers/CustomComponentManager.h"
+#include "Modules/ECSInternal/Assets/CustomComponent.h"
 
 #include "Kargono/Core/Base.h"
 #include "Modules/FileSystem/FileSystem.h"
@@ -211,7 +212,7 @@ namespace Kargono::ECSInternal
 			// If this is a custom component, get the custom component data
 			if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
 			{
-				customComp = &Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
+				customComp = &Assets::s_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
 				KG_ASSERT(customComp);
 			}
 
@@ -256,7 +257,7 @@ namespace Kargono::ECSInternal
 			// If this is a custom component, get the custom component data
 			if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
 			{
-				customComp = &Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
+				customComp = &Assets::s_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
 				KG_ASSERT(customComp);
 			}
 
@@ -437,7 +438,7 @@ namespace Kargono::ECSInternal
 				// If this is a custom component, get the custom component data
 				if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
 				{
-					customComp = &Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
+					customComp = &Assets::s_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
 					KG_ASSERT(customComp);
 				}
 

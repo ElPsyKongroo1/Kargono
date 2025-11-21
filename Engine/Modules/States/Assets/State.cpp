@@ -39,7 +39,7 @@ namespace Kargono::States
 		}
 		else
 		{
-			m_OnUpdate = Assets::AssetService::m_ScriptManager.GetAssetByHandle(onUpdateHandle);
+			m_OnUpdate = Assets::s_ScriptManager.GetAssetByHandle(onUpdateHandle);
 			if (!m_OnUpdate)
 			{
 				KG_WARN("Invalid OnUpdate script returned using a valid handle in deserialize ai state function");
@@ -54,7 +54,7 @@ namespace Kargono::States
 		}
 		else
 		{
-			m_OnEnterState = Assets::AssetService::m_ScriptManager.GetAssetByHandle(onEnterStateHandle);
+			m_OnEnterState = Assets::s_ScriptManager.GetAssetByHandle(onEnterStateHandle);
 			if (!m_OnEnterState)
 			{
 				KG_WARN("Invalid OnEnterState script returned using a valid handle in deserialize ai state function");
@@ -69,7 +69,7 @@ namespace Kargono::States
 		}
 		else
 		{
-			m_OnExitState = Assets::AssetService::m_ScriptManager.GetAssetByHandle(onExitStateHandle);
+			m_OnExitState = Assets::s_ScriptManager.GetAssetByHandle(onExitStateHandle);
 			if (!m_OnExitState)
 			{
 				KG_WARN("Invalid OnExitState script returned using a valid handle in deserialize AI state function");
@@ -84,7 +84,7 @@ namespace Kargono::States
 		}
 		else
 		{
-			m_OnMessage = Assets::AssetService::m_ScriptManager.GetAssetByHandle(onMessageHandle);
+			m_OnMessage = Assets::s_ScriptManager.GetAssetByHandle(onMessageHandle);
 			if (!m_OnMessage)
 			{
 				KG_WARN("Invalid AIMessage script returned using a valid handle in deserialize AI state function");
@@ -133,10 +133,10 @@ namespace Kargono::States
 	void State::ValidateDelete(Assets::Metadata& metadata)
 	{
 		// Handle deleting the StateMachines state by removing entity data from all scenes
-		for (auto& [sceneHandle, metadata] : Assets::AssetService::m_SceneManager.GetAssetRegistry())
+		for (auto& [sceneHandle, metadata] : Assets::s_SceneManager.GetAssetRegistry())
 		{
 			// Get scene
-			Assets::AssetRef<Scenes::Scene> currentScene = Assets::AssetService::m_SceneManager.GetAssetByHandle(sceneHandle);
+			Assets::AssetRef<Scenes::Scene> currentScene = Assets::s_SceneManager.GetAssetByHandle(sceneHandle);
 
 			currentScene->RemoveState(metadata.m_Handle);
 
@@ -145,7 +145,7 @@ namespace Kargono::States
 			if (sceneModified)
 			{
 				// Save scene asset on-disk 
-				Assets::AssetService::m_SceneManager.UpdateAsset(currentScene);
+				Assets::s_SceneManager.UpdateAsset(currentScene);
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/RuntimeUI/Assets/Font.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Core/Engine.h"
 #include "Modules/Rendering/Assets/Shader.h"

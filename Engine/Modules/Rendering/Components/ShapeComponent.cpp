@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/Rendering/Components/ShapeComponent.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Kargono/Core/Buffer.h"
 
 namespace Kargono::Rendering
@@ -134,7 +134,7 @@ namespace Kargono::Rendering
 
 	ShapeComponent::ShapeComponent()
 	{
-		auto [handle, shader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(m_ShaderSpecification);
+		auto [handle, shader] = Assets::s_ShaderManager.GetAssetByHandle(m_ShaderSpecification);
 		m_ShaderHandle = handle;
 		m_Shader = shader;
 		Buffer textureBuffer{ 4 };

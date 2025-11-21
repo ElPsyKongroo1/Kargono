@@ -310,7 +310,7 @@ namespace Kargono::Rendering
 
 	bool Rendering::Shader::GetAssetFromSpec(Assets::Metadata& metadata, const ShaderSpecification& querySpec)
 	{
-		Assets::AssetReference<Shader> currentRef = Assets::AssetService::m_ShaderManager.GetAssetByHandle(metadata.m_Handle);
+		Assets::AssetReference<Shader> currentRef = Assets::s_ShaderManager.GetAssetByHandle(metadata.m_Handle);
 		Shader& currentShader = currentRef.GetAsset();
 
 		if (currentShader.GetSpecification() == querySpec)

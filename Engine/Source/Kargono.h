@@ -9,7 +9,7 @@
 
 //-----------------Assets-----------------//
 #include "Modules/Assets/AssetsCommon.h"
-#include "Modules/Assets/AssetService.h"
+
 
 //-----------------Audio-----------------//
 #include "Modules/Audio/Audio.h"

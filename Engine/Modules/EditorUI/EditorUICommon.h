@@ -2,6 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/FixedBufferString.h"
+#include "Modules/Assets/AssetReference.h"
 
 #include <cstdint>
 #include <unordered_map>
@@ -41,8 +42,8 @@ namespace Kargono::EditorUI
 		float m_XPosition{ 0.0f };
 		float m_YPosition{ 0.0f };
 		float m_IconSize{ 0.0f };
-		Ref<Rendering::Texture2D> m_ActiveIcon{ nullptr };
-		Ref<Rendering::Texture2D> m_InactiveIcon{ nullptr };
+		Assets::TAssetRef<Rendering::Texture2D> m_ActiveIcon{};
+		Assets::TAssetRef<Rendering::Texture2D> m_InactiveIcon{};
 		std::string m_ActiveTooltip{};
 		std::string m_InactiveTooltip{};
 		PositionType m_XPositionType{ PositionType::Inline };

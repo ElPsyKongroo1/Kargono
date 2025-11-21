@@ -2,7 +2,7 @@
 
 #include "Modules/Audio/AudioContext.h"
 #include "Kargono/Core/Buffer.h"
-#include "Modules/Assets/AssetService.h"
+#include "Modules/Assets/Managers/AudioBufferManager.h"
 #include "Modules/Audio/Assets/AudioBuffer.h"
 #include "Modules/Audio/AudioSource.h"
 #include "Modules/Audio/AudioListener.h"
@@ -39,7 +39,7 @@ namespace Kargono::Audio
 	}
 	void AudioContext::PlayStereoSoundFromHandle(Assets::AssetHandle audioHandle)
 	{
-		Assets::AssetRef<AudioBuffer> audioBuffer = Assets::AssetService::m_AudioBufferManager.GetAssetByHandle(audioHandle);
+		Assets::AssetRef<AudioBuffer> audioBuffer = Assets::s_AudioBufferManager.GetAssetByHandle(audioHandle);
 		if (audioBuffer)
 		{
 			PlayStereoSound(audioBuffer);
@@ -92,7 +92,7 @@ namespace Kargono::Audio
 
 	void AudioContext::PlaySoundFromHandle(Assets::AssetHandle audioHandle)
 	{
-		Assets::AssetRef<AudioBuffer> audioBuffer = Assets::AssetService::m_AudioBufferManager.GetAssetByHandle(audioHandle);
+		Assets::AssetRef<AudioBuffer> audioBuffer = Assets::s_AudioBufferManager.GetAssetByHandle(audioHandle);
 		if (audioBuffer)
 		{
 			Audio::AudioContext::PlaySound(audioBuffer);
@@ -177,7 +177,7 @@ namespace Kargono::Audio
 			m_AudioSourceQueue.front().reset();
 			m_AudioSourceQueue.pop();
 		}
-		Assets::AssetService::m_AudioBufferManager.ClearAssetRegistry();
+		Assets::s_AudioBufferManager.ClearAssetRegistry();
 
 		// Close OpenAL Context
 		alcDestroyContext(m_ContextID);

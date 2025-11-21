@@ -248,7 +248,7 @@ namespace Kargono::Windows
 
 		// Look for asset in registry using the file location
 		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
-		Assets::AssetHandle assetHandle = Assets::AssetService::m_UserInterfaceHandleFromFileLocationManager.GetAssetByHandle(relativePath);
+		Assets::AssetHandle assetHandle = Assets::s_UserInterfaceHandleFromFileLocationManager.GetAssetByHandle(relativePath);
 
 		// Validate resulting handle
 		if (!assetHandle)

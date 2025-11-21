@@ -9,9 +9,9 @@
 #include "Modules/Assets/Metadata.h"
 #include "Modules/Assets/Module/AssetTag.h"
 #include "Modules/ECS/Registry.h"
+#include "Modules/ECS/Entity.h"
 #include "Modules/Memory/HeapAlloc.h"
 #include "Modules/Rendering/RenderingService.h"
-#include "Modules/ECS/Entity.h"
 #include "Modules/Scenes/Module/SceneModule.h"
 
 #include <vector>

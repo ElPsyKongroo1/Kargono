@@ -183,7 +183,7 @@ namespace Kargono::RuntimeUI
 		}
 		else
 		{
-		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_OnSelectOptionHandle);
+		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnSelectOptionHandle);
 			if (!onPressScript)
 			{
 				KG_WARN("Unable to locate on select option Script!");

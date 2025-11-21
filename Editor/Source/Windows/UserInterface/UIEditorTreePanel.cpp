@@ -75,7 +75,7 @@ namespace Kargono::Panels
 		// Create UI tree entry
 		// Create new window entry
 		EditorUI::TreeEntry uiEntry{};
-		uiEntry.m_Label = Assets::AssetService::m_UserInterfaceManager.GetAssetRegistry().at(
+		uiEntry.m_Label = Assets::s_UserInterfaceManager.GetAssetRegistry().at(
 			s_UIWindow->m_EditorUIHandle).Data.FileLocation.stem().string();
 		uiEntry.m_IconHandle = EditorUI::EditorUIContext::m_RuntimeUIIcons.m_UserInterface2;
 		uiEntry.m_Handle = s_UIWindow->m_EditorUIHandle;
@@ -181,7 +181,7 @@ namespace Kargono::Panels
 			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
 			m_OpenUIPopupSpec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_UserInterfaceManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_UserInterfaceManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
@@ -193,7 +193,7 @@ namespace Kargono::Panels
 					KG_WARN("No User Interface Selected");
 					return;
 				}
-				if (!Assets::AssetService::m_UserInterfaceManager.GetAssetRegistry().contains(selection.m_Handle))
+				if (!Assets::s_UserInterfaceManager.GetAssetRegistry().contains(selection.m_Handle))
 				{
 					KG_WARN("Could not find the user interface specified");
 					return;
@@ -219,7 +219,7 @@ namespace Kargono::Panels
 				}
 				s_UIWindow->m_EditorUI = Assets::AssetService::GetUserInterface(s_UIWindow->m_EditorUIHandle);
 				m_MainHeader.m_EditColorActive = false;
-				m_MainHeader.m_Label = Assets::AssetService::m_UserInterfaceManager.GetAssetRegistry().at(
+				m_MainHeader.m_Label = Assets::s_UserInterfaceManager.GetAssetRegistry().at(
 					s_UIWindow->m_EditorUIHandle).Data.FileLocation.filename().string();
 				s_UIWindow->OnRefreshData();
 				RuntimeUI::RuntimeUIService::GetActiveContext().SetActiveUI(s_UIWindow->m_EditorUI, s_UIWindow->m_EditorUIHandle);
@@ -268,12 +268,12 @@ namespace Kargono::Panels
 	void UIEditorTreePanel::OnOpenUI(Assets::AssetHandle newHandle)
 	{
 		// Set new in editor user interface
-		s_UIWindow->m_EditorUI = Assets::AssetService::m_UserInterfaceManager.GetAssetByHandle(newHandle);
+		s_UIWindow->m_EditorUI = Assets::s_UserInterfaceManager.GetAssetByHandle(newHandle);
 		s_UIWindow->m_EditorUIHandle = newHandle;
 
 		// Set default values for header
 		m_MainHeader.m_EditColorActive = false;
-		m_MainHeader.m_Label = Assets::AssetService::m_UserInterfaceManager.GetAssetRegistry().at(
+		m_MainHeader.m_Label = Assets::s_UserInterfaceManager.GetAssetRegistry().at(
 			s_UIWindow->m_EditorUIHandle).Data.FileLocation.filename().string();
 
 		// Handle opening the UI in viewport

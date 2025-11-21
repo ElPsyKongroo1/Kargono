@@ -62,7 +62,7 @@ namespace Kargono::Panels
 				EditorUI::TreePath sceneEntryPath;
 				sceneEntryPath.PushBackNode(0);
 				EditorUI::TreeEntry sceneEntry{};
-				sceneEntry.m_Label = Assets::AssetService::m_SceneManager.GetAssetRegistry().at(activeSceneHandle).Data.FileLocation.stem().string();
+				sceneEntry.m_Label = Assets::s_SceneManager.GetAssetRegistry().at(activeSceneHandle).Data.FileLocation.stem().string();
 				sceneEntry.m_IconHandle = EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Scene;
 				sceneEntry.m_Handle = Assets::k_EmptyHandle;
 				sceneEntry.m_OnLeftClick = [&](EditorUI::TreeEntry& entry)
@@ -161,9 +161,9 @@ namespace Kargono::Panels
 				spec.AddToOptions("Engine Component", "AI State", Assets::k_EmptyHandle);
 			}
 
-			for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(handle);
 				KG_ASSERT(customComponentRef);
 				if (!entity.HasCustomComponentData(handle) && customComponentRef->m_ComponentSize != 0)
 				{
@@ -199,7 +199,7 @@ namespace Kargono::Panels
 			if (option.m_Handle != Assets::k_EmptyHandle)
 			{
 				// Add component to entity & update tree
-			    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(option.m_Handle);
+			    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::s_CustomComponentManager.GetAssetByHandle(option.m_Handle);
 				KG_ASSERT(component);
 				entity.AddCustomComponentData(option.m_Handle);
 				componentEntry.m_Label = component->m_Name;
@@ -604,9 +604,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 				KG_ASSERT(script);
 
 				if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
@@ -635,7 +635,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_OnCollisionStartScriptHandle = entry.m_Handle;
-			component.m_OnCollisionStartScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
+			component.m_OnCollisionStartScript = Assets::s_ScriptManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		m_SelectRigidBody2DCollisionStartScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -664,7 +664,7 @@ namespace Kargono::Panels
 						}
 
 						// Ensure function type matches definition
-					    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+					    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 						if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
 						{
 							KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -700,9 +700,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 				KG_ASSERT(script);
 
 				if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
@@ -731,7 +731,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_OnCollisionEndScriptHandle = entry.m_Handle;
-			component.m_OnCollisionEndScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
+			component.m_OnCollisionEndScript = Assets::s_ScriptManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		m_SelectRigidBody2DCollisionEndScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -760,7 +760,7 @@ namespace Kargono::Panels
 						}
 
 						// Ensure function type matches definition
-					    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+					    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 						if (script->m_FuncType != WrappedFuncType::Bool_EntityEntity)
 						{
 							KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -1307,9 +1307,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_EmitterConfigManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_EmitterConfigManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<Particles::EmitterConfig> emitterConfigRef = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<Particles::EmitterConfig> emitterConfigRef = Assets::s_EmitterConfigManager.GetAssetByHandle(handle);
 				KG_ASSERT(emitterConfigRef);
 
 				spec.AddToOptions("All Emitters", asset.Data.FileLocation.filename().string(), handle);
@@ -1334,7 +1334,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_EmitterConfigHandle = entry.m_Handle;
-			component.m_EmitterConfigRef = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(entry.m_Handle);
+			component.m_EmitterConfigRef = Assets::s_EmitterConfigManager.GetAssetByHandle(entry.m_Handle);
 
 			s_MainWindow->LoadSceneParticleEmitters();
 		};
@@ -1392,9 +1392,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 				KG_ASSERT(script);
 
 				if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
@@ -1423,7 +1423,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_OnUpdateScriptHandle = entry.m_Handle;
-			component.m_OnUpdateScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
+			component.m_OnUpdateScript = Assets::s_ScriptManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		m_SelectOnUpdateScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -1452,7 +1452,7 @@ namespace Kargono::Panels
 					}
 
 					// Ensure function type matches definition
-				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 					if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
 					{
 						KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -1532,9 +1532,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 				KG_ASSERT(script);
 
 				if (script->m_FuncType != WrappedFuncType::Void_Entity)
@@ -1563,7 +1563,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Create if applicable
 			component.m_OnCreateScriptHandle = entry.m_Handle;
-			component.m_OnCreateScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
+			component.m_OnCreateScript = Assets::s_ScriptManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		m_SelectOnCreateScript.m_OnEdit = [&](EditorUI::SelectOptionWidget& spec)
@@ -1592,7 +1592,7 @@ namespace Kargono::Panels
 					}
 
 					// Ensure function type matches definition
-				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 					if (script->m_FuncType != WrappedFuncType::Void_Entity)
 					{
 						KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -1674,9 +1674,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_StateManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_StateManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<States::State> aiStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<States::State> aiStateRef = Assets::s_StateManager.GetAssetByHandle(handle);
 				KG_ASSERT(aiStateRef);
 
 				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
@@ -1701,7 +1701,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_GlobalStateHandle = entry.m_Handle;
-			component.m_GlobalStateReference = Assets::AssetService::m_StateManager.GetAssetByHandle(entry.m_Handle);
+			component.m_GlobalStateReference = Assets::s_StateManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		// Set up current state select options widget
@@ -1712,9 +1712,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_StateManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_StateManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<States::State> aiStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<States::State> aiStateRef = Assets::s_StateManager.GetAssetByHandle(handle);
 				KG_ASSERT(aiStateRef);
 
 				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
@@ -1739,7 +1739,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_CurrentStateHandle = entry.m_Handle;
-			component.m_CurrentStateReference = Assets::AssetService::m_StateManager.GetAssetByHandle(entry.m_Handle);
+			component.m_CurrentStateReference = Assets::s_StateManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 		// Set up previous state select options widget
@@ -1750,9 +1750,9 @@ namespace Kargono::Panels
 		{
 			spec.ClearOptions();
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_StateManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_StateManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<States::State> aiStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<States::State> aiStateRef = Assets::s_StateManager.GetAssetByHandle(handle);
 				KG_ASSERT(aiStateRef);
 
 				spec.AddToOptions("All States", asset.Data.FileLocation.filename().string(), handle);
@@ -1777,7 +1777,7 @@ namespace Kargono::Panels
 			}
 			// Check for a valid entry, and Update if applicable
 			component.m_PreviousStateHandle = entry.m_Handle;
-			component.m_PreviousStateReference = Assets::AssetService::m_StateManager.GetAssetByHandle(entry.m_Handle);
+			component.m_PreviousStateReference = Assets::s_StateManager.GetAssetByHandle(entry.m_Handle);
 		};
 
 	}
@@ -2128,7 +2128,7 @@ namespace Kargono::Panels
 
 	void SceneEditorPanel::InitializeCustomComponents()
 	{
-		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+		for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
 		{
 			InitializeCustomComponent(handle);
 		}
@@ -2137,7 +2137,7 @@ namespace Kargono::Panels
 
 	void SceneEditorPanel::InitializeCustomComponent(Assets::AssetHandle customComponentHandle)
 	{
-	    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(customComponentHandle);
+	    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::s_CustomComponentManager.GetAssetByHandle(customComponentHandle);
 		KG_ASSERT(component, "Invalid component provided when initializing SceneEditorPanel");
 
 		// Initialize Collapsing Header
@@ -2203,7 +2203,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2224,7 +2224,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2245,7 +2245,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2266,7 +2266,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2287,7 +2287,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2308,7 +2308,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2329,7 +2329,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2350,7 +2350,7 @@ namespace Kargono::Panels
 				{
 					// Get component data pointer
 					CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+				    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 					ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 					uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -2407,7 +2407,7 @@ namespace Kargono::Panels
 		if (Scenes::SceneService::GetActiveContext().GetActiveScene())
 		{
 			//TODO: Why, fix this plzzz
-			m_MainSceneHeader.m_Label = Assets::AssetService::m_SceneManager.GetAssetRegistry().at(
+			m_MainSceneHeader.m_Label = Assets::s_SceneManager.GetAssetRegistry().at(
 				Scenes::SceneService::GetActiveContext().GetActiveSceneHandle()).Data.FileLocation.filename().string();
 			
 			m_MainSceneHeader.RenderHeader();
@@ -2701,7 +2701,7 @@ namespace Kargono::Panels
 		DrawCameraComponent(entity);
 		DrawParticleEmitter(entity);
 		DrawShapeComponent(entity);
-		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+		for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
 		{
 			DrawCustomComponent(entity, handle);
 		}
@@ -2805,13 +2805,13 @@ namespace Kargono::Panels
 			m_RigidBody2DFixedRotation.RenderCheckbox();
 
 			// Display collision script functions
-		    Assets::AssetRef<Scripting::Script> collisionStartScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(component.m_OnCollisionStartScriptHandle);
+		    Assets::AssetRef<Scripting::Script> collisionStartScript = Assets::s_ScriptManager.GetAssetByHandle(component.m_OnCollisionStartScriptHandle);
 			m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = component.m_OnCollisionStartScriptHandle == Assets::k_EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(collisionStartScript).c_str(), component.m_OnCollisionStartScriptHandle);
 			m_SelectRigidBody2DCollisionStartScript.RenderOptions();
 
-		    Assets::AssetRef<Scripting::Script> collisionEndScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(component.m_OnCollisionEndScriptHandle);
+		    Assets::AssetRef<Scripting::Script> collisionEndScript = Assets::s_ScriptManager.GetAssetByHandle(component.m_OnCollisionEndScriptHandle);
 			m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = component.m_OnCollisionEndScriptHandle == Assets::k_EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(collisionEndScript).c_str(), component.m_OnCollisionEndScriptHandle);
@@ -2923,8 +2923,8 @@ namespace Kargono::Panels
 		m_ParticleEmitterHeader.RenderHeader();
 		if (m_ParticleEmitterHeader.m_Expanded)
 		{
-		    Assets::AssetRef<Particles::EmitterConfig> emitterConfig = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(component.m_EmitterConfigHandle);
-			Assets::AssetInfo emitterInfo = Assets::AssetService::m_EmitterConfigInfoManager.GetAssetByHandle(component.m_EmitterConfigHandle);
+		    Assets::AssetRef<Particles::EmitterConfig> emitterConfig = Assets::s_EmitterConfigManager.GetAssetByHandle(component.m_EmitterConfigHandle);
+			Assets::AssetInfo emitterInfo = Assets::s_EmitterConfigInfoManager.GetAssetByHandle(component.m_EmitterConfigHandle);
 			m_SelectParticleEmitter.m_CurrentOption = component.m_EmitterConfigHandle == Assets::k_EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(emitterInfo.Data.FileLocation.filename().string().c_str(), component.m_EmitterConfigHandle);
@@ -2941,7 +2941,7 @@ namespace Kargono::Panels
 		m_OnUpdateHeader.RenderHeader();
 		if (m_OnUpdateHeader.m_Expanded)
 		{
-		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(component.m_OnUpdateScriptHandle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(component.m_OnUpdateScriptHandle);
 			m_SelectOnUpdateScript.m_CurrentOption = component.m_OnUpdateScriptHandle == Assets::k_EmptyHandle ? 
 				EditorUI::OptionEntry( "None", Assets::k_EmptyHandle ) :
 				EditorUI::OptionEntry(Utility::ScriptToString(script).c_str(), component.m_OnUpdateScriptHandle);
@@ -2962,7 +2962,7 @@ namespace Kargono::Panels
 			bool optionValid = component.m_GlobalStateHandle != Assets::k_EmptyHandle;
 			if (optionValid)
 			{
-				Assets::AssetInfo& globalAsset = Assets::AssetService::m_StateManager.GetAssetRegistry().at(component.m_GlobalStateHandle);
+				Assets::AssetInfo& globalAsset = Assets::s_StateManager.GetAssetRegistry().at(component.m_GlobalStateHandle);
 				m_SelectGlobalState.m_CurrentOption = { globalAsset.Data.FileLocation.filename().string().c_str(),
 					component.m_GlobalStateHandle };
 			}
@@ -2976,7 +2976,7 @@ namespace Kargono::Panels
 			optionValid = component.m_CurrentStateHandle != Assets::k_EmptyHandle;
 			if (optionValid)
 			{
-				Assets::AssetInfo& currentAsset = Assets::AssetService::m_StateManager.GetAssetRegistry().at(component.m_CurrentStateHandle);
+				Assets::AssetInfo& currentAsset = Assets::s_StateManager.GetAssetRegistry().at(component.m_CurrentStateHandle);
 				m_SelectCurrentState.m_CurrentOption = { currentAsset.Data.FileLocation.filename().string().c_str(), 
 					component.m_CurrentStateHandle };
 			}
@@ -2990,7 +2990,7 @@ namespace Kargono::Panels
 			optionValid = component.m_PreviousStateHandle != Assets::k_EmptyHandle;
 			if (optionValid)
 			{
-				Assets::AssetInfo& previousAsset = Assets::AssetService::m_StateManager.GetAssetRegistry().at(component.m_PreviousStateHandle);
+				Assets::AssetInfo& previousAsset = Assets::s_StateManager.GetAssetRegistry().at(component.m_PreviousStateHandle);
 				m_SelectPreviousState.m_CurrentOption = { previousAsset.Data.FileLocation.filename().string().c_str(), 
 					component.m_PreviousStateHandle };
 			}
@@ -3011,7 +3011,7 @@ namespace Kargono::Panels
 		m_OnCreateHeader.RenderHeader();
 		if (m_OnCreateHeader.m_Expanded)
 		{
-		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(component.m_OnCreateScriptHandle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(component.m_OnCreateScriptHandle);
 			m_SelectOnCreateScript.m_CurrentOption = component.m_OnCreateScriptHandle == Assets::k_EmptyHandle ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(script).c_str(), component.m_OnCreateScriptHandle);
@@ -3061,7 +3061,7 @@ namespace Kargono::Panels
 		{
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -3078,7 +3078,7 @@ namespace Kargono::Panels
 		{
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -3095,7 +3095,7 @@ namespace Kargono::Panels
 		{
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -3131,7 +3131,7 @@ namespace Kargono::Panels
 		{
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -3153,7 +3153,7 @@ namespace Kargono::Panels
 		{
 			// Get component data pointer
 			CustomComponentFieldInfo& projectCompFieldInfo = *(CustomComponentFieldInfo*)spec.m_ProvidedData.get();
-		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> customComponentRef = Assets::s_CustomComponentManager.GetAssetByHandle(projectCompFieldInfo.m_CustomComponentHandle);
 			ECS::Entity selectedEntity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			uint8_t* componentDataRef = (uint8_t*)selectedEntity.GetCustomComponentData(projectCompFieldInfo.m_CustomComponentHandle);
 
@@ -3211,7 +3211,7 @@ namespace Kargono::Panels
 		Buffer oldBuffer = component.m_ShaderData;
 		Assets::AssetRef<Rendering::Shader> oldShader = component.m_Shader;
 		// Get New Shader
-		auto [newShaderAssetHandle, newShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(component.m_ShaderSpecification);
+		auto [newShaderAssetHandle, newShader] = Assets::s_ShaderManager.GetAssetByHandle(component.m_ShaderSpecification);
 		// Assign New Shader to Component
 		component.m_ShaderHandle = newShaderAssetHandle;
 		component.m_Shader = newShader;
@@ -3571,14 +3571,14 @@ namespace Kargono::Panels
 		}
 
 		// Handle adding custom components
-		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+		for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
 		{
 			if (!entity.HasCustomComponentData(handle))
 			{
 				continue;
 			}
 			// Add component to entity & update tree
-		    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::s_CustomComponentManager.GetAssetByHandle(handle);
 			KG_ASSERT(component);
 			componentEntry.m_Label = component->m_Name;
 			componentEntry.m_ProvidedData = CreateRef<SceneEditorTreeEntryData>(GetModuleTypeIdentifier<ECSInternal::CustomComponent>(), handle);

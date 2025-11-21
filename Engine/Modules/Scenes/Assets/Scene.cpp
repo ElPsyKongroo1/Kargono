@@ -10,7 +10,7 @@
 #include "Modules/Rendering/Assets/Shader.h"
 #include "Modules/Events/SceneEvent.h"
 #include "Kargono/Projects/Project.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Modules/Particles/ParticleContext.h"
 
 #include "Modules/Core/Components/Tag.h"
@@ -25,7 +25,7 @@
 #include "Modules/Particles/Components/ParticleEmitter.h"
 #include "Modules/States/Components/StateMachine.h"
 #include "Modules/Scenes/SceneContext.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Modules/Scripting/Assets/Script.h"
 
 #include "Modules/ECSInternal/Assets/CustomComponent.h"
@@ -332,7 +332,7 @@ namespace Kargono::Scenes
 		m_EntityRegistry.RegisterComponent<States::StateMachine>();
 
 		// Custom Components
-		for (auto& [handle, info] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+		for (auto& [handle, info] : Assets::s_CustomComponentManager.GetAssetRegistry())
 		{
 			m_EntityRegistry.RegisterCustomComponent(handle);
 		}
@@ -478,7 +478,7 @@ namespace Kargono::Scenes
 		KG_ASSERT(currentEntity);
 
 		// Get the indicated custom component
-		Assets::AssetRef<ECSInternal::CustomComponent> projectComponent = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle<ECSInternal::CustomComponent>(projectComponentID);
+		Assets::AssetRef<ECSInternal::CustomComponent> projectComponent = Assets::s_CustomComponentManager.GetAssetByHandle<ECSInternal::CustomComponent>(projectComponentID);
 		KG_ASSERT(projectComponent);
 		KG_ASSERT(fieldLocation < projectComponent->m_DataOffsets.size());
 
@@ -499,7 +499,7 @@ namespace Kargono::Scenes
 
 		// Get the indicated custom component
 		Assets::AssetRef<ECSInternal::CustomComponent> projectComponent = 
-			Assets::AssetService::m_CustomComponentManager.GetAssetByHandle<ECSInternal::CustomComponent>(projectComponentID);
+			Assets::s_CustomComponentManager.GetAssetByHandle<ECSInternal::CustomComponent>(projectComponentID);
 		KG_ASSERT(projectComponent);
 		KG_ASSERT(fieldLocation < projectComponent->m_DataOffsets.size());
 

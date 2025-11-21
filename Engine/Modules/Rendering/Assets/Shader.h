@@ -160,7 +160,7 @@ namespace Kargono::Rendering
 				KG_WARN("Input name hash did not retrieve an InputBufferElement");
 				return nullptr;
 			}
-			std::size_t inputLocation = currentInputBufferElement->Offset;
+			std::size_t inputLocation = currentInputBufferElement->m_Offset;
 			return inputBuffer.As<T>(inputLocation);
 		}
 		template<typename T>
@@ -174,7 +174,7 @@ namespace Kargono::Rendering
 				return;
 			}
 
-			std::size_t inputLocation = currentInputBufferElement->Offset;
+			std::size_t inputLocation = currentInputBufferElement->m_Offset;
 			T* inputPointer = inputBuffer.As<T>(inputLocation);
 			*inputPointer = value;
 		}

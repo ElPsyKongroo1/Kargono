@@ -12,7 +12,7 @@
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Math/Interpolation.h"
 #include "Modules/Rendering/RenderingService.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Modules/RuntimeUI/FontContext.h"
 #include "Modules/Scripting/Assets/Script.h"
 

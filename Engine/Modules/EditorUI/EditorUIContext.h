@@ -231,7 +231,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Internal Rendering
 		//==============================
-		static void RenderImage(Ref<Rendering::Texture2D> image, float size, ImVec4 tint = { 1.0f ,1.0f, 1.0f, 1.0f });
+		static void RenderImage(Assets::AssetRef<Rendering::Texture2D> image, float size, ImVec4 tint = { 1.0f ,1.0f, 1.0f, 1.0f });
 		static void RenderTruncatedText(const std::string& text, uint32_t maxTextSize);
 		static void RenderMultiLineText(const std::string& text, float lineWidth, float xOffset = 0, float yOffset = 0);
 		static void RenderInlineButton(ImGuiID widgetID, std::function<void()> onPress,

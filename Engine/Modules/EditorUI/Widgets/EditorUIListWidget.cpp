@@ -99,7 +99,7 @@ namespace Kargono::EditorUI
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3.0f);
 				}
 				ImGui::SetCursorPosX(m_Flags & List_Indented ? 42.5f : 12.0f);
-				EditorUIContext::RenderImage(EditorUIContext::m_GenIcons.m_Dash, 8, EditorUIContext::m_ConfigColors.m_DisabledColor);
+				EditorUIContext::RenderImage(EditorUIContext::m_GenIcons.m_Dash.GetAssetRef(), 8, EditorUIContext::m_ConfigColors.m_DisabledColor);
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(m_Flags & List_Indented ? 61.0f : EditorUIContext::m_ConfigSpacing.m_PrimaryTextIndent);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5.2f);

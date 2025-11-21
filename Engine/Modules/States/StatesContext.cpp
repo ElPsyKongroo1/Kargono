@@ -7,7 +7,7 @@
 #include "Modules/ECS/Entity.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/FileSystem/FileSystem.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Kargono/Utility/Time.h"
 #include "Modules/States/Components/StateMachine.h"
 
@@ -104,7 +104,7 @@ namespace Kargono::States
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Ensure new State is valid
-		Assets::AssetRef<State> newStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(newStateHandle);
+		Assets::AssetRef<State> newStateRef = Assets::s_StateManager.GetAssetByHandle(newStateHandle);
 		KG_ASSERT(newStateRef, "Invalid new AI state provided inside AIService");
 
 		// Get ai component to be modified
@@ -135,7 +135,7 @@ namespace Kargono::States
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
 
 		// Ensure new State is valid
-		Assets::AssetReference<State> newStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(newStateHandle);
+		Assets::AssetReference<State> newStateRef = Assets::s_StateManager.GetAssetByHandle(newStateHandle);
 		KG_ASSERT(newStateRef);
 
 		// Get ai component to be modified

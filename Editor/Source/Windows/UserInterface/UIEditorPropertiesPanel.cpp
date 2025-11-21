@@ -80,7 +80,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle fontHandle = s_UIWindow->m_EditorUI->m_Config.m_FontHandle;
 			m_UISelectFont.m_CurrentOption =
 			{
-				fontHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_FontInfoManager.GetAssetByHandle(fontHandle).Data.FileLocation.stem().string().c_str(),
+				fontHandle == Assets::k_EmptyHandle ? "None" : Assets::s_FontInfoManager.GetAssetByHandle(fontHandle).Data.FileLocation.stem().string().c_str(),
 				fontHandle
 			};
 			m_UISelectFont.RenderOptions();
@@ -89,7 +89,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onMoveHandle = s_UIWindow->m_EditorUI->m_Config.m_FunctionPointers.m_OnMoveHandle;
 			m_UIOnMove.m_CurrentOption =
 			{
-				onMoveHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptInfoManager.GetAssetByHandle(onMoveHandle).Data.FileLocation.stem().string().c_str(),
+				onMoveHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptInfoManager.GetAssetByHandle(onMoveHandle).Data.FileLocation.stem().string().c_str(),
 				onMoveHandle
 			};
 			m_UIOnMove.RenderOptions();
@@ -98,7 +98,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onHoverHandle = s_UIWindow->m_EditorUI->m_Config.m_FunctionPointers.m_OnHoverHandle;
 			m_UIOnHover.m_CurrentOption =
 			{
-				onHoverHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptInfoManager.GetAssetByHandle(onHoverHandle).Data.FileLocation.stem().string().c_str(),
+				onHoverHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptInfoManager.GetAssetByHandle(onHoverHandle).Data.FileLocation.stem().string().c_str(),
 				onHoverHandle
 			};
 			m_UIOnHover.RenderOptions();
@@ -304,7 +304,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeButtonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_ButtonWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_ButtonWidgetOnPress.RenderOptions();
@@ -371,7 +371,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeImageButtonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_ImageButtonWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_ImageButtonWidgetOnPress.RenderOptions();
@@ -427,7 +427,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeCheckboxWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_CheckboxWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_CheckboxWidgetOnPress.RenderOptions();
@@ -532,7 +532,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeInputTextWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_InputTextWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_InputTextWidgetOnPress.RenderOptions();
@@ -541,7 +541,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onMoveCursorHandle = activeInputTextWidget.m_OnMoveCursorHandle;
 			m_InputTextWidgetOnMoveCursor.m_CurrentOption =
 			{
-				onMoveCursorHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptManager.GetAssetByHandle(onMoveCursorHandle)->m_ScriptName.c_str(),
+				onMoveCursorHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onMoveCursorHandle)->m_ScriptName.c_str(),
 				onMoveCursorHandle
 			};
 			m_InputTextWidgetOnMoveCursor.RenderOptions();
@@ -581,7 +581,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeSliderWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_SliderWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_SliderWidgetOnPress.RenderOptions();
@@ -590,7 +590,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onMoveSliderHandle = activeSliderWidget.m_OnMoveSliderHandle;
 			m_SliderWidgetOnMoveSlider.m_CurrentOption =
 			{
-				onMoveSliderHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptManager.GetAssetByHandle(onMoveSliderHandle)->m_ScriptName.c_str(),
+				onMoveSliderHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onMoveSliderHandle)->m_ScriptName.c_str(),
 				onMoveSliderHandle
 			};
 			m_SliderWidgetOnMoveSlider.RenderOptions();
@@ -657,7 +657,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeDropDownWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_DropDownWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_DropDownWidgetOnPress.RenderOptions();
@@ -666,7 +666,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle OnSelectOptionHandle = activeDropDownWidget.m_OnSelectOptionHandle;
 			m_DropDownWidgetOnSelectOption.m_CurrentOption =
 			{
-				OnSelectOptionHandle == Assets::k_EmptyHandle ? "None" : Assets::AssetService::m_ScriptManager.GetAssetByHandle(OnSelectOptionHandle)->m_ScriptName.c_str(),
+				OnSelectOptionHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(OnSelectOptionHandle)->m_ScriptName.c_str(),
 				OnSelectOptionHandle
 			};
 			m_DropDownWidgetOnSelectOption.RenderOptions();
@@ -762,7 +762,7 @@ namespace Kargono::Panels
 			return;
 		}
 
-		Ref<RuntimeUI::Font> fontRef{ Assets::AssetService::m_FontManager.GetAssetByHandle(entry.m_Handle) };
+		Ref<RuntimeUI::Font> fontRef{ Assets::s_FontManager.GetAssetByHandle(entry.m_Handle) };
 
 		// Ensure returned font is valid
 		KG_ASSERT(fontRef);
@@ -781,7 +781,7 @@ namespace Kargono::Panels
 		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all font options
-		for (auto& [fontHandle, fontInfo] : Assets::AssetService::m_FontManager.GetAssetRegistry())
+		for (auto& [fontHandle, fontInfo] : Assets::s_FontManager.GetAssetRegistry())
 		{
 			spec.AddToOptions("All Options", fontInfo.Data.FileLocation.stem().string(), fontHandle);
 		}
@@ -800,7 +800,7 @@ namespace Kargono::Panels
 		}
 
 		// Get script and ensure valid
-	    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
+	    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(entry.m_Handle);
 		KG_ASSERT(script);
 
 		// Set the on move script for the UI
@@ -817,10 +817,10 @@ namespace Kargono::Panels
 		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+		for (auto& [handle, assetInfo] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
 			// Get script from handle
-		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 
 			// Ensure script is compatible with the text widget
 			if (script->m_FuncType != WrappedFuncType::Void_None)
@@ -862,7 +862,7 @@ namespace Kargono::Panels
 					}
 
 					// Ensure function type matches definition
-				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
 						KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -897,7 +897,7 @@ namespace Kargono::Panels
 		}
 
 		// Get script and ensure valid
-	    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
+	    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(entry.m_Handle);
 		KG_ASSERT(script);
 
 		// Set the on Hover script for the UI
@@ -914,10 +914,10 @@ namespace Kargono::Panels
 		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+		for (auto& [handle, assetInfo] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
 			// Get script from handle
-		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 
 			// Ensure script is compatible with the text widget
 			if (script->m_FuncType != WrappedFuncType::Void_None)
@@ -959,7 +959,7 @@ namespace Kargono::Panels
 						}
 
 						// Ensure function type matches definition
-					    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+					    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 						if (script->m_FuncType != WrappedFuncType::Void_None)
 						{
 							KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -2313,7 +2313,7 @@ namespace Kargono::Panels
 
 		// Set the script for the widget
 		activeInputTextWidget->m_OnMoveCursorHandle = entry.m_Handle;
-		activeInputTextWidget->m_OnMoveCursor = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
+		activeInputTextWidget->m_OnMoveCursor = Assets::s_ScriptManager.GetAssetByHandle(entry.m_Handle);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2326,10 +2326,10 @@ namespace Kargono::Panels
 		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+		for (auto& [handle, assetInfo] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
 			// Get script from handle
-		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 
 			// Ensure script is compatible with the text widget
 			if (script->m_FuncType != WrappedFuncType::Void_None)
@@ -2371,7 +2371,7 @@ namespace Kargono::Panels
 						}
 
 						// Ensure function type matches definition
-					    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+					    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 						if (script->m_FuncType != WrappedFuncType::Void_None)
 						{
 							KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -2384,7 +2384,7 @@ namespace Kargono::Panels
 
 						// Fill the new script handle
 						activeInputTextWidget.m_OnMoveCursorHandle = scriptHandle;
-						activeInputTextWidget.m_OnMoveCursor = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+						activeInputTextWidget.m_OnMoveCursor = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 						m_InputTextWidgetOnMoveCursor.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 
 						// Set the active editor UI as edited
@@ -2491,7 +2491,7 @@ namespace Kargono::Panels
 
 		// Set the script for the widget
 		activeSliderWidget->m_OnMoveSliderHandle = entry.m_Handle;
-		activeSliderWidget->m_OnMoveSlider = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
+		activeSliderWidget->m_OnMoveSlider = Assets::s_ScriptManager.GetAssetByHandle(entry.m_Handle);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2504,10 +2504,10 @@ namespace Kargono::Panels
 		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+		for (auto& [handle, assetInfo] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
 			// Get script from handle
-		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 
 			// Ensure script is compatible with the text widget
 			if (script->m_FuncType != WrappedFuncType::Void_Float)
@@ -2549,7 +2549,7 @@ namespace Kargono::Panels
 						}
 
 						// Ensure function type matches definition
-					    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+					    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 						if (script->m_FuncType != WrappedFuncType::Void_Float)
 						{
 							KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -2562,7 +2562,7 @@ namespace Kargono::Panels
 
 						// Fill the new script handle
 						activeSliderWidget.m_OnMoveSliderHandle = scriptHandle;
-						activeSliderWidget.m_OnMoveSlider = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+						activeSliderWidget.m_OnMoveSlider = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 						m_SliderWidgetOnMoveSlider.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 
 						// Set the active editor UI as edited
@@ -2706,7 +2706,7 @@ namespace Kargono::Panels
 
 		// Set the script for the widget
 		activeDropDownWidget->m_OnSelectOptionHandle = entry.m_Handle;
-		activeDropDownWidget->m_OnSelectOption = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
+		activeDropDownWidget->m_OnSelectOption = Assets::s_ScriptManager.GetAssetByHandle(entry.m_Handle);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -2719,10 +2719,10 @@ namespace Kargono::Panels
 		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+		for (auto& [handle, assetInfo] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
 			// Get script from handle
-		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 
 			// Ensure script is compatible with the widget
 			if (script->m_FuncType != WrappedFuncType::Void_String)
@@ -2764,7 +2764,7 @@ namespace Kargono::Panels
 						}
 
 						// Ensure function type matches definition
-					    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+					    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 						if (script->m_FuncType != WrappedFuncType::Void_String)
 						{
 							KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -2777,7 +2777,7 @@ namespace Kargono::Panels
 
 						// Fill the new script handle
 						activeDropDownWidget.m_OnSelectOptionHandle = scriptHandle;
-						activeDropDownWidget.m_OnSelectOption = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+						activeDropDownWidget.m_OnSelectOption = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 						m_DropDownWidgetOnSelectOption.m_CurrentOption = { script->m_ScriptName.c_str(), scriptHandle };
 
 						// Set the active editor UI as edited
@@ -3448,7 +3448,7 @@ namespace Kargono::Panels
 
 		// Set the on press script for the text widget
 		selectionData->m_FunctionPointers.m_OnPressHandle = entry.m_Handle;
-		selectionData->m_FunctionPointers.m_OnPress = Assets::AssetService::m_ScriptManager.GetAssetByHandle(entry.m_Handle);
+		selectionData->m_FunctionPointers.m_OnPress = Assets::s_ScriptManager.GetAssetByHandle(entry.m_Handle);
 
 		// Set the active editor UI as edited
 		s_UIWindow->m_TreePanel->m_MainHeader.m_EditColorActive = true;
@@ -3462,10 +3462,10 @@ namespace Kargono::Panels
 		spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 
 		// Add all compatible scripts to the select options
-		for (auto& [handle, assetInfo] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+		for (auto& [handle, assetInfo] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
 			// Get script from handle
-		    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+		    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 
 			// Ensure script is compatible with the text widget
 			if (script->m_FuncType != currentFuncType)
@@ -3525,7 +3525,7 @@ namespace Kargono::Panels
 					}
 
 					// Ensure function type matches definition
-				    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 					if (script->m_FuncType != s_CurrentFuncType)
 					{
 						KG_WARN("Incorrect function type returned when linking script to usage point");

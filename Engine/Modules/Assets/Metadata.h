@@ -51,7 +51,7 @@ namespace Kargono::Assets
 		{
 			KG_ASSERT(!m_Name.IsEmpty());
 			KG_ASSERT(!m_FileDirectory.empty());
-			return m_FileDirectory / (m_Name.String() + t_AssetType::GetFileExtension().StringView());
+			return m_FileDirectory / (m_Name.String() + t_AssetType::GetFileExtension().String());
 		}
 		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
 		std::filesystem::path GetAssetFullIntermediatePath(std::string_view extension)

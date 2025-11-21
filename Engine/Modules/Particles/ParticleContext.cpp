@@ -3,7 +3,7 @@
 #include "Modules/Particles/ParticleContext.h"
 
 #include "Modules/Rendering/RenderingService.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Modules/Core/Engine.h"
 #include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/ECS/Entity.h"
@@ -23,7 +23,7 @@ namespace Kargono::Particles
 			m_ParticleRenderSpec.ClearData();
 				// Create shader for UI background/quad rendering
 			Rendering::ShaderSpecification shaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawIndex, false };
-			Assets::AssetRef<Rendering::Shader> localShader = Assets::AssetService::m_ShaderManager.GetAssetBySpec(shaderSpec);
+			Assets::AssetRef<Rendering::Shader> localShader = Assets::s_ShaderManager.GetAssetBySpec(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			// Default particle color is pure white
@@ -318,7 +318,7 @@ namespace Kargono::Particles
 		KG_ASSERT(emitterHandle != Assets::k_EmptyHandle);
 
 		// Get emitter from asset service
-		Assets::AssetRef<Particles::EmitterConfig> emitter = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(emitterHandle);
+		Assets::AssetRef<Particles::EmitterConfig> emitter = Assets::s_EmitterConfigManager.GetAssetByHandle(emitterHandle);
 
 		KG_ASSERT(emitter);
 

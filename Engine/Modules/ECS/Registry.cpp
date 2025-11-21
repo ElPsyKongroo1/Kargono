@@ -26,7 +26,7 @@ namespace Kargono::ECS
 	{
 		return CreateEntityWithUUID(RandomUUIDService::GetRandomUUID(), name);
 	}
-	Entity Registry::CreateEntityWithUUID(UUID uuid, std::string_view name = {})
+	Entity Registry::CreateEntityWithUUID(UUID uuid, std::string_view name)
 	{
 		ECS::Entity entity = { m_Registry.CreateEntity().value() , this };
 		entity.SetUUID(uuid);
@@ -136,7 +136,7 @@ namespace Kargono::ECS
 
 	bool Registry::RegisterCustomComponent(Assets::AssetHandle customComponentHandle)
 	{
-		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(customComponentHandle);
+		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::s_CustomComponentManager.GetAssetByHandle(customComponentHandle);
 		KG_ASSERT(component);
 
 		if (component->m_ComponentSize == 0 || m_Registry.IsComponentRegistered(component->m_Identifier))
@@ -150,7 +150,7 @@ namespace Kargono::ECS
 	}
 	bool Registry::UnRegisterCustomComponent(Assets::AssetHandle customComponentHandle)
 	{
-	    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(customComponentHandle);
+	    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::s_CustomComponentManager.GetAssetByHandle(customComponentHandle);
 		KG_ASSERT(component);
 
 		if (component->m_ComponentSize == 0 || !m_Registry.IsComponentRegistered(component->m_Identifier))
@@ -163,7 +163,7 @@ namespace Kargono::ECS
 	}
 	size_t Registry::GetCustomComponentCount(Assets::AssetHandle customComponentHandle)
 	{
-		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(customComponentHandle);
+		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::s_CustomComponentManager.GetAssetByHandle(customComponentHandle);
 		KG_ASSERT(component);
 
 		if (component->m_ComponentSize == 0 || !m_Registry.IsComponentRegistered(customComponentHandle));

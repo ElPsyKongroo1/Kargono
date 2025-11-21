@@ -33,7 +33,7 @@ namespace Kargono::ECS
 		//==============================
 		// Entity Creation
 		Entity CreateEntity(std::string_view name = "");
-		Entity CreateEntityWithUUID(UUID uuid, std::string_view name = "");
+		Entity CreateEntityWithUUID(UUID uuid, std::string_view name = {});
 		Entity DuplicateEntity(Entity entity);
 		// Entity Destruction
 		void DestroyEntity(Entity entity);

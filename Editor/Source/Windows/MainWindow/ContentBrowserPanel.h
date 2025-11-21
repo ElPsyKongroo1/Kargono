@@ -3,7 +3,7 @@
 #include "Modules/Events/KeyEvent.h"
 #include "Modules/Events/MouseEvent.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
-#include "Modules/Assets/AssetService.h"
+
 
 #include "API/FileWatch/FileWatchAPI.h"
 

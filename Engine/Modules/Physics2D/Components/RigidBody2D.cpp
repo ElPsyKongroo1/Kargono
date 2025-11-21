@@ -37,8 +37,8 @@ namespace Kargono::Physics2D
 		m_FixedRotation = node["FixedRotation"].as<bool>();
 
 		m_OnCollisionStartScriptHandle = node["OnCollisionStartHandle"].as<uint64_t>();
-		m_OnCollisionStartScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_OnCollisionStartScriptHandle);
+		m_OnCollisionStartScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnCollisionStartScriptHandle);
 		m_OnCollisionEndScriptHandle = node["OnCollisionEndHandle"].as<uint64_t>();
-		m_OnCollisionEndScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_OnCollisionEndScriptHandle);
+		m_OnCollisionEndScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnCollisionEndScriptHandle);
 	}
 }

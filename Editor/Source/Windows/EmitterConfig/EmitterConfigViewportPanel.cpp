@@ -170,7 +170,7 @@ namespace Kargono::Panels
 		// Set up Line Input Specifications for Overlay Calls
 		{
 			Rendering::ShaderSpecification lineShaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawLine, false };
-			auto [uuid, localShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(lineShaderSpec);
+			auto [uuid, localShader] = Assets::s_ShaderManager.GetAssetByHandle(lineShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			// Add red color to shader
@@ -190,7 +190,7 @@ namespace Kargono::Panels
 		// Set up Point Input Specifications for Overlay Calls
 		{
 			Rendering::ShaderSpecification pointShaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, false, Rendering::RenderingType::DrawPoint, false };
-			auto [uuid, localShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(pointShaderSpec);
+			auto [uuid, localShader] = Assets::s_ShaderManager.GetAssetByHandle(pointShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f }, 

@@ -346,52 +346,52 @@ namespace Kargono::Scripting
 		// If they do, remove the reference
 
 		// Check StateMachines State assets
-		for (auto& [aiHandle, assetInfo] : Assets::AssetService::m_StateManager.GetAssetRegistry())
+		for (auto& [aiHandle, assetInfo] : Assets::s_StateManager.GetAssetRegistry())
 		{
-		    Assets::AssetRef<States::State> aiStateRef = Assets::AssetService::m_StateManager.GetAssetByHandle(aiHandle);
+		    Assets::AssetRef<States::State> aiStateRef = Assets::s_StateManager.GetAssetByHandle(aiHandle);
 			bool aiModified = AssetService::RemoveScriptFromState(aiStateRef, metadata.m_Handle);
 
 			if (aiModified)
 			{
-				Assets::AssetService::m_StateManager.UpdateAsset(aiStateRef);
+				Assets::s_StateManager.UpdateAsset(aiStateRef);
 			}
 		}
 
 		// Check input maps assets
-		for (auto& [inputHandle, assetInfo] : Assets::AssetService::m_InputMapManager.GetAssetRegistry())
+		for (auto& [inputHandle, assetInfo] : Assets::s_InputMapManager.GetAssetRegistry())
 		{
-		    Assets::AssetRef<Input::InputMap> inputMapRef = Assets::AssetService::m_InputMapManager.GetAssetByHandle(inputHandle);
+		    Assets::AssetRef<Input::InputMap> inputMapRef = Assets::s_InputMapManager.GetAssetByHandle(inputHandle);
 			bool inputModified = inputMapRef->RemoveScript(metadata.m_Handle);
 
 			if (inputModified)
 			{
-				Assets::AssetService::m_InputMapManager.UpdateAsset(inputMapRef);
+				Assets::s_InputMapManager.UpdateAsset(inputMapRef);
 			}
 		}
 
 		// Check user interface assets
-		for (auto& [uiHandle, assetInfo] : Assets::AssetService::m_UserInterfaceManager.GetAssetRegistry())
+		for (auto& [uiHandle, assetInfo] : Assets::s_UserInterfaceManager.GetAssetRegistry())
 		{
 			// Handle UI level function pointers
-		    Assets::AssetRef<RuntimeUI::UserInterface> userInterfaceRef = Assets::AssetService::m_UserInterfaceManager.GetAssetByHandle(uiHandle);
+		    Assets::AssetRef<RuntimeUI::UserInterface> userInterfaceRef = Assets::s_UserInterfaceManager.GetAssetByHandle(uiHandle);
 			bool uiModified = userInterfaceRef->RemoveScript(metadata.m_Handle);
 			if (uiModified)
 			{
-				Assets::AssetService::m_UserInterfaceManager.UpdateAsset(userInterfaceRef);
+				Assets::s_UserInterfaceManager.UpdateAsset(userInterfaceRef);
 			}
 		}
 
 		// Check scene assets
-		for (auto& [sceneHandle, assetInfo] : Assets::AssetService::m_SceneManager.GetAssetRegistry())
+		for (auto& [sceneHandle, assetInfo] : Assets::s_SceneManager.GetAssetRegistry())
 		{
 			// Handle UI level function pointers
-		    Assets::AssetRef<Scenes::Scene> sceneRef = Assets::AssetService::m_SceneManager.GetAssetByHandle(sceneHandle);
+		    Assets::AssetRef<Scenes::Scene> sceneRef = Assets::s_SceneManager.GetAssetByHandle(sceneHandle);
 
 			bool sceneModified = sceneRef->RemoveScript(metadata.m_Handle);
 			if (sceneModified)
 			{
 				// Save scene
-				Assets::AssetService::m_SceneManager.UpdateAsset(sceneRef);
+				Assets::s_SceneManager.UpdateAsset(sceneRef);
 			}
 		}
 

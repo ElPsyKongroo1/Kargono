@@ -298,6 +298,39 @@ namespace Kargono
 			return std::string(m_DataBuffer.data(), m_StringLength);
 		}
 
+	public:
+		//==============================
+		// XOR Functionality
+		//==============================
+		constexpr FixedBufferString<t_BufferSize> XOR(const FixedBufferString<t_BufferSize>& other) const
+		{
+			FixedBufferString<t_BufferSize> result;
+
+			for (std::size_t i = 0; i < t_BufferSize - 1; i++)
+			{
+				// Get bytes to xor
+				const uint8_t byteA = reinterpret_cast<const uint8_t>(m_DataBuffer[i]);
+				const uint8_t byteB = reinterpret_cast<const uint8_t>(other.Data()[i]);
+				uint8_t xorByte = byteA ^ byteB;
+
+				// Check for null terminator in either string
+				if (byteA == '\0' || byteB == '\0')
+				{
+					result.m_DataBuffer[i] = '\0';
+					result.m_StringLength = i;
+					return result;
+				}
+
+				// Set the xor'd byte in result buffer
+				result.m_DataBuffer[i] = reinterpret_cast<char>(xorByte);
+			}
+
+			// Set default null terminator and length if full buffer used
+			result.m_DataBuffer[t_BufferSize - 1] = '\0';
+			result.m_StringLength = t_BufferSize - 1;
+
+			return result;
+		}
 	private:
 		//==============================
 		// Internal Functionality
@@ -355,38 +388,6 @@ namespace Kargono
 			// Add new null terminator
 			m_DataBuffer[m_StringLength] = '\0';
 			return true;
-		}
-
-		
-		
-		constexpr FixedBufferString<t_BufferSize> XOR(const FixedBufferString<t_BufferSize>& other)
-		{
-			FixedBufferString<t_BufferSize> result;
-
-			for (std::size_t i = 0; i < t_BufferSize - 1; i++)
-			{
-				// Get bytes to xor
-				uint8_t byteA = static_cast<uint8_t>(m_DataBuffer[i]);
-				uint8_t byteB = static_cast<uint8_t>(other.m_DataBuffer[i]);
-				uint8_t xorByte = byteA ^ byteB;
-
-				// Check for null terminator in either string
-				if (byteA == '\0' || byteB == '\0')
-				{
-					result.m_DataBuffer[i] = '\0';
-					result.m_StringLength = i;
-					return result;
-				}
-
-				// Set the xor'd byte in result buffer
-				result.m_DataBuffer[i] = static_cast<char>(xorByte);
-			}
-
-			// Set default null terminator and length if full buffer used
-			result.m_DataBuffer[t_BufferSize - 1] = '\0';
-			result.m_StringLength = t_BufferSize - 1;
-
-			return result;
 		}
 
 	private:

@@ -18,7 +18,7 @@ namespace Kargono::Panels
 			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_ProjectEnumManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_ProjectEnumManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
@@ -31,7 +31,7 @@ namespace Kargono::Panels
 				KG_WARN("No Project Enum Selected");
 				return;
 			}
-			if (!Assets::AssetService::m_ProjectEnumManager.GetAssetRegistry().contains(selection.m_Handle))
+			if (!Assets::s_ProjectEnumManager.GetAssetRegistry().contains(selection.m_Handle))
 			{
 				KG_WARN("Could not find on Project Enum in Project Enum editor");
 				return;
@@ -62,7 +62,7 @@ namespace Kargono::Panels
 					return;
 				}
 
-				for (auto& [id, asset] : Assets::AssetService::m_ProjectEnumManager.GetAssetRegistry())
+				for (auto& [id, asset] : Assets::s_ProjectEnumManager.GetAssetRegistry())
 				{
 					if (asset.Data.GetSpecificMetaData<Assets::ProjectEnumMetaData>()->Name == m_SelectProjectEnumNameSpec.m_CurrentOption)
 					{
@@ -70,9 +70,9 @@ namespace Kargono::Panels
 					}
 				}
 				m_EditorProjectEnumHandle = Assets::AssetService::CreateProjectEnum(m_SelectProjectEnumNameSpec.m_CurrentOption.c_str(), m_SelectProjectEnumLocationSpec.m_CurrentOption);
-				m_EditorProjectEnum = Assets::AssetService::m_ProjectEnumManager.GetAssetByHandle(m_EditorProjectEnumHandle);
+				m_EditorProjectEnum = Assets::s_ProjectEnumManager.GetAssetByHandle(m_EditorProjectEnumHandle);
 				m_MainHeader.m_EditColorActive = false;
-				m_MainHeader.m_Label = Assets::AssetService::m_ProjectEnumManager.GetAssetRegistry().at(
+				m_MainHeader.m_Label = Assets::s_ProjectEnumManager.GetAssetRegistry().at(
 					m_EditorProjectEnumHandle).Data.FileLocation.filename().string();
 				m_EnumDataTable.m_OnRefresh();
 			};
@@ -112,7 +112,7 @@ namespace Kargono::Panels
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
 			{
-				Assets::AssetService::m_ProjectEnumManager.UpdateAsset(m_EditorProjectEnum);
+				Assets::s_ProjectEnumManager.UpdateAsset(m_EditorProjectEnum);
 				m_MainHeader.m_EditColorActive = false;
 			});
 		m_MainHeader.AddToSelectionList("Close", [&]()
@@ -370,7 +370,7 @@ namespace Kargono::Panels
 
 		// Look for asset in registry using the file location
 		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
-		Assets::AssetHandle assetHandle = Assets::AssetService::m_ProjectEnumHandleFromFileLocationManager.GetAssetByHandle(relativePath);
+		Assets::AssetHandle assetHandle = Assets::s_ProjectEnumHandleFromFileLocationManager.GetAssetByHandle(relativePath);
 
 		// Validate resulting handle
 		if (!assetHandle)
@@ -418,10 +418,10 @@ namespace Kargono::Panels
 	}
 	void ProjectEnumPanel::OnOpenProjectEnum(Assets::AssetHandle newHandle)
 	{
-		m_EditorProjectEnum = Assets::AssetService::m_ProjectEnumManager.GetAssetByHandle(newHandle);
+		m_EditorProjectEnum = Assets::s_ProjectEnumManager.GetAssetByHandle(newHandle);
 		m_EditorProjectEnumHandle = newHandle;
 		m_MainHeader.m_EditColorActive = false;
-		m_MainHeader.m_Label = Assets::AssetService::m_ProjectEnumManager.GetAssetRegistry().at(
+		m_MainHeader.m_Label = Assets::s_ProjectEnumManager.GetAssetRegistry().at(
 			m_EditorProjectEnumHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}

@@ -18,7 +18,7 @@ namespace Kargono::Panels
 			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_GameStateManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_GameStateManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
@@ -31,7 +31,7 @@ namespace Kargono::Panels
 				KG_WARN("No Game State Selected");
 				return;
 			}
-			if (!Assets::AssetService::m_GameStateManager.GetAssetRegistry().contains(selection.m_Handle))
+			if (!Assets::s_GameStateManager.GetAssetRegistry().contains(selection.m_Handle))
 			{
 				KG_WARN("Could not find on game state in game state editor");
 				return;
@@ -64,7 +64,7 @@ namespace Kargono::Panels
 				return;
 			}
 
-			for (auto& [id, asset] : Assets::AssetService::m_GameStateManager.GetAssetRegistry())
+			for (auto& [id, asset] : Assets::s_GameStateManager.GetAssetRegistry())
 			{
 				if (asset.Data.GetSpecificMetaData<Assets::GameStateMetaData>()->Name == m_SelectGameStateNameSpec.m_CurrentOption)
 				{
@@ -72,9 +72,9 @@ namespace Kargono::Panels
 				}
 			}
 			m_EditorGameStateHandle = Assets::AssetService::CreateGameState(m_SelectGameStateNameSpec.m_CurrentOption.c_str(), m_SelectGameStateLocationSpec.m_CurrentOption);
-			m_EditorGameState = Assets::AssetService::m_GameStateManager.GetAssetByHandle(m_EditorGameStateHandle);
+			m_EditorGameState = Assets::s_GameStateManager.GetAssetByHandle(m_EditorGameStateHandle);
 			m_MainHeader.m_EditColorActive = false;
-			m_MainHeader.m_Label = Assets::AssetService::m_GameStateManager.GetAssetRegistry().at(
+			m_MainHeader.m_Label = Assets::s_GameStateManager.GetAssetRegistry().at(
 				m_EditorGameStateHandle).Data.FileLocation.filename().string();
 			m_FieldsTable.m_OnRefresh();
 		};
@@ -114,7 +114,7 @@ namespace Kargono::Panels
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
 			{
-				Assets::AssetService::m_GameStateManager.UpdateAsset(m_EditorGameState);
+				Assets::s_GameStateManager.UpdateAsset(m_EditorGameState);
 				m_MainHeader.m_EditColorActive = false;
 			});
 		m_MainHeader.AddToSelectionList("Close", [&]()
@@ -424,7 +424,7 @@ namespace Kargono::Panels
 
 		// Look for asset in registry using the file location
 		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
-		Assets::AssetHandle assetHandle = Assets::AssetService::m_GameStateHandleFromFileLocationManager.GetAssetByHandle(relativePath);
+		Assets::AssetHandle assetHandle = Assets::s_GameStateHandleFromFileLocationManager.GetAssetByHandle(relativePath);
 
 		// Validate resulting handle
 		if (!assetHandle)
@@ -473,10 +473,10 @@ namespace Kargono::Panels
 	}
 	void GameStatePanel::OnOpenGameState(Assets::AssetHandle newHandle)
 	{
-		m_EditorGameState = Assets::AssetService::m_GameStateManager.GetAssetByHandle(newHandle);
+		m_EditorGameState = Assets::s_GameStateManager.GetAssetByHandle(newHandle);
 		m_EditorGameStateHandle = newHandle;
 		m_MainHeader.m_EditColorActive = false;
-		m_MainHeader.m_Label = Assets::AssetService::m_GameStateManager.GetAssetRegistry().at(
+		m_MainHeader.m_Label = Assets::s_GameStateManager.GetAssetRegistry().at(
 			m_EditorGameStateHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}

@@ -9,6 +9,7 @@
 #include "Modules/Memory/IAllocator.h"
 #include "Modules/Assets/Concepts/ManageAssetConcepts.h"
 #include "Modules/Assets/Concepts/RegistryConcept.h"
+#include "Modules/Core/MetaProgramming/MetaProgrammingTools.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 
@@ -105,9 +106,12 @@ namespace Kargono::Assets
 			return GetAssetByHandle(handle);
 		}
 
-		AssetReference<t_AssetType> GetAssetBySpec(const typename t_AssetType::Spec& spec)
+		AssetReference<t_AssetType> GetAssetBySpec(const auto& spec)
 			requires HasGetAssetFromSpec<t_AssetType>
 		{
+			// Ensure spec type matches expected type
+			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
+
 			// Check each asset for matching spec
 			for (const auto& [handle, metadata] : m_AssetRegistry)
 			{
@@ -240,7 +244,7 @@ namespace Kargono::Assets
 			SendManageAssetEvent(metadata, Events::ManageAssetAction::UpdateAsset, providedData);
 		}
 
-		void UpdateAsset(AssetHandle handle, const t_AssetType::Spec& spec)
+		void UpdateAsset(AssetHandle handle, const auto& spec)
 			requires HasUpdateFromSpec<t_AssetType>
 		{
 			// Ensure asset exists and is cached
@@ -510,7 +514,7 @@ namespace Kargono::Assets
 			}
 
 			// Create metadata
-			Metadata newMetadata{ CreateAssetMetadata(GetAssetIdentifier<t_AssetType>, creationData.m_AssetName
+			Metadata newMetadata{ CreateAssetMetadata(GetAssetIdentifier<t_AssetType>, creationData.m_AssetName,
 				metadataFileDirectory, creationData.m_IsHidden) };
 
 			// Validate metadata
@@ -529,7 +533,7 @@ namespace Kargono::Assets
 			newMetadata.m_Hash = resultHash;
 
 			// Add new asset into asset registry
-			m_AssetRegistry.insert({ newHandle, newMetadata });
+			m_AssetRegistry.insert({ newMetadata.m_Handle, newMetadata });
 			SerializeAssetRegistry();
 
 			// Fill in-memory cache
@@ -557,11 +561,14 @@ namespace Kargono::Assets
 
 			return newMetadata.m_Handle;
 		}
-
+		
 		AssetHandle CreateAssetFromSpec(const AssetCreationData& creationData, 
-			const typename t_AssetType::Spec& spec)
+			const auto& spec)
 			requires HasCreateFromSpec<t_AssetType>
 		{
+			// Ensure spec type matches expected type
+			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
+
 			// Handle validation
 			if constexpr (HasValidateCreateFromSpec<t_AssetType>)
 			{
@@ -629,7 +636,7 @@ namespace Kargono::Assets
 			newMetadata.m_Hash = resultHash;
 
 			// Register new asset
-			m_AssetRegistry.insert({ newHandle, newMetadata });
+			m_AssetRegistry.insert({ newMetadata.m_Handle, newMetadata });
 			SerializeAssetRegistry(); // Update Registry File on Disk
 
 			// Fill in-memory cache
@@ -744,7 +751,7 @@ namespace Kargono::Assets
 			}
 			catch (YAML::ParserException e)
 			{
-				KG_WARN("Failed to load {} file {}\n  {}", k_Config.m_FileExtension.CString(), registryPath.string(), e.what());
+				KG_WARN("Failed to load file {}\n  {}", registryPath.string(), e.what());
 				return;
 			}
 
@@ -837,7 +844,7 @@ namespace Kargono::Assets
 						cachedDirectory.c_str());
 					return false;
 				}
-				metadataFileDirectory = NormalizeAssetDirectory(cachedDirectory);
+				cachedDirectory = NormalizeAssetDirectory(cachedDirectory);
 			}
 			else
 			{
@@ -1062,7 +1069,7 @@ namespace Kargono::Assets
 			if constexpr (HasFileLocation<t_AssetType>)
 			{
 				Utility::SHA256Hash fileChecksum{};
-				fileChecksum = Utility::FileSystem::SHA256HashFromFile(metadata.GetAssetFullFilePath());
+				fileChecksum = Utility::FileSystem::SHA256HashFromFile(metadata.GetAssetFullFilePath<t_AssetType>());
 				resultHash = resultHash ^ fileChecksum;
 			}
 
@@ -1071,7 +1078,7 @@ namespace Kargono::Assets
 			{
 				Utility::SHA256Hash intermediateChecksum{};
 				std::filesystem::path intermediateFolder{ metadata.GetAssetFullIntermediatePath({})};
-				for (const FixedStrBuf16& extension : t_AssetType::GetIntermediateExtensions())
+				for (const FixedBufStr16& extension : t_AssetType::GetIntermediateExtensions())
 				{
 					intermediateFolder.replace_extension(extension.CString());
 					Utility::SHA256Hash currentIntermediateChecksum{ Utility::FileSystem::SHA256HashFromFile(intermediateFolder) };
@@ -1104,7 +1111,7 @@ namespace Kargono::Assets
 				{
 					intermediateFolder.replace_extension(extension.CString());
 					KG_ASSERT(Utility::FileSystem::PathExists(intermediateFolder));
-					bool deleteSuccess { Utility::FileSystem::DeleteSelectedFile(intermediateLocation) };
+					bool deleteSuccess { Utility::FileSystem::DeleteSelectedFile(intermediateFolder) };
 					KG_ASSERT(deleteSuccess);
 				}
 			}
@@ -1124,19 +1131,19 @@ namespace Kargono::Assets
 					KG_ASSERT(currentRef.GetLoadState() != LoadState::Unloaded);
 
 					// Deallocate if necessary
-					if (currentRef.m_LoadState == LoadState::Loaded)
+					if (currentRef.GetLoadState() == LoadState::Loaded)
 					{
 						// Deallocate the data
 						i_BackingAllocator->Dealloc<t_AssetType>(&currentRef.GetAsset()); // GOTTA LOVE UB
 					}
 
 					// Remove asset listing from cache map
-					m_AssetCache.erase(assetHandle);
+					m_AssetCache.erase(handle);
 				}
 			}
 
 			// Delete the asset inside the registry
-			m_AssetRegistry.erase(assetHandle);
+			m_AssetRegistry.erase(handle);
 		}
 
 		void LoadAssetIntoCache(Metadata& metadata) requires HasAssetCacheFlag<t_AssetType>
@@ -1176,9 +1183,12 @@ namespace Kargono::Assets
 		};
 
 		void UpdateFromSpecImpl(Metadata& metadata,
-			AssetReference<t_AssetType> currentRef, const typename t_AssetType::Spec& spec)
+			AssetReference<t_AssetType> currentRef, const auto& spec)
 			requires HasUpdateFromSpec<t_AssetType>
 		{
+			// Ensure spec type matches expected type
+			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
+
 			// Ensure asset type supports serialization
 			KG_ASSERT(metadata.IsValid());
 			KG_ASSERT(currentRef.IsUsable());
@@ -1190,9 +1200,12 @@ namespace Kargono::Assets
 			currentAsset.UpdateFromSpec(metadata, spec);
 		}
 
-		Ref<void> ValidateUpdateFromSpecImpl(Metadata& metadata, const typename t_AssetType::Spec& spec)
+		Ref<void> ValidateUpdateFromSpecImpl(Metadata& metadata, const auto& spec)
 			requires HasValidateUpdateFromSpec<t_AssetType>
 		{
+			// Ensure spec type matches expected type
+			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
+
 			KG_ASSERT(metadata.IsValid());
 
 			// Call user-defined validate function
@@ -1227,9 +1240,12 @@ namespace Kargono::Assets
 			t_AssetType::CreateFromFile(metadata, sourcePath);
 		};
 
-		void CreateFromSpecImpl(Metadata& metadata, const typename t_AssetType::Spec& spec)
+		void CreateFromSpecImpl(Metadata& metadata, const auto& spec)
 			requires HasCreateFromSpec<t_AssetType>
 		{
+			// Ensure spec type matches expected type
+			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
+
 			KG_ASSERT(metadata.IsValid());
 
 			// Call user-defined create-from-file function
@@ -1237,23 +1253,32 @@ namespace Kargono::Assets
 		};
 
 		void ValidateCreateFromSpecImpl(const AssetCreationData& creationData, 
-			const typename t_AssetType::Spec& spec)
+			const auto& spec)
 			requires HasValidateCreateFromSpec<t_AssetType>
 		{
+			// Ensure spec type matches expected type
+			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
+
 			// Call user-defined create-from-file function
 			t_AssetType::ValidateCreateFromSpec(creationData, spec);
 		};
 
-		bool GetAssetFromSpecImpl(Metadata& metadata, const typename t_AssetType::Spec& spec)
+		bool GetAssetFromSpecImpl(Metadata& metadata, const auto& spec)
 			requires HasGetAssetFromSpec<t_AssetType>
 		{
+			// Ensure spec type matches expected type
+			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
+
 			// Call user-defined function to check if an asset meets the provided specification requirements
 			return t_AssetType::GetAssetFromSpec(metadata, spec);
 		};
 
-		bool GetHashFromSpecImpl(const typename t_AssetType::Spec& spec)
+		bool GetHashFromSpecImpl(const auto& spec)
 			requires HasHashFromSpec<t_AssetType>
 		{
+			// Ensure spec type matches expected type
+			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
+
 			// Call user-defined function to get hash from spec
 			return t_AssetType::GetHashFromSpec(spec);
 		};
@@ -1494,7 +1519,7 @@ namespace Kargono::Assets
 				std::filesystem::path registryAssetPath = metadata.GetAssetRelativeFilePath();
 				if (registryAssetPath.compare(assetPath) == 0)
 				{
-					return assetHandle
+					return assetHandle;
 				}
 			}
 			return k_EmptyHandle;

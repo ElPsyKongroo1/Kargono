@@ -4,7 +4,7 @@
 #include "Modules/Scripting/ScriptOutputGenerator.h"
 
 #include "Modules/EditorUI/EditorUIInclude.h"
-#include "Modules/Assets/AssetService.h"
+
 #include "Modules/ECSInternal/CustomComponent.h"
 #include "Modules/ECS/Entity.h"
 #include "Kargono/ProjectData/ProjectEnum.h"
@@ -469,9 +469,9 @@ namespace Kargono::Scripting
 		newFunctionMember = {};
 
 		// Provide all custom components as member data for the entity type
-		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+		for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
 		{
-		    Assets::AssetRef<ECSInternal::CustomComponent> projectComp = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
+		    Assets::AssetRef<ECSInternal::CustomComponent> projectComp = Assets::s_CustomComponentManager.GetAssetByHandle(handle);
 			KG_ASSERT(projectComp);
 
 			// Initialize custom component data
@@ -504,11 +504,11 @@ namespace Kargono::Scripting
 					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
 					KG_ASSERT(projectComponentExpression);
 					Ref<ECSInternal::CustomComponent> component = nullptr;
-					for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+					for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
 					{
 						if (asset.Data.GetSpecificMetaData<Assets::CustomComponentMetaData>()->Name == projectComponentExpression->Value.Value)
 						{
-							component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
+							component = Assets::s_CustomComponentManager.GetAssetByHandle(handle);
 							generator.m_OutputText << std::to_string(handle);
 							break;
 						}
@@ -548,11 +548,11 @@ namespace Kargono::Scripting
 					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->CurrentNodeExpression->Value);
 					KG_ASSERT(projectComponentExpression);
 					Ref<ECSInternal::CustomComponent> component = nullptr;
-					for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+					for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
 					{
 						if (asset.Data.GetSpecificMetaData<Assets::CustomComponentMetaData>()->Name == projectComponentExpression->Value.Value)
 						{
-							component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
+							component = Assets::s_CustomComponentManager.GetAssetByHandle(handle);
 							generator.m_OutputText << std::to_string(handle);
 							break;
 						}
@@ -1129,7 +1129,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all StateMachines States
 		CustomLiteralNameToIDMap& aiMap = m_AllLiteralTypes.at("States").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_StateManager.GetAssetRegistry())
+		for (auto& [configHandle, configInfo] : Assets::s_StateManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "ai_state" };
@@ -1142,7 +1142,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all audio buffers
 		CustomLiteralNameToIDMap& audioMap = m_AllLiteralTypes.at("AudioBuffers").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_AudioBufferManager.GetAssetRegistry())
+		for (auto& [configHandle, configInfo] : Assets::s_AudioBufferManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "audio_buffer" };
@@ -1155,7 +1155,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all emitter configs
 		CustomLiteralNameToIDMap& emitterConfigMap = m_AllLiteralTypes.at("EmitterConfigs").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_EmitterConfigManager.GetAssetRegistry())
+		for (auto& [configHandle, configInfo] : Assets::s_EmitterConfigManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "emitter_config" };
@@ -1168,7 +1168,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all fonts
 		CustomLiteralNameToIDMap& fontMap = m_AllLiteralTypes.at("Fonts").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_FontManager.GetAssetRegistry())
+		for (auto& [configHandle, configInfo] : Assets::s_FontManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "font" };
@@ -1181,7 +1181,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all game states
 		CustomLiteralNameToIDMap& gameStateMap = m_AllLiteralTypes.at("GameStates").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_GameStateManager.GetAssetRegistry())
+		for (auto& [configHandle, configInfo] : Assets::s_GameStateManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "game_state" };
@@ -1194,7 +1194,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all input map
 		CustomLiteralNameToIDMap& inputMapMap = m_AllLiteralTypes.at("InputMaps").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_InputMapManager.GetAssetRegistry())
+		for (auto& [configHandle, configInfo] : Assets::s_InputMapManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "input_map" };
@@ -1207,7 +1207,7 @@ namespace Kargono::Scripting
 
 		// Load in names of all custom component
 		CustomLiteralNameToIDMap& projectComponentMap = m_AllLiteralTypes.at("CustomComponents").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+		for (auto& [configHandle, configInfo] : Assets::s_CustomComponentManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "project_component" };
@@ -1220,10 +1220,10 @@ namespace Kargono::Scripting
 
 		// Load in names of all project enums
 		CustomLiteralNameToIDMap& projectEnumMap = m_AllLiteralTypes.at("Enums").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_ProjectEnumManager.GetAssetRegistry())
+		for (auto& [configHandle, configInfo] : Assets::s_ProjectEnumManager.GetAssetRegistry())
 		{
 			m_EnumTypes.clear();
-			Ref<ProjectData::ProjectEnum> currentEnum{ Assets::AssetService::m_ProjectEnumManager.GetAssetByHandle(configHandle) };
+			Ref<ProjectData::ProjectEnum> currentEnum{ Assets::s_ProjectEnumManager.GetAssetByHandle(configHandle) };
 
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "project_enum" };
@@ -1250,10 +1250,10 @@ namespace Kargono::Scripting
 
 		// Load in names of all scene
 		CustomLiteralNameToIDMap& sceneMap = m_AllLiteralTypes.at("Scenes").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_SceneManager.GetAssetRegistry())
+		for (auto& [configHandle, configInfo] : Assets::s_SceneManager.GetAssetRegistry())
 		{
 			// Get the active scene
-			Ref<Scenes::Scene> currentScene{ Assets::AssetService::m_SceneManager.GetAssetByHandle(configHandle) };
+			Ref<Scenes::Scene> currentScene{ Assets::s_SceneManager.GetAssetByHandle(configHandle) };
 			KG_ASSERT(currentScene);
 
 			CustomLiteralMember newMember;
@@ -1297,10 +1297,10 @@ namespace Kargono::Scripting
 
 		// Load in names of all UserInterface
 		CustomLiteralNameToIDMap& userInterfaceMap = m_AllLiteralTypes.at("UserInterfaces").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_UserInterfaceManager.GetAssetRegistry())
+		for (auto& [configHandle, configInfo] : Assets::s_UserInterfaceManager.GetAssetRegistry())
 		{
 			// Get the active user interface
-			Ref<RuntimeUI::UserInterface> currentUI{ Assets::AssetService::m_UserInterfaceManager.GetAssetByHandle(configHandle) };
+			Ref<RuntimeUI::UserInterface> currentUI{ Assets::s_UserInterfaceManager.GetAssetByHandle(configHandle) };
 			KG_ASSERT(currentUI);
 
 			CustomLiteralMember newMember;

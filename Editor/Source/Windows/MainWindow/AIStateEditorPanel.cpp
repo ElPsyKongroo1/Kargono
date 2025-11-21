@@ -41,10 +41,10 @@ namespace Kargono::Panels
 
 	void StateEditorPanel::OnOpenState(Assets::AssetHandle newHandle)
 	{
-		m_EditorState = Assets::AssetService::m_StateManager.GetAssetByHandle(newHandle);
+		m_EditorState = Assets::s_StateManager.GetAssetByHandle(newHandle);
 		m_EditorStateHandle = newHandle;
 		m_MainHeader.m_EditColorActive = false;
-		m_MainHeader.m_Label = Assets::AssetService::m_StateManager.GetAssetRegistry().at(
+		m_MainHeader.m_Label = Assets::s_StateManager.GetAssetRegistry().at(
 			m_EditorStateHandle).Data.FileLocation.filename().string();
 		OnRefreshData();
 	}
@@ -201,7 +201,7 @@ namespace Kargono::Panels
 
 		// Look for asset in registry using the file location
 		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
-		Assets::AssetHandle assetHandle = Assets::AssetService::m_StateHandleFromFileLocationManager.GetAssetByHandle(relativePath);
+		Assets::AssetHandle assetHandle = Assets::s_StateHandleFromFileLocationManager.GetAssetByHandle(relativePath);
 
 		// Validate resulting handle
 		if (!assetHandle)
@@ -246,7 +246,7 @@ namespace Kargono::Panels
 			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_StateManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_StateManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
@@ -259,7 +259,7 @@ namespace Kargono::Panels
 				KG_WARN("No AI State Selected");
 				return;
 			}
-			if (!Assets::AssetService::m_StateManager.GetAssetRegistry().contains(selection.m_Handle))
+			if (!Assets::s_StateManager.GetAssetRegistry().contains(selection.m_Handle))
 			{
 				KG_WARN("Could not find the AI State specified");
 				return;
@@ -296,9 +296,9 @@ namespace Kargono::Panels
 				KG_WARN("AI state was not created");
 				return;
 			}
-			m_EditorState = Assets::AssetService::m_StateManager.GetAssetByHandle(m_EditorStateHandle);
+			m_EditorState = Assets::s_StateManager.GetAssetByHandle(m_EditorStateHandle);
 			m_MainHeader.m_EditColorActive = false;
-			m_MainHeader.m_Label = Assets::AssetService::m_StateManager.GetAssetRegistry().at(
+			m_MainHeader.m_Label = Assets::s_StateManager.GetAssetRegistry().at(
 				m_EditorStateHandle).Data.FileLocation.filename().string();
 			OnRefreshData();
 		};
@@ -337,7 +337,7 @@ namespace Kargono::Panels
 
 		m_MainHeader.AddToSelectionList("Save", [&]()
 			{
-				Assets::AssetService::m_StateManager.UpdateAsset(m_EditorState)
+				Assets::s_StateManager.UpdateAsset(m_EditorState)
 				m_MainHeader.m_EditColorActive = false;
 			});
 		m_MainHeader.AddToSelectionList("Close", [&]()
@@ -370,9 +370,9 @@ namespace Kargono::Panels
 			spec.GetAllOptions().clear();
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
 				{
 					continue;
@@ -392,7 +392,7 @@ namespace Kargono::Panels
 			}
 
 			// Get Script
-		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(selection.m_Handle);
+		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::s_ScriptManager.GetAssetByHandle(selection.m_Handle);
 			KG_ASSERT(selectedScript);
 
 			// Update ai state's script
@@ -424,7 +424,7 @@ namespace Kargono::Panels
 							}
 
 							// Ensure function type matches definition
-						    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+						    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 							if (script->m_FuncType != WrappedFuncType::Void_EntityFloat)
 							{
 								KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -455,9 +455,9 @@ namespace Kargono::Panels
 			spec.GetAllOptions().clear();
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_Entity)
 				{
 					continue;
@@ -477,7 +477,7 @@ namespace Kargono::Panels
 			}
 
 			// Get Script
-		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(selection.m_Handle);
+		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::s_ScriptManager.GetAssetByHandle(selection.m_Handle);
 			KG_ASSERT(selectedScript);
 
 			// Update ai state's script
@@ -511,7 +511,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_Entity)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -542,9 +542,9 @@ namespace Kargono::Panels
 			spec.GetAllOptions().clear();
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_Entity)
 				{
 					continue;
@@ -564,7 +564,7 @@ namespace Kargono::Panels
 			}
 
 			// Get Script
-		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(selection.m_Handle);
+		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::s_ScriptManager.GetAssetByHandle(selection.m_Handle);
 			KG_ASSERT(selectedScript);
 
 			// Update ai state's script
@@ -598,7 +598,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_Entity)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");
@@ -629,9 +629,9 @@ namespace Kargono::Panels
 			spec.GetAllOptions().clear();
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_ScriptManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_UInt32EntityEntityFloat)
 				{
 					continue;
@@ -651,7 +651,7 @@ namespace Kargono::Panels
 			}
 
 			// Get Script
-		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(selection.m_Handle);
+		    Assets::AssetRef<Scripting::Script> selectedScript = Assets::s_ScriptManager.GetAssetByHandle(selection.m_Handle);
 			KG_ASSERT(selectedScript);
 
 			// Update ai state's script
@@ -685,7 +685,7 @@ namespace Kargono::Panels
 								}
 
 								// Ensure function type matches definition
-							    Assets::AssetRef<Scripting::Script> script = Assets::AssetService::m_ScriptManager.GetAssetByHandle(scriptHandle);
+							    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(scriptHandle);
 								if (script->m_FuncType != WrappedFuncType::Void_UInt32EntityEntityFloat)
 								{
 									KG_WARN("Incorrect function type returned when linking script to usage point");

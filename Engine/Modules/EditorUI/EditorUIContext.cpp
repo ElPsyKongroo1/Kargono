@@ -9,11 +9,11 @@
 #include "Kargono/Utility/FileDialogs.h"
 #include "Modules/Rendering/Assets/Texture2D.h"
 #include "Kargono/Projects/Project.h"
-#include "Kargono/ProjectData/ColorPalette.h"
-#include "Modules/Assets/AssetService.h"
+#include "Modules/EditorUI/Assets/ColorPalette.h"
+
 
 #include "Kargono/Utility/DebugGlobals.h"
-
+#include "Modules/Assets/Managers/ColorPaletteManager.h"
 #include "Modules/EditorUI/ExternalAPI/ImGuiBackendAPI.h"
 #include "API/Platform/GlfwAPI.h"
 #include "API/Platform/gladAPI.h"
@@ -116,7 +116,7 @@ namespace Kargono::EditorUI
 		const float square_sz = ImGui::GetFrameHeight();
 		constexpr size_t k_InvalidPaletteID{ std::numeric_limits<size_t>().max() };
 
-		static std::vector<std::pair<std::string, ProjectData::ColorPalette>> s_ActivePalettes;
+		static std::vector<std::pair<std::string, EditorUI::ColorPalette>> s_ActivePalettes;
 		static std::string s_ActivePaletteLabel;
 		static size_t s_ActivePaletteID;
 		
@@ -135,14 +135,15 @@ namespace Kargono::EditorUI
 			s_ActivePalettes.clear();
 
 			// Add all color palettes from the active registry
-			for (auto& [handle, assetInfo] : Assets::AssetService::m_ColorPaletteManager.GetAssetRegistry())
+			for (auto& [handle, metadata] : Assets::s_ColorPaletteManager.GetAssetRegistry())
 			{
-			    Assets::AssetRef<ProjectData::ColorPalette> palette = Assets::AssetService::m_ColorPaletteManager.GetAssetByHandle(handle);
+			    Assets::AssetRef<EditorUI::ColorPalette> palette = Assets::s_ColorPaletteManager.GetAssetByHandle(handle);
 				KG_ASSERT(palette);
 				s_ActivePalettes.push_back
 				({
-					assetInfo.Data.GetSpecificMetaData<Assets::ColorPaletteMetaData>()->Name,
-					*palette
+				
+					metadata.m_Name.CString(),
+					palette.GetAsset()
 				});
 			}
 		}
@@ -211,7 +212,7 @@ namespace Kargono::EditorUI
 						columnCount = columnCount > 0 ? columnCount : 1;
 
 						// Get the active color palette
-						ProjectData::ColorPalette& activePalette = s_ActivePalettes[s_ActivePaletteID].second;
+						EditorUI::ColorPalette& activePalette = s_ActivePalettes[s_ActivePaletteID].second;
 						Spacing(SpacingAmount::Small);
 						// Start drawing columns
 						ImGui::Columns(columnCount, id.CString(), false);
@@ -881,7 +882,7 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void EditorUIContext::RenderImage(Ref<Rendering::Texture2D> image, float size, ImVec4 tint)
+	void EditorUIContext::RenderImage(Assets::AssetRef<Rendering::Texture2D> image, float size, ImVec4 tint)
 	{
 		ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + 4.0f, ImGui::GetCursorPosY() + 3.2f));
 
@@ -923,7 +924,8 @@ namespace Kargono::EditorUI
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, k_PureEmpty);
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, k_PureEmpty);
 		}
-		Ref<Rendering::Texture2D> iconChoice = active ? spec.m_ActiveIcon : spec.m_InactiveIcon;
+		Assets::AssetRef<Rendering::Texture2D> iconChoice = active ? 
+			spec.m_ActiveIcon.GetAssetRef() : spec.m_InactiveIcon.GetAssetRef();
 		if (ImGui::ImageButtonEx(widgetID,
 			(ImTextureID)(uint64_t)iconChoice->GetRendererID(),
 			ImVec2(spec.m_IconSize, spec.m_IconSize), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },

@@ -51,7 +51,7 @@ namespace Kargono::Memory
 			dataPtr->~t_Type();
 
 			// Free the underlying memory
-			return DeallocRaw(static_cast<uint8_t*>(dataPtr), t_Align);
+			return DeallocRaw(reinterpret_cast<uint8_t*>(dataPtr), t_Align);
 		}
 
 		//==============================

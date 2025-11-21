@@ -31,6 +31,6 @@ namespace Kargono::Scripting
 
 		// Deserialize component
 		m_OnUpdateScriptHandle = node["OnUpdateHandle"].as<uint64_t>();
-		m_OnUpdateScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_OnUpdateScriptHandle);
+		m_OnUpdateScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnUpdateScriptHandle);
 	} 
 }

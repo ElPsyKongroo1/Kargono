@@ -2,7 +2,7 @@
 
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
 
-#include "Modules/Assets/AssetService.h"
+
 #include "Modules/Core/Engine.h"
 #include "Kargono/Core/Window.h"
 #include "Kargono/Projects/Project.h"
@@ -27,7 +27,7 @@ namespace Kargono::RuntimeUI
 		{
 			// Create shader for UI background/quad rendering
 			Rendering::ShaderSpecification shaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false};
-			auto [uuid, localShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(shaderSpec);
+			auto [uuid, localShader] = Assets::s_ShaderManager.GetAssetByHandle(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, 
 				Utility::FileSystem::CRCFromString("a_Color"),
@@ -48,7 +48,7 @@ namespace Kargono::RuntimeUI
 		{
 			// Create shader for UI background/quad rendering
 			Rendering::ShaderSpecification shaderSpec{ Rendering::ColorInputType::None, Rendering::TextureInputType::ColorTexture, false, true, true, Rendering::RenderingType::DrawIndex, false };
-			auto [uuid, localShader] = Assets::AssetService::m_ShaderManager.GetAssetByHandle(shaderSpec);
+			auto [uuid, localShader] = Assets::s_ShaderManager.GetAssetByHandle(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			// Create basic shape component for UI quad rendering
@@ -107,7 +107,7 @@ namespace Kargono::RuntimeUI
 	void RuntimeUIContext::SetActiveUIFromHandle(Assets::AssetHandle uiHandle)
 	{
 		// Get user interface from asset service system
-	    Assets::AssetRef<RuntimeUI::UserInterface> uiReference = Assets::AssetService::m_UserInterfaceManager.GetAssetByHandle(uiHandle);
+	    Assets::AssetRef<RuntimeUI::UserInterface> uiReference = Assets::s_UserInterfaceManager.GetAssetByHandle(uiHandle);
 
 		// Validate returned user interface
 		if (!uiReference)

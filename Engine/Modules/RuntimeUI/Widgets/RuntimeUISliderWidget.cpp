@@ -128,7 +128,7 @@ namespace Kargono::RuntimeUI
 		}
 		else
 		{
-		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_OnMoveSliderHandle);
+		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnMoveSliderHandle);
 			if (!onPressScript)
 			{
 				KG_WARN("Unable to locate on move slider Script!");

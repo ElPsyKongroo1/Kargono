@@ -1,7 +1,7 @@
 #pragma once
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Events/KeyEvent.h"
-#include "Kargono/ProjectData/ColorPalette.h"
+#include "Modules/EditorUI/Assets/ColorPalette.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 
 #include <string>
@@ -67,7 +67,7 @@ namespace Kargono::Panels
 		//=========================
 		// Core Panel Data
 		//=========================
-		Ref<ProjectData::ColorPalette> m_EditorColorPalette{ nullptr };
+		Ref<EditorUI::ColorPalette> m_EditorColorPalette{ nullptr };
 		Assets::AssetHandle m_EditorColorPaletteHandle{ 0 };
 	private:
 		FixedBufStr32 m_PanelName{ "Color Palette Editor" };

@@ -2,7 +2,7 @@
 
 #include "Modules/ECS/Entity.h"
 #include "Modules/ECSInternal/Assets/CustomComponent.h"
-#include "Modules/Assets/AssetService.h"
+
 
 #include "Modules/Core/Components/Transform.h"
 #include "Modules/Core/Components/Tag.h"
@@ -115,14 +115,14 @@ namespace Kargono::ECS
 		}
 
 		// Handle all custom components
-		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+		for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
 		{
 			if (!HasCustomComponentData(handle))
 			{
 				continue;
 			}
 			Assets::AssetRef<ECSInternal::CustomComponent> projectComponent = 
-				Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
+				Assets::s_CustomComponentManager.GetAssetByHandle(handle);
 			uint8_t* componentRef = (uint8_t*)GetCustomComponentData(handle);
 
 			out << YAML::Key << projectComponent->m_Name + "Component";
@@ -233,10 +233,10 @@ namespace Kargono::ECS
 		}
 
 		// Handle all custom components
-		for (auto& [handle, asset] : Assets::AssetService::m_CustomComponentManager.GetAssetRegistry())
+		for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
 		{
 			Assets::AssetRef<ECSInternal::CustomComponent> projectComponent = 
-				Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(handle);
+				Assets::s_CustomComponentManager.GetAssetByHandle(handle);
 			KG_ASSERT(projectComponent);
 
 			YAML::Node projectComponentNode = entityNode[projectComponent->m_Name + "Component"];
@@ -278,7 +278,7 @@ namespace Kargono::ECS
 	void Entity::AddCustomComponentData(Assets::AssetHandle componentHandle)
 	{
 		// Get the custom component
-		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(componentHandle);
+		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::s_CustomComponentManager.GetAssetByHandle(componentHandle);
 		KG_ASSERT(component);
 		KG_ASSERT(component->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
 		if (component->m_ComponentSize == 0)
@@ -304,7 +304,7 @@ namespace Kargono::ECS
 	void* Entity::GetCustomComponentData(Assets::AssetHandle componentHandle)
 	{
 		Assets::AssetRef<ECSInternal::CustomComponent> component = 
-			Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(componentHandle);
+			Assets::s_CustomComponentManager.GetAssetByHandle(componentHandle);
 		KG_ASSERT(component);
 		KG_ASSERT(component->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
 		if (component->m_ComponentSize == 0)
@@ -317,7 +317,7 @@ namespace Kargono::ECS
 	bool Entity::HasCustomComponentData(Assets::AssetHandle componentHandle)
 	{
 		Assets::AssetRef<ECSInternal::CustomComponent> component = 
-			Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(componentHandle);
+			Assets::s_CustomComponentManager.GetAssetByHandle(componentHandle);
 		KG_ASSERT(component);
 		if (component->m_ComponentSize == 0)
 		{
@@ -327,7 +327,7 @@ namespace Kargono::ECS
 	}
 	void Entity::RemoveCustomComponentData(Assets::AssetHandle componentHandle)
 	{
-		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::AssetService::m_CustomComponentManager.GetAssetByHandle(componentHandle);
+		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::s_CustomComponentManager.GetAssetByHandle(componentHandle);
 		KG_ASSERT(component);
 		KG_ASSERT(component->m_Identifier != ECSInternal::k_InvalidComponentIdentifier);
 		if (component->m_ComponentSize == 0)

@@ -108,7 +108,7 @@ namespace Kargono::RuntimeUI
 		}
 		else
 		{
-		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::AssetService::m_ScriptManager.GetAssetByHandle(m_OnMoveCursorHandle);
+		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnMoveCursorHandle);
 			if (!onPressScript)
 			{
 				KG_WARN("Unable to locate On Move Cursor Script!");

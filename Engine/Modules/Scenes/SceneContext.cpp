@@ -31,7 +31,7 @@ namespace Kargono::Scenes
 	}
 	void SceneContext::TransitionScene(Assets::AssetHandle newSceneHandle)
 	{
-	    Assets::AssetRef<Scene> newScene = Assets::AssetService::m_SceneManager.GetAssetByHandle(newSceneHandle);
+	    Assets::AssetRef<Scene> newScene = Assets::s_SceneManager.GetAssetByHandle(newSceneHandle);
 		if (!newScene)
 		{
 			KG_WARN("Could not locate scene by scene handle");
@@ -71,7 +71,7 @@ namespace Kargono::Scenes
 
 	void SceneContext::TransitionSceneFromHandle(Assets::AssetHandle sceneID)
 	{
-	    Assets::AssetRef<Scenes::Scene> sceneReference = Assets::AssetService::m_SceneManager.GetAssetByHandle(sceneID);
+	    Assets::AssetRef<Scenes::Scene> sceneReference = Assets::s_SceneManager.GetAssetByHandle(sceneID);
 		if (sceneReference)
 		{
 			Particles::ParticleService::GetActiveContext().ClearEmitters();

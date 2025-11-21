@@ -61,7 +61,7 @@ namespace Kargono::Windows
 		// Set new in editor user interface
 
 		// Get emitter an ensure it is valid
-		Particles::EmitterConfig* openedEmitter = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(newHandle).get();
+		Particles::EmitterConfig* openedEmitter = Assets::s_EmitterConfigManager.GetAssetByHandle(newHandle).get();
 		KG_ASSERT(openedEmitter);
 
 		// Create editor only variant of emitter
@@ -70,7 +70,7 @@ namespace Kargono::Windows
 
 		// Set default values for header
 		m_MainHeader.m_EditColorActive = false;
-		m_MainHeader.m_Label = Assets::AssetService::m_EmitterConfigManager.GetAssetRegistry().at(
+		m_MainHeader.m_Label = Assets::s_EmitterConfigManager.GetAssetRegistry().at(
 			m_EditorEmitterConfigHandle).Data.FileLocation.filename().string();
 
 		// Handle opening the EmitterConfig in viewport
@@ -116,7 +116,7 @@ namespace Kargono::Windows
 			spec.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
-			for (auto& [handle, asset] : Assets::AssetService::m_EmitterConfigManager.GetAssetRegistry())
+			for (auto& [handle, asset] : Assets::s_EmitterConfigManager.GetAssetRegistry())
 			{
 				spec.AddToOptions("All Options", asset.Data.FileLocation.filename().string(), handle);
 			}
@@ -128,7 +128,7 @@ namespace Kargono::Windows
 				KG_WARN("No Emitter Config Selected");
 				return;
 			}
-			if (!Assets::AssetService::m_EmitterConfigManager.GetAssetRegistry().contains(selection.m_Handle))
+			if (!Assets::s_EmitterConfigManager.GetAssetRegistry().contains(selection.m_Handle))
 			{
 				KG_WARN("Could not find the Emitter Config specified");
 				return;
@@ -154,7 +154,7 @@ namespace Kargono::Windows
 			}
 
 			// Get emitter an ensure it is valid
-			Particles::EmitterConfig* openedEmitter = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(m_EditorEmitterConfigHandle).get();
+			Particles::EmitterConfig* openedEmitter = Assets::s_EmitterConfigManager.GetAssetByHandle(m_EditorEmitterConfigHandle).get();
 			KG_ASSERT(openedEmitter);
 
 			// Create editor only variant of emitterConfig
@@ -162,7 +162,7 @@ namespace Kargono::Windows
 
 			// Manage changing main header to new emitter
 			m_MainHeader.m_EditColorActive = false;
-			m_MainHeader.m_Label = Assets::AssetService::m_EmitterConfigManager.GetAssetRegistry().at(
+			m_MainHeader.m_Label = Assets::s_EmitterConfigManager.GetAssetRegistry().at(
 				m_EditorEmitterConfigHandle).Data.FileLocation.filename().string();
 			OnRefreshData();
 
@@ -222,12 +222,12 @@ namespace Kargono::Windows
 		m_MainHeader.AddToSelectionList("Save", [&]()
 		{
 			// Modify the asset memory
-		    Assets::AssetRef<Particles::EmitterConfig> cachedRef = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(m_EditorEmitterConfigHandle);
+		    Assets::AssetRef<Particles::EmitterConfig> cachedRef = Assets::s_EmitterConfigManager.GetAssetByHandle(m_EditorEmitterConfigHandle);
 			KG_ASSERT(cachedRef);
 			*cachedRef = *m_EditorEmitterConfig; // KINDA DANGEROUS
 
 			// Save emitter asset in registry
-			Assets::AssetService::m_EmitterConfigManager.UpdateAsset(cachedRef);
+			Assets::s_EmitterConfigManager.UpdateAsset(cachedRef);
 
 			// Update editted status
 			m_MainHeader.m_EditColorActive = false;
@@ -442,7 +442,7 @@ namespace Kargono::Windows
 
 		// Look for asset in registry using the file location
 		std::filesystem::path relativePath{ Utility::FileSystem::GetRelativePath(activeAssetDirectory, assetLocation) };
-		Assets::AssetHandle assetHandle = Assets::AssetService::m_EmitterConfigHandleFromFileLocationManager.GetAssetByHandle(relativePath);
+		Assets::AssetHandle assetHandle = Assets::s_EmitterConfigHandleFromFileLocationManager.GetAssetByHandle(relativePath);
 
 		// Validate resulting handle
 		if (!assetHandle)

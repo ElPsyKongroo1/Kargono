@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/Particles/Components/ParticleEmitter.h"
-#include "Modules/Assets/AssetService.h"
+
 
 namespace Kargono::Particles
 {
@@ -33,6 +33,6 @@ namespace Kargono::Particles
 		YAML::Node& node = *deserializeContext->m_Node;
 
 		Assets::AssetHandle emitterConfigHandle = node["EmitterHandle"].as<uint64_t>();
-		m_EmitterConfigRef = Assets::AssetService::m_EmitterConfigManager.GetAssetByHandle(emitterConfigHandle);
+		m_EmitterConfigRef = Assets::s_EmitterConfigManager.GetAssetByHandle(emitterConfigHandle);
 	}
 }
