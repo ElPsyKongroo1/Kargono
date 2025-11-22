@@ -153,7 +153,7 @@ namespace Kargono::Rendering
 		template<typename T>
 		static T* GetInputLocation(uint32_t inputNameHash, Buffer inputBuffer, Assets::AssetRef<Shader> shader)
 		{
-			InputBufferElement* currentInputBufferElement = shader->GetInputLayout().FindElementByName(inputNameHash);
+			InputBufferElement* currentInputBufferElement = shader->GetInputLayout().FindElementByHash(inputNameHash);
 
 			if (!currentInputBufferElement)
 			{
@@ -166,7 +166,7 @@ namespace Kargono::Rendering
 		template<typename T>
 		static void SetDataAtInputLocation(const T& value, uint32_t inputNameHash, Buffer inputBuffer, Assets::AssetRef<Shader> shader)
 		{
-			InputBufferElement* currentInputBufferElement = shader->GetInputLayout().FindElementByName(inputNameHash);
+			InputBufferElement* currentInputBufferElement = shader->GetInputLayout().FindElementByHash(inputNameHash);
 
 			if (!currentInputBufferElement)
 			{

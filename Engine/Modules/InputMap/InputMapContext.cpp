@@ -1,32 +1,31 @@
 #pragma once
 #include "kgpch.h"
 
+#include "Modules/Assets/Managers/InputMapManager.h"
+
 #include "Modules/InputMap/InputMapContext.h"
 #include "Modules/Input/InputService.h"
 #include "Modules/Core/Engine.h"
+#include "Modules/Scripting/Assets/Script.h"
 
 namespace Kargono::InputMap
 {
 	void InputMapContext::ClearActiveInputMap()
 	{
-		m_ActiveInputMap = { nullptr };
-		m_ActiveInputMapHandle = { 0 };
+		m_ActiveInputMap.Reset();
 	}
 
-	void InputMapContext::SetActiveInputMap(Ref<InputMap> newInput, Assets::AssetHandle newHandle)
+	void InputMapContext::SetActiveInputMap(Assets::AssetRef<InputMap> newInput)
 	{
 		m_ActiveInputMap = newInput;
-		m_ActiveInputMapHandle = newHandle;
 	}
 
 	void InputMapContext::SetActiveInputMapFromHandle(Assets::AssetHandle inputMapHandle)
 	{
-		static Ref<InputMap> s_InputRef{ nullptr };
-		static Assets::AssetHandle s_InputHandle{ 0 };
+		static Assets::AssetRef<InputMap> s_InputRef{};
 
 	    Assets::AssetRef<InputMap> inputReference = Assets::s_InputMapManager.GetAssetByHandle(inputMapHandle);
 		s_InputRef = inputReference;
-		s_InputHandle = inputMapHandle;
 
 		if (!inputReference)
 		{
@@ -36,7 +35,7 @@ namespace Kargono::InputMap
 
 		EngineService::GetActiveEngine().GetThread().SubmitFunction([&]()
 		{
-			SetActiveInputMap(s_InputRef, s_InputHandle);
+			SetActiveInputMap(s_InputRef);
 		});
 
 	}

@@ -5,7 +5,7 @@
 #include "Kargono/Core/Timestep.h"
 #include "Kargono/Core/FixedBufferString.h"
 #include "Modules/ECS/Entity.h"
-#include "Modules/Rendering/EditorPerspectiveCamera.h"
+#include "Modules/Cameras/PerspectiveCamera.h"
 #include "Modules/Rendering/Framebuffer.h"
 #include "Kargono/Math/Spline.h"
 #include "Modules/RuntimeUI/RuntimeUICommon.h"

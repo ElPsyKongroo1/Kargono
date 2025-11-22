@@ -3,6 +3,7 @@
 #include "Modules/RuntimeUI/FontContext.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
 #include "Modules/RuntimeUI/ExternalAPI/msdfgenAPI.h"
+#include "Modules/Assets/Managers/ShaderManager.h"
 
 namespace Kargono::RuntimeUI
 {
@@ -13,7 +14,7 @@ namespace Kargono::RuntimeUI
 		{
 			// TODO: Unreleased Heap Data with Buffer
 			Rendering::ShaderSpecification textShaderSpec{ Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::TextTexture, false, true, true, Rendering::RenderingType::DrawTriangle, false };
-			auto [uuid, localShader] = Assets::s_ShaderManager.GetAssetByHandle(textShaderSpec);
+			Assets::AssetRef<Rendering::Shader> localShader = Assets::s_ShaderManager.GetAssetBySpec(textShaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 0.0f, 1.0f, 0.0f, 1.0f },

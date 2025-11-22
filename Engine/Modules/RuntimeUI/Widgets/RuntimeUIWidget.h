@@ -154,8 +154,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Public Fields
 		//============================
-		Assets::AssetRef<Rendering::Texture2D> m_ImageRef{ nullptr };
-		Assets::AssetHandle m_ImageHandle{ Assets::k_EmptyHandle };
+		Assets::TAssetRef<Rendering::Texture2D> m_ImageRef{};
 		bool m_FixedAspectRatio{ false };
 	};
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Modules/Rendering/EditorPerspectiveCamera.h"
+#include "Modules/Cameras/PerspectiveCamera.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Kargono/Core/Base.h"
 #include "Modules/RuntimeUI/Assets/Font.h"

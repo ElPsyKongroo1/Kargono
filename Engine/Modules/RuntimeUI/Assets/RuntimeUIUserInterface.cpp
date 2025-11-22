@@ -7,6 +7,7 @@
 #include "Modules/RuntimeUI/Widgets/RuntimeUIHorizontalContainerWidget.h"
 #include "Modules/RuntimeUI/Widgets/RuntimeUIVerticalContainerWidget.h"
 #include "Modules/RuntimeUI/RuntimeUIWindow.h"
+#include "Modules/Assets/Managers/Texture2DManager.h"
 
 #include "Modules/Input/InputService.h"
 #include "Kargono/Utility/Operations.h"
@@ -67,12 +68,12 @@ namespace Kargono::RuntimeUI
 					* glm::scale(Math::mat4(1.0f), windowSize);
 				Rendering::Shader::SetDataAtInputLocation<Math::vec4>(window->m_BackgroundColor,
 					Utility::FileSystem::CRCFromString("a_Color"),
-					backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
+					backgroundSpec.m_Buffer, backgroundSpec.m_Shader.GetAssetRef());
 
 				// Push window ID and invalid widgetID
 				Rendering::Shader::SetDataAtInputLocation<int32_t>(window->m_ID,
 					Utility::FileSystem::CRCFromString("a_EntityID"),
-					backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
+					backgroundSpec.m_Buffer, backgroundSpec.m_Shader.GetAssetRef());
 
 				// Submit background data to GPU
 				Rendering::RenderingService::SubmitDataToRenderer(backgroundSpec);
@@ -86,10 +87,10 @@ namespace Kargono::RuntimeUI
 				// Push widget ID
 				Rendering::Shader::SetDataAtInputLocation<int32_t>(widgetRef->m_ID,
 					Utility::FileSystem::CRCFromString("a_EntityID"),
-					backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
+					backgroundSpec.m_Buffer, backgroundSpec.m_Shader.GetAssetRef());
 				Rendering::Shader::SetDataAtInputLocation<int32_t>(widgetRef->m_ID,
 					Utility::FileSystem::CRCFromString("a_EntityID"),
-					imageSpec.m_Buffer, imageSpec.m_Shader);
+					imageSpec.m_Buffer, imageSpec.m_Shader.GetAssetRef());
 				RuntimeUI::FontService::GetActiveContext().SetID((uint32_t)widgetRef->m_ID);
 
 				// Call the widget's rendering function
@@ -506,7 +507,7 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Ensure the texture provided is valid
-		Ref<Rendering::Texture2D> textureRef{ Assets::AssetService::m_Texture2DManager.GetAssetByHandle(textureHandle) };
+		Assets::AssetRef<Rendering::Texture2D> textureRef{ Assets::s_Texture2DManager.GetAssetByHandle(textureHandle) };
 		if (!textureRef)
 		{
 			KG_WARN("Attempt to modify the image of a widget, however, the provided image is invalid!");
@@ -521,7 +522,6 @@ namespace Kargono::RuntimeUI
 			return;
 		}
 
-		imageData->m_ImageHandle = textureHandle;
 		imageData->m_ImageRef = textureRef;
 	}
 
@@ -643,11 +643,10 @@ namespace Kargono::RuntimeUI
 		{
 			// Remove texture reference from widget if necessary
 			RuntimeUI::ImageWidget& imageWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
-			if (imageWidget.m_ImageData.m_ImageHandle == textureHandle)
+			if (imageWidget.m_ImageData.m_ImageRef.GetAssetHandle() == textureHandle)
 			{
 				RuntimeUI::ImageWidget& buttonWidget = *(RuntimeUI::ImageWidget*)widgetRef.get();
-				buttonWidget.m_ImageData.m_ImageHandle = Assets::k_EmptyHandle;
-				buttonWidget.m_ImageData.m_ImageRef = nullptr;
+				buttonWidget.m_ImageData.m_ImageRef.Reset();
 				uiModified = true;
 			}
 		}
@@ -655,11 +654,10 @@ namespace Kargono::RuntimeUI
 		{
 			// Remove texture reference from widget if necessary
 			RuntimeUI::ImageButtonWidget& imageWidget = *(RuntimeUI::ImageButtonWidget*)widgetRef.get();
-			if (imageWidget.m_ImageData.m_ImageHandle == textureHandle)
+			if (imageWidget.m_ImageData.m_ImageRef.GetAssetHandle() == textureHandle)
 			{
 				RuntimeUI::ImageButtonWidget& imageButtonWidget = *(RuntimeUI::ImageButtonWidget*)widgetRef.get();
-				imageButtonWidget.m_ImageData.m_ImageHandle = Assets::k_EmptyHandle;
-				imageButtonWidget.m_ImageData.m_ImageRef = nullptr;
+				imageButtonWidget.m_ImageData.m_ImageRef.Reset();
 				uiModified = true;
 			}
 		}
@@ -667,16 +665,14 @@ namespace Kargono::RuntimeUI
 		{
 			// Remove texture reference from widget if necessary
 			RuntimeUI::CheckboxWidget& checkboxWidget = *(RuntimeUI::CheckboxWidget*)widgetRef.get();
-			if (checkboxWidget.m_ImageUnChecked.m_ImageHandle == textureHandle)
+			if (checkboxWidget.m_ImageUnChecked.m_ImageRef.GetAssetHandle() == textureHandle)
 			{
-				checkboxWidget.m_ImageUnChecked.m_ImageHandle = Assets::k_EmptyHandle;
-				checkboxWidget.m_ImageUnChecked.m_ImageRef = nullptr;
+				checkboxWidget.m_ImageUnChecked.m_ImageRef.Reset();
 				uiModified = true;
 			}
-			if (checkboxWidget.m_ImageChecked.m_ImageHandle == textureHandle)
+			if (checkboxWidget.m_ImageChecked.m_ImageRef.GetAssetHandle() == textureHandle)
 			{
-				checkboxWidget.m_ImageChecked.m_ImageHandle = Assets::k_EmptyHandle;
-				checkboxWidget.m_ImageChecked.m_ImageRef = nullptr;
+				checkboxWidget.m_ImageChecked.m_ImageRef.Reset();
 				uiModified = true;
 			}
 		}
@@ -823,7 +819,7 @@ namespace Kargono::RuntimeUI
 		}
 		else
 		{
-			Ref<Scripting::Script> onMoveScript = AssetService::GetScript(m_Config.m_FunctionPointers.m_OnMoveHandle);
+			Assets::AssetRef<Scripting::Script> onMoveScript = Assets::s_ShaderManager.GetAssetByHandle(m_Config.m_FunctionPointers.m_OnMoveHandle);
 			if (!onMoveScript)
 			{
 				KG_WARN("Unable to locate OnMove Script!");

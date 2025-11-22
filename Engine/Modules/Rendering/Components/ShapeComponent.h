@@ -6,6 +6,8 @@
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Assets/AssetReference.h"
 #include "Kargono/Core/Buffer.h"
+#include "Modules/Rendering/Shape.h"
+#include "Modules/Rendering/Assets/Shader.h"
 
 #include <vector>
 
@@ -37,8 +39,6 @@ namespace Kargono::Rendering
 			dst->m_Shader = m_Shader;
 			dst->m_ShaderSpecification = m_ShaderSpecification;
 			dst->m_Texture = m_Texture;
-			dst->m_TextureHandle = m_TextureHandle;
-			dst->m_ShaderHandle = m_ShaderHandle;
 			dst->m_ShaderData = Buffer::Copy(m_ShaderData);
 			dst->m_VertexColors = m_VertexColors;
 		}
@@ -59,9 +59,7 @@ namespace Kargono::Rendering
 		Ref<std::vector<Math::vec4>> m_VertexColors{ nullptr };
 		Assets::TAssetRef<Rendering::Shader> m_Shader;
 		Rendering::ShaderSpecification m_ShaderSpecification{ Rendering::ColorInputType::None, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false };
-		Assets::AssetHandle m_ShaderHandle{ Assets::k_EmptyHandle };
 		Assets::TAssetRef<Rendering::Texture2D> m_Texture;
-		Assets::AssetHandle m_TextureHandle{ Assets::k_EmptyHandle };
 		Buffer m_ShaderData;
 	};
 

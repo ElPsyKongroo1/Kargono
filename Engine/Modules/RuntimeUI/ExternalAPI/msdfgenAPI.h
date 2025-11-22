@@ -27,11 +27,12 @@ namespace Kargono::Utility
 		msdfgen::BitmapConstRef<T, N> bitmap = (msdfgen::BitmapConstRef<T, N>)generator.atlasStorage();
 
 		Rendering::TextureSpecification spec;
-		spec.Width = bitmap.width;
-		spec.Height = bitmap.height;
-		spec.Format = Rendering::ImageFormat::RGB8;
-		spec.GenerateMipMaps = false;
-		Ref<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
+		spec.m_Width = bitmap.width;
+		spec.m_Height = bitmap.height;
+		spec.m_Format = Rendering::ImageFormat::RGB8;
+		spec.m_GenerateMipMaps = false;
+		Ref<Rendering::Texture2D> texture{ CreateRef<Rendering::Texture2D>() }; 
+		texture->RegisterTexture(spec);
 		texture->SetData((void*)bitmap.pixels, bitmap.width * bitmap.height * 3);
 		return texture;
 	}
@@ -55,12 +56,12 @@ namespace Kargono::Utility
 
 		msdfgen::BitmapConstRef<T, N> bitmap = (msdfgen::BitmapConstRef<T, N>)generator.atlasStorage();
 
-		textureSpec.Width = bitmap.width;
-		textureSpec.Height = bitmap.height;
-		textureSpec.Format = Rendering::ImageFormat::RGB8;
-		textureSpec.GenerateMipMaps = false;
+		textureSpec.m_Width = bitmap.width;
+		textureSpec.m_Height = bitmap.height;
+		textureSpec.m_Format = Rendering::ImageFormat::RGB8;
+		textureSpec.m_GenerateMipMaps = false;
 
-		buffer.Allocate(bitmap.width * bitmap.height * Utility::ImageFormatToBytes(textureSpec.Format));
-		memcpy(buffer.Data, bitmap.pixels, buffer.Size);
+		buffer.Allocate(bitmap.width * bitmap.height * Utility::ImageFormatToBytes(textureSpec.m_Format));
+		memcpy(buffer.m_Data, bitmap.pixels, buffer.m_Size);
 	}
 }

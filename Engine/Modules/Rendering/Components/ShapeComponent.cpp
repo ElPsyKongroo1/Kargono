@@ -1,6 +1,8 @@
 #include "kgpch.h"
 
 #include "Modules/Rendering/Components/ShapeComponent.h"
+#include "Modules/Assets/Managers/Texture2DManager.h"
+#include "Modules/Assets/Managers/ShaderManager.h"
 
 #include "Kargono/Core/Buffer.h"
 
@@ -32,14 +34,14 @@ namespace Kargono::Rendering
 		}
 		if (m_Texture)
 		{
-			out << YAML::Key << "TextureHandle" << YAML::Value << static_cast<uint64_t>(m_TextureHandle);
+			out << YAML::Key << "TextureHandle" << YAML::Value << static_cast<uint64_t>(m_Texture.GetAssetHandle());
 		}
 
 		static_assert(sizeof(uint8_t) * 20 == sizeof(Rendering::ShaderSpecification));
 		if (m_Shader)
 		{
 			// Add Shader Handle
-			out << YAML::Key << "ShaderHandle" << YAML::Value << static_cast<uint64_t>(m_ShaderHandle);
+			out << YAML::Key << "ShaderHandle" << YAML::Value << static_cast<uint64_t>(m_Shader.GetAssetHandle());
 			// Add Shader Specification
 			const Rendering::ShaderSpecification& shaderSpec = m_Shader->GetSpecification();
 			out << YAML::Key << "ShaderSpecification" << YAML::Value;
@@ -84,14 +86,13 @@ namespace Kargono::Rendering
 		if (node["TextureHandle"])
 		{
 			Assets::AssetHandle textureHandle = node["TextureHandle"].as<uint64_t>();
-			m_Texture = AssetService::GetTexture2D(textureHandle);
-			m_TextureHandle = textureHandle;
+			m_Texture = Assets::s_Texture2DManager.GetAssetByHandle(textureHandle);
 		}
 
 		if (node["ShaderHandle"])
 		{
 			Assets::AssetHandle shaderHandle = node["ShaderHandle"].as<uint64_t>();
-			m_Shader = AssetService::GetShader(shaderHandle);
+			m_Shader = Assets::s_ShaderManager.GetAssetByHandle(shaderHandle);
 			if (!m_Shader)
 			{
 				YAML::Node shaderSpecificationNode = node["ShaderSpecification"];
@@ -104,11 +105,10 @@ namespace Kargono::Rendering
 				shaderSpec.m_TextureInput = Utility::StringToTextureInputType(shaderSpecificationNode["TextureInput"].as<std::string>());
 				shaderSpec.m_DrawOutline = shaderSpecificationNode["DrawOutline"].as<bool>();
 				shaderSpec.m_RenderType = Utility::StringToRenderingType(shaderSpecificationNode["RenderType"].as<std::string>());
-				auto [newHandle, newShader] = AssetService::GetShader(shaderSpec);
-				shaderHandle = newHandle;
+				Assets::AssetRef<Shader> newShader = Assets::s_ShaderManager.GetAssetBySpec(shaderSpec);
+				shaderHandle = newShader.GetHandle();
 				m_Shader = newShader;
 			}
-			m_ShaderHandle = shaderHandle;
 			m_ShaderSpecification = m_Shader->GetSpecification();
 			YAML::Binary binary = node["Buffer"].as<YAML::Binary>();
 			Buffer buffer{ binary.size() };
@@ -134,13 +134,18 @@ namespace Kargono::Rendering
 
 	ShapeComponent::ShapeComponent()
 	{
-		auto [handle, shader] = Assets::s_ShaderManager.GetAssetByHandle(m_ShaderSpecification);
-		m_ShaderHandle = handle;
+		Assets::AssetRef<Shader> shader = Assets::s_ShaderManager.GetAssetBySpec(m_ShaderSpecification);
 		m_Shader = shader;
 		Buffer textureBuffer{ 4 };
 		textureBuffer.SetDataToByte(0xff);
-		m_TextureHandle = Assets::AssetService::ImportNewTextureFromData(textureBuffer, 1, 1, 4);
-		m_Texture = Assets::AssetService::m_Texture2DManager.GetAssetByHandle(m_TextureHandle);
+		Rendering::TextureSpecification textureSpec{};
+		textureSpec.m_Buffer = textureBuffer;
+		textureSpec.m_Width = 1;
+		textureSpec.m_Height = 1;
+		textureSpec.m_Format = ImageFormat::RGBA8;
+		Assets::AssetRef<Texture2D> texture = Assets::s_Texture2DManager.CreateAssetFromSpec({}, textureSpec);
+		KG_ASSERT(texture.IsUsable());
+		m_Texture = texture;
 		textureBuffer.Release();
 		Buffer buffer(m_Shader->GetInputLayout().GetStride() * sizeof(uint8_t));
 		m_ShaderData = buffer;

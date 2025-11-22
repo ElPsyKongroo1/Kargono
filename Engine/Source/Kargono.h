@@ -63,7 +63,7 @@
 #include "Modules/Rendering/Framebuffer.h"
 #include "Modules/Rendering/Assets/Texture2D.h"
 #include "Modules/Rendering/VertexArray.h"
-#include "Modules/Rendering/EditorPerspectiveCamera.h"
+#include "Modules/Cameras/PerspectiveCamera.h"
 
 //-----------------Scene-----------------//
 #include "Modules/Scenes/Assets/Scene.h"

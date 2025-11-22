@@ -34,22 +34,21 @@ namespace Kargono::InputMap
 		// Getter/Setter
 		//=========================
 		void ClearActiveInputMap();
-		void SetActiveInputMap(Ref<InputMap> newInput, Assets::AssetHandle newHandle);
+		void SetActiveInputMap(Assets::AssetRef<InputMap> newInput);
 		void SetActiveInputMapFromHandle(Assets::AssetHandle inputMapHandle);
-		Ref<InputMap> GetActiveInputMap()
+		Assets::AssetRef<InputMap> GetActiveInputMap()
 		{
-			return m_ActiveInputMap;
+			return m_ActiveInputMap.GetAssetRef();
 		}
 		Assets::AssetHandle GetActiveInputMapHandle()
 		{
-			return m_ActiveInputMapHandle;
+			return m_ActiveInputMap.GetAssetHandle();
 		}
 	private:
 		//=========================
 		// Current Input Mode
 		//=========================
-		Ref<InputMap> m_ActiveInputMap{ nullptr };
-		Assets::AssetHandle m_ActiveInputMapHandle{ Assets::k_EmptyHandle };
+		Assets::TAssetRef<InputMap> m_ActiveInputMap{};
 	};
 
 	class InputMapService // TODO: REMOVE EWWWWWWW

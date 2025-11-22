@@ -1,7 +1,7 @@
 #pragma once
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/Core/Timestep.h"
-#include "Modules/Rendering/EditorPerspectiveCamera.h"
+#include "Modules/Cameras/PerspectiveCamera.h"
 #include "Modules/Rendering/Framebuffer.h"
 #include "Kargono/Core/Window.h"
 

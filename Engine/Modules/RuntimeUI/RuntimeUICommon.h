@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Modules/Assets/AssetsTypes.h"
-
+#include "Modules/Assets/AssetsCommon.h"
 #include <cstdint>
 
 namespace Kargono::RuntimeUI

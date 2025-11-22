@@ -2,6 +2,7 @@
 
 #include "Modules/Particles/Assets/EmitterConfig.h"
 #include "Modules/Scenes/Assets/Scene.h"
+#include "Modules/Assets/Managers/SceneManager.h"
 
 namespace Kargono::Particles
 {

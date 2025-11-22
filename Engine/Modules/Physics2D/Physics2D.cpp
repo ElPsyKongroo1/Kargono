@@ -44,7 +44,7 @@ namespace Kargono::Physics
 
 		// Initialize Physics2DWorld with selected settings.
 		i_Scene = scene;
-		m_PhysicsWorld = CreateScope<b2World>(b2Vec2(physicsSpec.Gravity.x, physicsSpec.Gravity.y));
+		m_PhysicsWorld = CreateScope<b2World>(b2Vec2(physicsSpec.m_Gravity.x, physicsSpec.m_Gravity.y));
 		m_PhysicsWorld->SetAllowSleeping(false);
 		m_ContactListener = CreateScope<ContactListener>();
 		EngineService::GetActiveEngine().RegisterCollisionEventListener(*m_ContactListener);

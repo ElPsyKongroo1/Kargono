@@ -3,7 +3,8 @@
 #include "Modules/Particles/ParticleContext.h"
 
 #include "Modules/Rendering/RenderingService.h"
-
+#include "Modules/Assets/Managers/ShaderManager.h"
+#include "Modules/Assets/Managers/EmitterConfigManager.h"
 #include "Modules/Core/Engine.h"
 #include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/ECS/Entity.h"
@@ -231,7 +232,7 @@ namespace Kargono::Particles
 					),
 					Utility::FileSystem::CRCFromString("a_Color"),
 					m_ParticleRenderSpec.m_Buffer, 
-					m_ParticleRenderSpec.m_Shader
+					m_ParticleRenderSpec.m_Shader.GetAssetRef()
 				);
 
 				// Render the particle
@@ -404,7 +405,7 @@ namespace Kargono::Particles
 				continue;
 			}
 
-			AddEmitter(particleComp.m_EmitterConfigRef, scene.get(), entity.GetUUID());
+			AddEmitter(particleComp.m_EmitterConfigRef.GetAssetRef(), scene.get(), entity.GetUUID());
 		}
 	}
 }

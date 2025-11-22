@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/Particles/Components/ParticleEmitter.h"
+#include "Modules/Assets/Managers/EmitterConfigManager.h"
 
 
 namespace Kargono::Particles

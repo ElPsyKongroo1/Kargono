@@ -1,12 +1,12 @@
 #include "kgpch.h"
 
 #include "Modules/RuntimeUI/Assets/Font.h"
-
+#include "Modules/Assets/Managers/Texture2DManager.h"
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Core/Engine.h"
 #include "Modules/Rendering/Assets/Shader.h"
 #include "Modules/FileSystem/FileSystem.h"
-#include "Modules/Rendering/Assets/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
 #include "Modules/RuntimeUI/FontContext.h"
@@ -107,9 +107,9 @@ namespace Kargono::RuntimeUI
 		spec.m_Height = static_cast<uint32_t>(fontMetadata.m_AtlasHeight);
 		spec.m_Format = Rendering::ImageFormat::RGB8;
 		spec.m_GenerateMipMaps = false;
-		Assets::AssetRef<Rendering::Texture2D> texture = Rendering::Texture2D::Create(spec);
-		texture->SetData((void*)currentResource.m_Data, spec.m_Width * spec.m_Height * Utility::ImageFormatToBytes(spec.m_Format));
-		m_AtlasTexture = texture;
+		// TODO: Might want a register method in the asset manager that takes in an already created asset
+		m_AtlasTexture = Assets::s_Texture2DManager.CreateAssetFromSpec({}, spec);
+		m_AtlasTexture->SetData((void*)currentResource.m_Data, spec.m_Width * spec.m_Height * Utility::ImageFormatToBytes(spec.m_Format));
 
 		m_LineHeight = fontMetadata.m_LineHeight;
 		m_Ascender = fontMetadata.m_Ascender;
@@ -288,7 +288,7 @@ namespace Kargono::RuntimeUI
 		fontContext.m_TextInputSpec.m_ShapeComponent->m_Texture = m_AtlasTexture;
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, 
 			Utility::FileSystem::CRCFromString("a_Color"),
-			fontContext.m_TextInputSpec.m_Buffer, fontContext.m_TextInputSpec.m_Shader);
+			fontContext.m_TextInputSpec.m_Buffer, fontContext.m_TextInputSpec.m_Shader.GetAssetRef());
 
 		// Initialize the active location where text is being rendered
 		double xLocation{ translation.x };
@@ -388,7 +388,7 @@ namespace Kargono::RuntimeUI
 		fontContext.m_TextInputSpec.m_ShapeComponent->m_Texture = m_AtlasTexture;
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color, 
 			Utility::FileSystem::CRCFromString("a_Color"),
-			fontContext.m_TextInputSpec.m_Buffer, fontContext.m_TextInputSpec.m_Shader);
+			fontContext.m_TextInputSpec.m_Buffer, fontContext.m_TextInputSpec.m_Shader.GetAssetRef());
 
 		// Initialize the active location where text is being rendered
 		double xLocation{ translation.x };

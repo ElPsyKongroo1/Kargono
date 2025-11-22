@@ -3225,7 +3225,7 @@ namespace Kargono::Panels
 		// transferred to the new buffer!
 		for (const auto& element : oldShader->GetInputLayout().GetElements())
 		{
-			if (newShader->GetInputLayout().FindElementByName(Utility::FileSystem::CRCFromString(element.Name.c_str())))
+			if (newShader->GetInputLayout().FindElementByHash(Utility::FileSystem::CRCFromString(element.Name.c_str())))
 			{
 				// Get Location of Old Data Pointer
 				std::size_t oldLocation = element.Offset;

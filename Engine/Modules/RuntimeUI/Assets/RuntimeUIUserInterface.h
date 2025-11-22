@@ -38,10 +38,8 @@ namespace Kargono::RuntimeUI
 
 	struct UserInterfaceCallbacks
 	{
-		Assets::AssetHandle m_OnMoveHandle{ Assets::k_EmptyHandle };
-		Ref<Scripting::Script> m_OnMove{ nullptr };
-		Assets::AssetHandle m_OnHoverHandle{ Assets::k_EmptyHandle };
-		Ref<Scripting::Script> m_OnHover{ nullptr };
+		Assets::AssetRef<Scripting::Script> m_OnMove{};
+		Assets::AssetRef<Scripting::Script> m_OnHover{};
 	};
 
 	struct Bounds
@@ -392,7 +390,6 @@ namespace Kargono::RuntimeUI
 			Assets::AssetFlags flags{};
 			flags.ClearFlag(Assets::AssetFlag::HasAssetCache);
 			flags.SetFlag(Assets::AssetFlag::RequireUniqueName);
-			flags.SetFlag(Assets::AssetFlag::AllowDefaultUpdateAsset);
 			return flags;
 		}
 

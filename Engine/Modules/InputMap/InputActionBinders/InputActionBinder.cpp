@@ -16,6 +16,5 @@ namespace Kargono::InputMap
 		Assets::AssetRef<Scripting::Script> newScript{ Assets::s_ScriptManager.GetAssetByHandle(handle) };
 		KG_ASSERT(newScript);
 		m_Script = newScript;
-		m_ScriptHandle = handle;
 	}
 }

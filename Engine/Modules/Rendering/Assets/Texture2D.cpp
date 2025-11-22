@@ -3,7 +3,7 @@
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Rendering/Assets/Texture2D.h"
 #include "Kargono/Projects/Project.h"
-
+#include "Modules/Assets/Managers/RuntimeUIManager.h"
 #include "Modules/RuntimeUI/Assets/RuntimeUIUserInterface.h"
 
 #include "API/Platform/gladAPI.h"

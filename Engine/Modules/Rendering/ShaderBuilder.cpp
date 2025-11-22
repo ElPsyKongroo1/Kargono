@@ -149,7 +149,7 @@ namespace Kargono::Rendering
 		s_OutputStream << "// " << shaderName << " shader\r\n";
 		s_OutputStream << "//============================================================\r\n";
 
-		s_OutputStream << fmt::format(s_ShaderType, shaderName) << "\r\n";
+		s_OutputStream << std::format(s_ShaderType, shaderName) << "\r\n";
 		s_OutputStream << s_VersionLine << "\r\n";
 	}
 
@@ -572,24 +572,24 @@ namespace Kargono::Rendering
 		AddSimpleVertexOutput();
 		AddSimpleFragmentOutput();
 
-		if (shaderSpec.ColorInput == ColorInputType::FlatColor || shaderSpec.ColorInput == ColorInputType::VertexColor)
+		if (shaderSpec.m_ColorInput == ColorInputType::FlatColor || shaderSpec.m_ColorInput == ColorInputType::VertexColor)
 		{
 			AddColorOutput();
 		}
-		if (shaderSpec.AddProjectionMatrix) { AddProjectionMatrix(); }
-		if (shaderSpec.AddEntityID) { AddEntityID(); }
-		if (shaderSpec.AddCircleShape) { AddCircleShape(); }
-		if (shaderSpec.TextureInput == TextureInputType::ColorTexture) { AddTextureOutput(); }
-		if (shaderSpec.TextureInput == TextureInputType::TextTexture) { AddTextTextureOutput(); }
+		if (shaderSpec.m_AddProjectionMatrix) { AddProjectionMatrix(); }
+		if (shaderSpec.m_AddEntityID) { AddEntityID(); }
+		if (shaderSpec.m_AddCircleShape) { AddCircleShape(); }
+		if (shaderSpec.m_TextureInput == TextureInputType::ColorTexture) { AddTextureOutput(); }
+		if (shaderSpec.m_TextureInput == TextureInputType::TextTexture) { AddTextTextureOutput(); }
 
 		//=================
 		// Start Building Shader
 		//=================
 
 		// ==== Vertex Shader ====
-		s_OutputStream << "// Rendering Type: " << Utility::RenderingTypeToString(shaderSpec.RenderType) << "\r\n";
-		s_OutputStream << "// Color Type: " << Utility::ColorInputTypeToString(shaderSpec.ColorInput) << "\r\n";
-		s_OutputStream << "// Draw Outline: " << (shaderSpec.DrawOutline ? "true" : "false") << "\r\n";
+		s_OutputStream << "// Rendering Type: " << Utility::RenderingTypeToString(shaderSpec.m_RenderType) << "\r\n";
+		s_OutputStream << "// Color Type: " << Utility::ColorInputTypeToString(shaderSpec.m_ColorInput) << "\r\n";
+		s_OutputStream << "// Draw Outline: " << (shaderSpec.m_DrawOutline ? "true" : "false") << "\r\n";
 		BeginShader("vertex");
 		// Structs/Classes
 		RunFunctions(s_VertexStructs);

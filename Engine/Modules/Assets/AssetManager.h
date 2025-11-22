@@ -113,7 +113,7 @@ namespace Kargono::Assets
 			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
 
 			// Check each asset for matching spec
-			for (const auto& [handle, metadata] : m_AssetRegistry)
+			for (auto& [handle, metadata] : m_AssetRegistry)
 			{
 				if (GetAssetFromSpecImpl(metadata, spec))
 				{
@@ -305,8 +305,7 @@ namespace Kargono::Assets
 			}
 
 			// Send update event
-			SendManageAssetEvent(Events::ManageAssetAction::UpdateAsset,
-				metadata, providedData);
+			SendManageAssetEvent(metadata, Events::ManageAssetAction::UpdateAsset, providedData);
 		}
 
 		bool DeleteAsset(AssetHandle handle)
@@ -328,8 +327,7 @@ namespace Kargono::Assets
 			}
 
 			// Send pre-delete event
-			SendManageAssetEvent(Events::ManageAssetAction::PreDelete,
-				metadata, nullptr);
+			SendManageAssetEvent(metadata, Events::ManageAssetAction::PreDelete, nullptr);
 
 			// Remove asset
 			DeleteAssetFiles(metadata);
@@ -339,8 +337,7 @@ namespace Kargono::Assets
 			SerializeAssetRegistry();
 
 			// Send post-delete event
-			SendManageAssetEvent(Events::ManageAssetAction::PostDelete,
-				metadata, nullptr);
+			SendManageAssetEvent(metadata, Events::ManageAssetAction::PostDelete, nullptr);
 
 			return true;
 		}
@@ -389,7 +386,7 @@ namespace Kargono::Assets
 			metadata.m_IsHidden = isHidden;
 		}
 
-		AssetHandle CreateAssetFromName(const AssetCreationData& creationData)
+		AssetRef<t_AssetType> CreateAssetFromName(const AssetCreationData& creationData)
 			requires HasCreateFromName<t_AssetType>
 		{
 			// Validate asset name
@@ -397,7 +394,7 @@ namespace Kargono::Assets
 			{
 				KG_WARN("Invalid asset name provided to create asset from name function: {}", 
 					creationData.m_AssetName);
-				return k_EmptyHandle;
+				return {};
 			}
 			
 			// Handle file location information
@@ -410,7 +407,7 @@ namespace Kargono::Assets
 				{
 					KG_WARN("Creation directory validation failed for path: {}", 
 						metadataFileDirectory.c_str());
-					return k_EmptyHandle;
+					return {};
 				}
 				metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
 			}
@@ -434,7 +431,7 @@ namespace Kargono::Assets
 			{
 				KG_WARN("Failed to create valid metadata for new {} asset with name {}", 
 					t_AssetType::GetAssetName(), creationData.m_AssetName);
-				return k_EmptyHandle;
+				return {};
 			}
 
 			// Create asset on disk
@@ -463,17 +460,16 @@ namespace Kargono::Assets
 				bool deleteSuccess = DeleteAsset(newMetadata.m_Handle);
 				KG_ASSERT(deleteSuccess);
 
-				return k_EmptyHandle;
+				return {};
 			}
 
 			// Send creation event
-			SendManageAssetEvent(Events::ManageAssetAction::Create, 
-				newMetadata, nullptr);
+			SendManageAssetEvent(newMetadata, Events::ManageAssetAction::Create, nullptr);
 			
-			return newMetadata.m_Handle;
+			return GetAssetByHandle(newMetadata.m_Handle);
 		}
 
-		AssetHandle CreateAssetFromFile(const std::filesystem::path& sourcePath, 
+		AssetRef<t_AssetType> CreateAssetFromFile(const std::filesystem::path& sourcePath, 
 			const AssetCreationData& creationData)
 			requires HasCreateFromFile<t_AssetType>
 		{
@@ -482,7 +478,7 @@ namespace Kargono::Assets
 			{
 				KG_WARN("Invalid asset name provided to create asset from file function: {}", 
 					creationData.m_AssetName);
-				return k_EmptyHandle;
+				return {};
 			}
 
 			// Handle file location information
@@ -495,7 +491,7 @@ namespace Kargono::Assets
 				{
 					KG_WARN("Creation directory validation failed for path: {}",
 						metadataFileDirectory.c_str());
-					return k_EmptyHandle;
+					return {};
 				}
 				metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
 			}
@@ -510,7 +506,7 @@ namespace Kargono::Assets
 			{
 				KG_WARN("Source path validation failed for provided path: {}", 
 					sourcePath.string());
-				return k_EmptyHandle;
+				return {};
 			}
 
 			// Create metadata
@@ -522,7 +518,7 @@ namespace Kargono::Assets
 			{
 				KG_WARN("Failed to create valid metadata for new {} asset with name {}",
 					t_AssetType::GetAssetName(), creationData.m_AssetName);
-				return k_EmptyHandle;
+				return {};
 			}
 
 			// Create asset files on disk
@@ -551,18 +547,16 @@ namespace Kargono::Assets
 				bool deleteSuccess = DeleteAsset(newMetadata.m_Handle);
 				KG_ASSERT(deleteSuccess);
 
-				// Return empty handle
-				return k_EmptyHandle;
+				return {};
 			}
 
 			// Send creation event
-			SendManageAssetEvent(Events::ManageAssetAction::Create,
-				newMetadata, nullptr);
+			SendManageAssetEvent(newMetadata, Events::ManageAssetAction::Create, nullptr);
 
-			return newMetadata.m_Handle;
+			return GetAssetByHandle(newMetadata.m_Handle);
 		}
 		
-		AssetHandle CreateAssetFromSpec(const AssetCreationData& creationData, 
+		AssetRef<t_AssetType> CreateAssetFromSpec(const AssetCreationData& creationData, 
 			const auto& spec)
 			requires HasCreateFromSpec<t_AssetType>
 		{
@@ -576,7 +570,7 @@ namespace Kargono::Assets
 				if (!validateSuccess)
 				{
 					KG_WARN("Validation of asset specification failed");
-					return k_EmptyHandle;
+					return {};
 				}
 			}
 
@@ -585,7 +579,7 @@ namespace Kargono::Assets
 			{
 				KG_WARN("Invalid asset name provided to create asset from file function: {}",
 					creationData.m_AssetName);
-				return k_EmptyHandle;
+				return {};
 			}
 
 			// Handle file location information
@@ -598,7 +592,7 @@ namespace Kargono::Assets
 				{
 					KG_WARN("Creation directory validation failed for path: {}",
 						metadataFileDirectory.c_str());
-					return k_EmptyHandle;
+					return {};
 				}
 				metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
 			}
@@ -609,7 +603,7 @@ namespace Kargono::Assets
 			}
 
 			// Create metadata
-			Metadata newMetadata{ CreateAssetMetadata(GetAssetIdentifier<t_AssetType>, 
+			Metadata newMetadata{ CreateAssetMetadata(GetAssetIdentifier<t_AssetType>(),
 				creationData.m_AssetName, metadataFileDirectory, creationData.m_IsHidden) };
 
 			// Validate metadata
@@ -617,7 +611,7 @@ namespace Kargono::Assets
 			{
 				KG_WARN("Failed to create valid metadata for new {} asset with name {}",
 					t_AssetType::GetAssetName(), creationData.m_AssetName);
-				return k_EmptyHandle;
+				return {};
 			}
 
 			// Create asset
@@ -655,14 +649,13 @@ namespace Kargono::Assets
 				KG_ASSERT(deleteSuccess);
 
 				// Return empty handle
-				return k_EmptyHandle;
+				return {};
 			}
 
 			// Send creation event
-			SendManageAssetEvent(Events::ManageAssetAction::Create,
-				newMetadata, nullptr);
+			SendManageAssetEvent(newMetadata, Events::ManageAssetAction::Create, nullptr);
 
-			return newMetadata.m_Handle;
+			return GetAssetByHandle(newMetadata.m_Handle);
 		}
 
 		void SerializeAssetRegistry()
@@ -862,8 +855,7 @@ namespace Kargono::Assets
 			SerializeAssetRegistry();
 
 			// Send update event
-			SendManageAssetEvent(Events::ManageAssetAction::UpdateAssetInfo,
-				metadata, nullptr);
+			SendManageAssetEvent(metadata, Events::ManageAssetAction::UpdateAssetInfo, nullptr);
 			return true;
 		}
 

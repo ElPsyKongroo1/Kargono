@@ -2,7 +2,7 @@
 
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/Rendering/Assets/Shader.h"
-#include "Modules/Rendering/Assets/Texture.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 #include "Modules/Rendering/VertexArray.h"
 #include "Modules/Rendering/UniformBuffer.h"
 #include "Kargono/Projects/Project.h"
@@ -11,34 +11,28 @@
 
 namespace Kargono::Rendering
 {
+	constexpr uint32_t k_MaxQuads{ 20000 };
+	constexpr uint32_t k_MaxVertices = k_MaxQuads * 4;
+	constexpr uint32_t k_MaxIndices = k_MaxQuads * 6;
+	constexpr uint32_t k_MaxTextureSlots = 32;
+	constexpr uint32_t k_MaxIndicesBuffer = 1000;
+
+	struct CameraData
+	{
+		Math::mat4 m_ViewProjection;
+	};
+
 	struct RendererData
 	{
-		static const uint32_t MaxQuads = 20000;
-		static const uint32_t MaxVertices = MaxQuads * 4;
-		static const uint32_t MaxIndices = MaxQuads * 6;
-
-		float LineWidth = 4.0f;
-		float PointWidth = 8.0f;
-
-		RenderingService::Statistics Stats;
-
-		struct CameraData
-		{
-			Math::mat4 ViewProjection;
-		};
-		CameraData CameraBuffer;
-		Ref<UniformBuffer> CameraUniformBuffer;
-
-		// New Renderer
-		// Maximum Vertex Buffer Size in Bytes
-		static const uint32_t MaxTextureSlots = 32;
-		static const uint32_t MaxIndicesBuffer = 1000;
-		std::vector<Ref<DrawCallBuffer>> DrawCalls;
+		float m_LineWidth = 4.0f;
+		float m_PointWidth = 8.0f;
+		Statistics m_Stats;
+		CameraData m_CameraBuffer;
+		Ref<UniformBuffer> m_CameraUniformBuffer;
+		std::vector<Ref<DrawCallBuffer>> m_DrawCalls;
 	};
 
 	static RendererData s_Data;
-
-
 
 	void RenderingService::OnWindowResize(uint32_t width, uint32_t height)
 	{
@@ -47,29 +41,29 @@ namespace Kargono::Rendering
 
 	void RenderingService::Init()
 	{
-		s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(RendererData::CameraData), 0);
-		KG_VERIFY(s_Data.CameraUniformBuffer, "Renderer Init")
+		s_Data.m_CameraUniformBuffer->RegisterBuffer(sizeof(CameraData), 0);
+		KG_VERIFY(s_Data.m_CameraUniformBuffer, "Renderer Init")
 	}
 	void RenderingService::Shutdown()
 	{
-		s_Data.CameraUniformBuffer.reset();
-		s_Data.DrawCalls.clear();
+		s_Data.m_CameraUniformBuffer.reset();
+		s_Data.m_DrawCalls.clear();
 	}
-	void RenderingService::BeginScene(const CameraProjection& camera, const Math::mat4& transform)
+	void RenderingService::BeginScene(const Cameras::CameraProjection& camera, const Math::mat4& transform)
 	{
-		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * transform;
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
+		s_Data.m_CameraBuffer.m_ViewProjection = camera.GetProjection() * transform;
+		s_Data.m_CameraUniformBuffer->SetData(&s_Data.m_CameraBuffer, sizeof(CameraData));
 	}
-	void RenderingService::BeginScene(const PerspectiveCamera& camera)
+	void RenderingService::BeginScene(const Cameras::PerspectiveCamera& camera)
 	{
-		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
+		s_Data.m_CameraBuffer.m_ViewProjection = camera.GetViewProjection();
+		s_Data.m_CameraUniformBuffer->SetData(&s_Data.m_CameraBuffer, sizeof(CameraData));
 	}
 
 	void RenderingService::BeginScene(const Math::mat4 projection)
 	{
-		s_Data.CameraBuffer.ViewProjection = projection;
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(RendererData::CameraData));
+		s_Data.m_CameraBuffer.m_ViewProjection = projection;
+		s_Data.m_CameraUniformBuffer->SetData(&s_Data.m_CameraBuffer, sizeof(CameraData));
 	}
 
 	void RenderingService::EndScene()
@@ -79,25 +73,25 @@ namespace Kargono::Rendering
 
 	float RenderingService::GetLineWidth()
 	{
-		return s_Data.LineWidth;
+		return s_Data.m_LineWidth;
 	}
 	void RenderingService::SetLineWidth(float width)
 	{
-		s_Data.LineWidth = width;
+		s_Data.m_LineWidth = width;
 	}
 
 	void RenderingService::ResetStats()
 	{
-		memset(&s_Data.Stats, 0, sizeof(Statistics));
+		memset(&s_Data.m_Stats, 0, sizeof(Statistics));
 	}
-	RenderingService::Statistics RenderingService::GetStats()
+	Statistics RenderingService::GetStats()
 	{
-		return s_Data.Stats;
+		return s_Data.m_Stats;
 	}
 
 	void RenderingService::FillTextureIndex(RendererInputSpec& inputSpec)
 	{
-		//if (s_Data.QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
+		//if (s_Data.m_QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
 		KG_ASSERT(inputSpec.m_ShapeComponent->m_Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
 		auto& m_Textures = inputSpec.m_CurrentDrawBuffer->m_Textures;
 		float textureIndex = -1.0f;
@@ -114,25 +108,25 @@ namespace Kargono::Rendering
 		}
 		if (static_cast<int32_t>(textureIndex) == -1)
 		{
-			if (m_Textures.size() >= RendererData::MaxTextureSlots)
+			if (m_Textures.size() >= k_MaxTextureSlots)
 			{
 				textureIndex = 0.0f;
 				// TODO: NextBatch, Create a new DrawCallBuffer for the current shader and update Textures Ref
 			}
-			m_Textures.push_back(inputSpec.m_ShapeComponent->m_Texture);
+			m_Textures.push_back(inputSpec.m_ShapeComponent->m_Texture.GetAssetRef());
 			textureIndex = static_cast<float>(m_Textures.size() - 1);
 		}
 
 		Shader::SetDataAtInputLocation<float>(textureIndex, 
 			Utility::FileSystem::CRCFromString("a_TexIndex"),
-			inputSpec.m_Buffer, inputSpec.m_Shader);
+			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
 	}
 
 	void RenderingService::FillTextureAtlas(RendererInputSpec& inputSpec)
 	{
-		//if (s_Data.QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
+		//if (s_Data.m_QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
 		KG_ASSERT(inputSpec.m_ShapeComponent->m_Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
-		std::vector<Ref<Texture2D>>& m_Textures = inputSpec.m_CurrentDrawBuffer->m_Textures;
+		std::vector<Assets::AssetRef<Texture2D>>& m_Textures = inputSpec.m_CurrentDrawBuffer->m_Textures;
 		m_Textures.clear();
 		m_Textures.emplace_back(inputSpec.m_ShapeComponent->m_Texture);
 	}
@@ -143,7 +137,7 @@ namespace Kargono::Rendering
 		Shader::SetDataAtInputLocation<Math::vec2>(coordinates, 
 			Utility::FileSystem::CRCFromString("a_TexCoord"),
 			inputSpec.m_Buffer, 
-			inputSpec.m_Shader);
+			inputSpec.m_Shader.GetAssetRef());
 	}
 
 	void RenderingService::FillLocalPosition(RendererInputSpec& inputSpec, uint32_t iteration)
@@ -151,7 +145,7 @@ namespace Kargono::Rendering
 		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->m_Vertices->at(iteration) * 2.0f;
 		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, 
 			Utility::FileSystem::CRCFromString("a_LocalPosition"),
-			inputSpec.m_Buffer, inputSpec.m_Shader);
+			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
 	}
 
 	void RenderingService::FillWorldPosition(RendererInputSpec& inputSpec, uint32_t iteration)
@@ -160,7 +154,7 @@ namespace Kargono::Rendering
 		Math::vec3 worldPosition = inputSpec.m_TransformMatrix * Math::vec4(localPosition, 1.0f);
 		Shader::SetDataAtInputLocation<Math::vec3>(worldPosition, 
 			Utility::FileSystem::CRCFromString("a_Position"),
-			inputSpec.m_Buffer, inputSpec.m_Shader);
+			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
 	}
 
 
@@ -170,7 +164,7 @@ namespace Kargono::Rendering
 
 		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, 
 			Utility::FileSystem::CRCFromString("a_Position"),
-			inputSpec.m_Buffer, inputSpec.m_Shader);
+			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
 	}
 
 	void RenderingService::FillVertexColor(RendererInputSpec& inputSpec, uint32_t iteration)
@@ -179,7 +173,7 @@ namespace Kargono::Rendering
 		KG_ASSERT(iteration < static_cast<uint32_t>(colorVector->size()), "Invalid iteration inside FillVertexColor function");
 		Shader::SetDataAtInputLocation<Math::vec4>(colorVector->at(iteration), 
 			Utility::FileSystem::CRCFromString("a_Color"),
-			inputSpec.m_Buffer, inputSpec.m_Shader);
+			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
 	}
 
 	void RenderingService::FillIndicesData(RendererInputSpec& inputSpec)
@@ -197,12 +191,12 @@ namespace Kargono::Rendering
 	{
 		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.m_Entity, 
 			Utility::FileSystem::CRCFromString("a_EntityID"),
-			inputSpec.m_Buffer, inputSpec.m_Shader);
+			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
 	}
 
 	void RenderingService::SubmitDataToRenderer(RendererInputSpec& inputSpec)
 	{
-		if (!inputSpec.m_ShapeComponent->m_Vertices || inputSpec.m_Shader->GetSpecification().RenderType == RenderingType::None) { return; }
+		if (!inputSpec.m_ShapeComponent->m_Vertices || inputSpec.m_Shader->GetSpecification().m_RenderType == RenderingType::None) { return; }
 
 		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.m_Shader->GetCurrentDrawCallBuffer();
 
@@ -210,33 +204,33 @@ namespace Kargono::Rendering
 		if (!drawCallBuffer)
 		{
 			drawCallBuffer = CreateRef<DrawCallBuffer>();
-			drawCallBuffer->m_VertexBuffer.Allocate(s_MaxVertexBufferSize);
+			drawCallBuffer->m_VertexBuffer.Allocate(k_MaxVertexBufferSize);
 			drawCallBuffer->m_VertexBufferIterator = drawCallBuffer->m_VertexBuffer.m_Data;
-			if (inputSpec.m_Shader->GetSpecification().RenderType == RenderingType::DrawIndex)
+			if (inputSpec.m_Shader->GetSpecification().m_RenderType == RenderingType::DrawIndex)
 			{
-				drawCallBuffer->m_IndexBuffer.reserve(s_Data.MaxIndicesBuffer);
+				drawCallBuffer->m_IndexBuffer.reserve(k_MaxIndicesBuffer);
 			}
-			drawCallBuffer->m_Textures.reserve(s_Data.MaxTextureSlots);
-			drawCallBuffer->m_Shader = inputSpec.m_Shader.get();
-			s_Data.DrawCalls.emplace_back(drawCallBuffer);
+			drawCallBuffer->m_Textures.reserve(k_MaxTextureSlots);
+			drawCallBuffer->m_Shader = &inputSpec.m_Shader.GetAsset();
+			s_Data.m_DrawCalls.emplace_back(drawCallBuffer);
 			inputSpec.m_Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
 		}
 
 		std::size_t currentBufferSize = drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.m_Data;
 		std::size_t sizeOfNewDrawCallBuffer = inputSpec.m_Buffer.m_Size * inputSpec.m_ShapeComponent->m_Vertices->size() + currentBufferSize;
 		// Create new DrawCallBuffer if current buffer overflows
-		if (sizeOfNewDrawCallBuffer >= s_MaxVertexBufferSize)
+		if (sizeOfNewDrawCallBuffer >= k_MaxVertexBufferSize)
 		{
 			drawCallBuffer = CreateRef<DrawCallBuffer>();
-			drawCallBuffer->m_VertexBuffer.Allocate(s_MaxVertexBufferSize);
+			drawCallBuffer->m_VertexBuffer.Allocate(k_MaxVertexBufferSize);
 			drawCallBuffer->m_VertexBufferIterator = drawCallBuffer->m_VertexBuffer.m_Data;
-			if (inputSpec.m_Shader->GetSpecification().RenderType == RenderingType::DrawIndex)
+			if (inputSpec.m_Shader->GetSpecification().m_RenderType == RenderingType::DrawIndex)
 			{
-				drawCallBuffer->m_IndexBuffer.reserve(s_Data.MaxIndicesBuffer);
+				drawCallBuffer->m_IndexBuffer.reserve(k_MaxIndicesBuffer);
 			}
-			drawCallBuffer->m_Textures.reserve(s_Data.MaxTextureSlots);
-			drawCallBuffer->m_Shader = inputSpec.m_Shader.get();
-			s_Data.DrawCalls.emplace_back(drawCallBuffer);
+			drawCallBuffer->m_Textures.reserve(k_MaxTextureSlots);
+			drawCallBuffer->m_Shader = &inputSpec.m_Shader.GetAsset();
+			s_Data.m_DrawCalls.emplace_back(drawCallBuffer);
 			inputSpec.m_Shader->SetCurrentDrawCallBuffer(drawCallBuffer);
 		}
 
@@ -255,7 +249,7 @@ namespace Kargono::Rendering
 			}
 			memcpy(inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator, inputSpec.m_Buffer.m_Data, inputSpec.m_Buffer.m_Size);
 			inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator += inputSpec.m_Buffer.m_Size;
-			s_Data.Stats.VertexCount++;
+			s_Data.m_Stats.m_VertexCount++;
 		}
 
 		
@@ -272,32 +266,32 @@ namespace Kargono::Rendering
 	void RenderingService::DrawBufferIndices(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::DrawIndexed(buffer->m_Shader->GetVertexArray(), buffer->m_IndexBuffer.data(), static_cast<uint32_t>(buffer->m_IndexBuffer.size()));
-		s_Data.Stats.DrawCalls++;
+		s_Data.m_Stats.m_DrawCalls++;
 	}
 
 	void RenderingService::DrawBufferPoints(Ref<DrawCallBuffer> buffer)
 	{
-		RendererAPI::SetPointWidth(s_Data.PointWidth);
+		RendererAPI::SetPointWidth(s_Data.m_PointWidth);
 		RendererAPI::DrawPoints(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.m_Data) / buffer->m_Shader->GetInputLayout().GetStride());
-		s_Data.Stats.DrawCalls++;
+		s_Data.m_Stats.m_DrawCalls++;
 	}
 
 	void RenderingService::DrawBufferLine(Ref<DrawCallBuffer> buffer)
 	{
-		RendererAPI::SetLineWidth(s_Data.LineWidth);
+		RendererAPI::SetLineWidth(s_Data.m_LineWidth);
 		RendererAPI::DrawLines(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.m_Data) / buffer->m_Shader->GetInputLayout().GetStride());
-		s_Data.Stats.DrawCalls++;
+		s_Data.m_Stats.m_DrawCalls++;
 	}
 
 	void RenderingService::DrawBufferTriangles(Ref<DrawCallBuffer> buffer)
 	{
 		RendererAPI::DrawTriangles(buffer->m_Shader->GetVertexArray(), static_cast<std::uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.m_Data) / buffer->m_Shader->GetInputLayout().GetStride());
-		s_Data.Stats.DrawCalls++;
+		s_Data.m_Stats.m_DrawCalls++;
 	}
 
 	void RenderingService::FlushBuffers()
 	{
-		auto& allBuffers = s_Data.DrawCalls;
+		auto& allBuffers = s_Data.m_DrawCalls;
 
 		// Submit all Buffers to DrawCalls!
 		for (auto buffer : allBuffers)

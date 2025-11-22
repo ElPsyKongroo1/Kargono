@@ -89,7 +89,8 @@ namespace Kargono::EditorUI
 				ImGui::SameLine();
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 2.5f);
 				ImGui::PushStyleColor(ImGuiCol_Button, k_PureEmpty);
-				const Ref<Rendering::Texture2D> icon = m_ExpandedNodes.contains(currentPath) ? EditorUIContext::m_GenIcons.m_Down : EditorUIContext::m_GenIcons.m_Right;
+				Assets::AssetRef<Rendering::Texture2D> icon = m_ExpandedNodes.contains(currentPath) ? 
+					EditorUIContext::m_GenIcons.m_Down.GetAssetRef() : EditorUIContext::m_GenIcons.m_Right.GetAssetRef();
 				if (ImGui::ImageButtonEx(GetNextChildID(),
 					(ImTextureID)(uint64_t)icon->GetRendererID(),
 					ImVec2(13, 13), ImVec2{ 0, 1 }, ImVec2{ 1, 0 },
