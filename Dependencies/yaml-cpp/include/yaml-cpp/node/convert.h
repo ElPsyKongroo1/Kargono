@@ -17,6 +17,7 @@
 #include <type_traits>
 #include <valarray>
 #include <vector>
+#include <string_view>
 
 #include "yaml-cpp/binary.h"
 #include "yaml-cpp/node/impl.h"
@@ -24,6 +25,7 @@
 #include "yaml-cpp/node/node.h"
 #include "yaml-cpp/node/type.h"
 #include "yaml-cpp/null.h"
+
 
 
 namespace YAML {
@@ -77,6 +79,22 @@ struct convert<std::string> {
 template <>
 struct convert<const char*> {
   static Node encode(const char* rhs) { return Node(rhs); }
+};
+
+
+template<>
+struct convert<std::string_view> {
+  static Node encode(const std::string_view& rhs) { return Node(std::string(rhs)); }
+  static bool decode(const Node& node, std::string_view& rhs) 
+  {
+    if (!node.IsScalar())
+    {
+      return false;
+    }
+    const std::string& scalar = node.Scalar();
+    rhs = std::string_view(scalar.data(), scalar.size());
+    return true;
+  }
 };
 
 template <>

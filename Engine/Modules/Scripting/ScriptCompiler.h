@@ -8,7 +8,7 @@ namespace Kargono::Scripting
 {
 	struct SuggestionSpec
 	{
-		Ref<Rendering::Texture2D> m_Icon { nullptr };
+		Assets::AssetRef<Rendering::Texture2D> m_Icon {};
 		std::string m_Label {};
 		std::string m_ReplacementText {};
 		int16_t m_ShiftValue{ 0 };

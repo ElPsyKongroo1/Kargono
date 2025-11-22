@@ -3,6 +3,7 @@
 #include "Kargono/Core/Base.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/Assets/AssetsCommon.h"
+#include "Modules/Assets/AssetReference.h"
 
 namespace Kargono::InputMap
 {
@@ -27,30 +28,28 @@ namespace Kargono::InputMap
 		{
 			return m_BindingType;
 		}
-		Ref<Scripting::Script> GetScript()
+		Assets::AssetRef<Scripting::Script> GetScript()
 		{
-			return m_Script;
+			return m_Script.GetAssetRef();
 		}
 		Assets::AssetHandle GetScriptHandle() const
 		{
-			return m_ScriptHandle;
+			return m_Script.GetAssetRef().GetHandle();
 		}
 
 		void ClearScript()
 		{
-			m_ScriptHandle = Assets::k_EmptyHandle;
-			m_Script = nullptr;
+			m_Script.Reset();
 		}
 
-		void SetScript(Ref<Scripting::Script> script, Assets::AssetHandle handle)
+		void SetScript(Assets::AssetRef<Scripting::Script> script)
 		{
-			if (handle == Assets::k_EmptyHandle)
+			if (script.IsEmpty())
 			{
 				ClearScript();
 				return;
 			}
 
-			m_ScriptHandle = handle;
 			m_Script = script;
 		}
 		void SetScript(Assets::AssetHandle handle);
@@ -59,7 +58,6 @@ namespace Kargono::InputMap
 		// Protected Fields
 		//=========================
 		InputActionTypes m_BindingType{ InputActionTypes::None };
-		Assets::AssetHandle m_ScriptHandle{ Assets::k_EmptyHandle };
-		Ref<Scripting::Script> m_Script{ nullptr };
+		Assets::TAssetRef<Scripting::Script> m_Script{};
 	};
 }

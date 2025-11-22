@@ -2,8 +2,8 @@
 
 #if defined(KG_PLATFORM_WINDOWS)
 
-#include "Kargono/Memory/SystemAlloc.h"
-#include "Kargono/Memory/MemoryCommon.h"
+#include "Modules/Memory/SystemAlloc.h"
+#include "Modules/Memory/MemoryCommon.h"
 
 #include <windows.h>
 #include <memoryapi.h>

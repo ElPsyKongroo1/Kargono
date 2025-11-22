@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/Physics2D/Components/RigidBody2D.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
 
 namespace Kargono::Physics2D
 {
@@ -18,8 +19,8 @@ namespace Kargono::Physics2D
 		out << YAML::BeginMap; // Component Map
 		out << YAML::Key << "BodyType" << YAML::Value << Utility::RigidBody2DBodyTypeToString(m_Type);
 		out << YAML::Key << "FixedRotation" << YAML::Value << m_FixedRotation;
-		out << YAML::Key << "OnCollisionStartHandle" << YAML::Value << static_cast<uint64_t>(m_OnCollisionStartScriptHandle);
-		out << YAML::Key << "OnCollisionEndHandle" << YAML::Value << static_cast<uint64_t>(m_OnCollisionEndScriptHandle);
+		out << YAML::Key << "OnCollisionStartHandle" << YAML::Value << static_cast<uint64_t>(m_OnCollisionStartScript.GetAssetHandle());
+		out << YAML::Key << "OnCollisionEndHandle" << YAML::Value << static_cast<uint64_t>(m_OnCollisionEndScript.GetAssetHandle());
 		out << YAML::EndMap; // Component Map
 	}
 	void RigidBody2D::Deserialize(void* context)
@@ -36,9 +37,9 @@ namespace Kargono::Physics2D
 		m_Type = Utility::StringToRigidBody2DBodyType(node["BodyType"].as<std::string>());
 		m_FixedRotation = node["FixedRotation"].as<bool>();
 
-		m_OnCollisionStartScriptHandle = node["OnCollisionStartHandle"].as<uint64_t>();
-		m_OnCollisionStartScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnCollisionStartScriptHandle);
-		m_OnCollisionEndScriptHandle = node["OnCollisionEndHandle"].as<uint64_t>();
-		m_OnCollisionEndScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnCollisionEndScriptHandle);
+		Assets::AssetHandle onCollisionStartHandle = node["OnCollisionStartHandle"].as<uint64_t>();
+		m_OnCollisionStartScript = Assets::s_ScriptManager.GetAssetByHandle(onCollisionStartHandle);
+		Assets::AssetHandle onCollisionEndHandle = node["OnCollisionEndHandle"].as<uint64_t>();
+		m_OnCollisionEndScript = Assets::s_ScriptManager.GetAssetByHandle(onCollisionEndHandle);
 	}
 }

@@ -5,6 +5,7 @@
 #include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/UUID.h"
 #include "Modules/Rendering/Assets/Texture2D.h"
+#include "Modules/Assets/AssetReference.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiAPI.h"
 
@@ -98,7 +99,7 @@ namespace Kargono::EditorUI
 	{
 		std::string m_Label{};
 		UUID m_Handle{Assets::k_EmptyHandle};
-		Ref<Rendering::Texture2D> m_IconHandle{ nullptr };
+		Assets::AssetRef<Rendering::Texture2D> m_IconHandle{};
 		std::function<void(TreeEntry& entry)> m_OnLeftClick{ nullptr };
 		std::function<void(TreeEntry& entry)> m_OnDoubleLeftClick{ nullptr };
 		std::function<void(TreeEntry& entry)> m_OnRightClick{ nullptr };

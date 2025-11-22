@@ -2,6 +2,7 @@
 
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
+#include "Modules/Assets/AssetReference.h"
 
 #include "Modules/Physics2D/Module/Physics2DModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
@@ -35,9 +36,7 @@ namespace Kargono::Physics2D
 			// Copy fields
 			dst->m_Type = m_Type;
 			dst->m_FixedRotation = m_FixedRotation;
-			dst->m_OnCollisionStartScriptHandle = m_OnCollisionStartScriptHandle;
 			dst->m_OnCollisionStartScript = m_OnCollisionStartScript;
-			dst->m_OnCollisionEndScriptHandle = m_OnCollisionEndScriptHandle;
 			dst->m_OnCollisionEndScript = m_OnCollisionEndScript;
 		}
 
@@ -57,14 +56,15 @@ namespace Kargono::Physics2D
 		// Storage for runtime
 		void* m_RuntimeBody{ nullptr };
 		// Collision callback function pointers
-		Assets::AssetHandle m_OnCollisionStartScriptHandle{ Assets::k_EmptyHandle };
-		Ref<Scripting::Script> m_OnCollisionStartScript{ nullptr };
-		Assets::AssetHandle m_OnCollisionEndScriptHandle{ Assets::k_EmptyHandle };
-		Ref<Scripting::Script> m_OnCollisionEndScript{ nullptr };
+		Assets::TAssetRef<Scripting::Script> m_OnCollisionStartScript{};
+		Assets::TAssetRef<Scripting::Script> m_OnCollisionEndScript{};
 	};
 
 	Register_Module_Type(RigidBody2D, ECSInternal::ComponentTag)
+}
 
+namespace Kargono::Utility
+{
 	// These are simply here to help with serialization for the rigid body components in an entity
 	inline const char* RigidBody2DBodyTypeToString(Physics2D::BodyType bodyType)
 	{

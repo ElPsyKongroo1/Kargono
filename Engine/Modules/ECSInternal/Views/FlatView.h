@@ -34,7 +34,7 @@ namespace Kargono::ECSInternal
         //==============================
         explicit FlatIterator() = default;
         explicit FlatIterator(FlatStorage_t<t_NumComponents> validEntitySpan, size_t index)
-            : m_SpanStorage{ validEntitySpan }, m_CurrentEntity(index) 
+            : m_SpanStorage{ validEntitySpan }, m_CurrentEntity(static_cast<EntityID>(index)) 
         {
             SkipToNextValid();
         }

@@ -1,8 +1,8 @@
 #include "kgpch.h"
 
-#include "Kargono/Memory/StackAlloc.h"
+#include "Modules/Memory/StackAlloc.h"
 
-#include "Kargono/Memory/MemoryCommon.h"
+#include "Modules/Memory/MemoryCommon.h"
 
 namespace Kargono::Memory
 {

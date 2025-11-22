@@ -7,9 +7,9 @@
 #include "Modules/Scripting/ScriptCompiler.h"
 #include "Kargono/Utility/Random.h"
 #include "Modules/FileSystem/FileSystem.h"
-#include "Kargono/Memory/StackAlloc.h"
-#include "Kargono/Memory/SystemAlloc.h"
-#include "Kargono/Memory/HeapAlloc.h"
+#include "Modules/Memory/StackAlloc.h"
+#include "Modules/Memory/SystemAlloc.h"
+#include "Modules/Memory/HeapAlloc.h"
 #include "Kargono/Utility/CompilerInfo.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
 

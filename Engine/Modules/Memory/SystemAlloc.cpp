@@ -1,7 +1,7 @@
 #include "kgpch.h"
 
-#include "Kargono/Memory/MemoryCommon.h"
-#include "Kargono/Memory/SystemAlloc.h"
+#include "Modules/Memory/MemoryCommon.h"
+#include "Modules/Memory/SystemAlloc.h"
 
 namespace Kargono::Memory
 {

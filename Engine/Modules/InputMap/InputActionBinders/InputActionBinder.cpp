@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/InputMap/InputActionBinders/InputActionBinder.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
 
 namespace Kargono::InputMap
 {
@@ -12,7 +13,7 @@ namespace Kargono::InputMap
 			return;
 		}
 
-		Ref<Scripting::Script> newScript{ Assets::s_ScriptManager.GetAssetByHandle(handle) };
+		Assets::AssetRef<Scripting::Script> newScript{ Assets::s_ScriptManager.GetAssetByHandle(handle) };
 		KG_ASSERT(newScript);
 		m_Script = newScript;
 		m_ScriptHandle = handle;

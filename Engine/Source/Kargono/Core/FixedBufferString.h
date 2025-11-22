@@ -309,8 +309,8 @@ namespace Kargono
 			for (std::size_t i = 0; i < t_BufferSize - 1; i++)
 			{
 				// Get bytes to xor
-				const uint8_t byteA = reinterpret_cast<const uint8_t>(m_DataBuffer[i]);
-				const uint8_t byteB = reinterpret_cast<const uint8_t>(other.Data()[i]);
+				uint8_t byteA = reinterpret_cast<const uint8_t*>(m_DataBuffer.data())[i];
+				uint8_t byteB = reinterpret_cast<const uint8_t*>(other.m_DataBuffer.data())[i];
 				uint8_t xorByte = byteA ^ byteB;
 
 				// Check for null terminator in either string
@@ -322,7 +322,7 @@ namespace Kargono
 				}
 
 				// Set the xor'd byte in result buffer
-				result.m_DataBuffer[i] = reinterpret_cast<char>(xorByte);
+				result.m_DataBuffer[i] = static_cast<char>(xorByte);
 			}
 
 			// Set default null terminator and length if full buffer used
@@ -392,7 +392,7 @@ namespace Kargono
 
 	private:
 		std::array<char, t_BufferSize> m_DataBuffer{};
-		std::size_t m_StringLength{0};
+		std::size_t m_StringLength{ 0 };
 	};
 
 	template <size_t t_BufferSize>

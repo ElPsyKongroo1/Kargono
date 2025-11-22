@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Kargono/Memory/Platform/MemoryTypes.h"
+#include "Modules/Memory/Platform/MemoryTypes.h"
 
 #include <cstdint>
 #include <cstdlib>

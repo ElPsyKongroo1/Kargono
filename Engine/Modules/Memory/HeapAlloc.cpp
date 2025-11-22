@@ -1,6 +1,6 @@
 #include "kgpch.h"
 
-#include "Kargono/Memory/HeapAlloc.h"
+#include "Modules/Memory/HeapAlloc.h"
 
 namespace Kargono::Memory
 {

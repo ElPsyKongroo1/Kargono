@@ -75,7 +75,7 @@ namespace Kargono::EditorUI
 					return 0;
 				};
 			ImGui::InputText(("##" + std::to_string(GetNextChildID())).c_str(),
-				FieldBuffer.As<char>(), FieldBuffer.Size, inputFlags, typeCallback);
+				FieldBuffer.As<char>(), FieldBuffer.m_Size, inputFlags, typeCallback);
 			break;
 		}
 		case WrappedVarType::Float:
@@ -95,7 +95,7 @@ namespace Kargono::EditorUI
 					return 0;
 				};
 			ImGui::InputText(("##" + std::to_string(GetNextChildID())).c_str(),
-				FieldBuffer.As<char>(), FieldBuffer.Size, inputFlags, typeCallback);
+				FieldBuffer.As<char>(), FieldBuffer.m_Size, inputFlags, typeCallback);
 			break;
 		}
 		}

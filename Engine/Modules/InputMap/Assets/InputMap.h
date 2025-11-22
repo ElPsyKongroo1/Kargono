@@ -6,6 +6,7 @@
 #include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/Events/KeyEvent.h"
 #include "Kargono/Core/Timestep.h"
+#include "Modules/Assets/Metadata.h"
 
 #include "Modules/InputMap/InputActionBinders/InputActionBinder.h"
 #include "Modules/InputMap/InputActionBinders/KeyboardActionBinder.h"

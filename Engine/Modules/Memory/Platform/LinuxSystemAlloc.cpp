@@ -1,8 +1,8 @@
 #include "kgpch.h"
 
 #if defined(KG_PLATFORM_LINUX)
-#include "Kargono/Memory/SystemAlloc.h"
-#include "Kargono/Memory/MemoryCommon.h"
+#include "Modules/Memory/SystemAlloc.h"
+#include "Modules/Memory/MemoryCommon.h"
 
 # define _GNU_SOURCE 1
 # include <sys/mman.h>
