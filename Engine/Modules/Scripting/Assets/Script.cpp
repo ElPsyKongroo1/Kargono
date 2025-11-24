@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/Scripting/Assets/Script.h"
+#include "Modules/Assets/AssetService.h"
 #include "Modules/Core/Engine.h"
 #include "Modules/Events/AssetEvent.h"
 
@@ -93,8 +94,7 @@ namespace Kargono::Scripting
 		}
 
 		m_ScriptSectionLabels.insert(newLabel);
-		SerializeAssetRegistry();
-
+		Assets::s_ScriptManager.SerializeAssetRegistry();
 		return true;
 	}
 
@@ -116,23 +116,25 @@ namespace Kargono::Scripting
 		m_ScriptSectionLabels.insert(newLabel);
 
 		// Change label for all scripts
-		for (auto& [handle, script] : m_AssetCache)
+		for (auto& [handle, script] : Assets::s_ScriptManager.GetAssetCache())
 		{
-			if (script->m_SectionLabel == oldLabel)
+			if (script->m_SectionLabel.StringView() == oldLabel)
 			{
 				script->m_SectionLabel = newLabel;
 			}
 		}
 
-		for (auto& [handle, asset] : m_AssetRegistry)
+		for (auto& [handle, metadata] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
-			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->m_SectionLabel == oldLabel)
+			ScriptMetaData* scriptMetaData = metadata.GetSpecificMetaData<ScriptMetaData>();
+
+			if (scriptMetaData->m_SectionLabel.StringView() == oldLabel)
 			{
-				asset.Data.GetSpecificMetaData<ScriptMetaData>()->m_SectionLabel = newLabel;
+				scriptMetaData->m_SectionLabel = newLabel;
 			}
 		}
 
-		SerializeAssetRegistry();
+		Assets::s_ScriptManager.SerializeAssetRegistry();
 
 		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
 			(
@@ -155,23 +157,24 @@ namespace Kargono::Scripting
 		m_ScriptSectionLabels.erase(label);
 
 		// Remove this label from all scripts
-		for (auto& [handle, script] : m_AssetCache)
+		for (auto& [handle, script] : Assets::s_ScriptManager.GetAssetCache())
 		{
-			if (script->m_SectionLabel == label)
+			if (script->m_SectionLabel.StringView() == label)
 			{
 				script->m_SectionLabel = "None";
 			}
 		}
 
-		for (auto& [handle, asset] : m_AssetRegistry)
+		for (auto& [handle, metadata] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
-			if (asset.Data.GetSpecificMetaData<ScriptMetaData>()->m_SectionLabel == label)
+			ScriptMetaData* scriptMetaData = metadata.GetSpecificMetaData<ScriptMetaData>();
+			if (scriptMetaData->m_SectionLabel.StringView() == label)
 			{
-				asset.Data.GetSpecificMetaData<ScriptMetaData>()->m_SectionLabel = "None";
+				scriptMetaData->m_SectionLabel = "None";
 			}
 		}
 
-		SerializeAssetRegistry();
+		Assets::s_ScriptManager.SerializeAssetRegistry();
 
 		Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
 		(
@@ -349,8 +352,7 @@ namespace Kargono::Scripting
 		for (auto& [aiHandle, assetInfo] : Assets::s_StateManager.GetAssetRegistry())
 		{
 		    Assets::AssetRef<States::State> aiStateRef = Assets::s_StateManager.GetAssetByHandle(aiHandle);
-			bool aiModified = AssetService::RemoveScriptFromState(aiStateRef, metadata.m_Handle);
-
+			bool aiModified = aiStateRef->RemoveScript(metadata.m_Handle);
 			if (aiModified)
 			{
 				Assets::s_StateManager.UpdateAsset(aiStateRef);
@@ -360,7 +362,7 @@ namespace Kargono::Scripting
 		// Check input maps assets
 		for (auto& [inputHandle, assetInfo] : Assets::s_InputMapManager.GetAssetRegistry())
 		{
-		    Assets::AssetRef<Input::InputMap> inputMapRef = Assets::s_InputMapManager.GetAssetByHandle(inputHandle);
+		    Assets::AssetRef<InputMap::InputMap> inputMapRef = Assets::s_InputMapManager.GetAssetByHandle(inputHandle);
 			bool inputModified = inputMapRef->RemoveScript(metadata.m_Handle);
 
 			if (inputModified)

@@ -2,6 +2,7 @@
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUIImageButtonWidget.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
 
 #include "Kargono/Core/Resolution.h"
 #include "Kargono/Projects/Project.h"
@@ -84,7 +85,7 @@ namespace Kargono::RuntimeUI
 		// Save selection fields
 		m_SelectionData.Serialize(emitter);
 		// Save input text unique function pointers
-		emitter << YAML::Key << "OnMoveCursor" << YAML::Value << (uint64_t)m_OnMoveCursorHandle;
+		emitter << YAML::Key << "OnMoveCursor" << YAML::Value << (uint64_t)m_OnMoveCursor.GetAssetHandle();
 		emitter << YAML::EndMap; // End InputTextWidget Map
 
 		emitter << YAML::EndMap; // End Widget Map
@@ -101,14 +102,14 @@ namespace Kargono::RuntimeUI
 		// Get selection data
 		m_SelectionData.Deserialize(specificWidget);
 		// Get input map specific function pointers
-		m_OnMoveCursorHandle = specificWidget["OnMoveCursor"].as<uint64_t>();
-		if (m_OnMoveCursorHandle == Assets::k_EmptyHandle)
+		Assets::AssetHandle onMoveCursorHandle = specificWidget["OnMoveCursor"].as<uint64_t>();
+		if (onMoveCursorHandle == Assets::k_EmptyHandle)
 		{
-			m_OnMoveCursor = nullptr;
+			m_OnMoveCursor.Reset();
 		}
 		else
 		{
-		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnMoveCursorHandle);
+		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(onMoveCursorHandle);
 			if (!onPressScript)
 			{
 				KG_WARN("Unable to locate On Move Cursor Script!");

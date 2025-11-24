@@ -2,6 +2,7 @@
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUIDropdownWidget.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
 
 #include "Kargono/Core/Resolution.h"
 #include "Kargono/Projects/Project.h"
@@ -148,7 +149,7 @@ namespace Kargono::RuntimeUI
 		emitter << YAML::Key << "DropDownBackground" << YAML::Value << m_DropDownBackground;
 
 		// Save function pointer
-		emitter << YAML::Key << "OnSelectOption" << YAML::Value << (uint64_t)m_OnSelectOptionHandle;
+		emitter << YAML::Key << "OnSelectOption" << YAML::Value << (uint64_t)m_OnSelectOption.GetAssetHandle();
 
 		emitter << YAML::EndMap; // End DropDownWidget Map
 
@@ -176,14 +177,14 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Get slider widget specific function pointers
-		m_OnSelectOptionHandle = specificWidget["OnSelectOption"].as<uint64_t>();
-		if (m_OnSelectOptionHandle == Assets::k_EmptyHandle)
+		Assets::AssetHandle onSelectOptionHandle = specificWidget["OnSelectOption"].as<uint64_t>();
+		if (onSelectOptionHandle == Assets::k_EmptyHandle)
 		{
-			m_OnSelectOption = nullptr;
+			m_OnSelectOption.Reset();
 		}
 		else
 		{
-		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnSelectOptionHandle);
+		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(onSelectOptionHandle);
 			if (!onPressScript)
 			{
 				KG_WARN("Unable to locate on select option Script!");

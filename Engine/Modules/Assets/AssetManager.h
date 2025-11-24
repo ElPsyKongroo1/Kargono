@@ -864,7 +864,7 @@ namespace Kargono::Assets
 			return m_AssetRegistry;
 		}
 
-		AssetCache<t_AssetType>& GetAssetCache()
+		AssetCache<t_AssetType>& GetAssetCache() requires HasAssetCacheFlag<t_AssetType>
 		{
 			return m_AssetCache;
 		}

@@ -7,6 +7,8 @@
 #include "Modules/ECS/Entity.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/FileSystem/FileSystem.h"
+#include "Modules/Scripting/Assets/Script.h"
+#include "Modules/Assets/Managers/StateManager.h"
 
 #include "Kargono/Utility/Time.h"
 #include "Modules/States/Components/StateMachine.h"

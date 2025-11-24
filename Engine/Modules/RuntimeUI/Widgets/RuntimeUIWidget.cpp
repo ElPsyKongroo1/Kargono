@@ -5,6 +5,8 @@
 #include "Modules/Rendering/RenderingService.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
+#include "Modules/Assets/Managers/Texture2DManager.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
 
 #include "Modules/EditorUI/EditorUIInclude.h"
 
@@ -15,30 +17,30 @@ namespace Kargono::Utility
 		switch (widgetType)
 		{
 		case RuntimeUI::WidgetTypes::TextWidget:
-			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_TextWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_TextWidget.GetAssetRef();
 		case RuntimeUI::WidgetTypes::ButtonWidget:
-			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_ButtonWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_ButtonWidget.GetAssetRef();
 		case RuntimeUI::WidgetTypes::ImageWidget:
-			return EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture;
+			return EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture.GetAssetRef();
 		case RuntimeUI::WidgetTypes::ImageButtonWidget:
-			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_ImageButtonWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_ImageButtonWidget.GetAssetRef();
 		case RuntimeUI::WidgetTypes::CheckboxWidget:
-			return EditorUI::EditorUIContext::m_GenIcons.m_Checkbox_Enabled;
+			return EditorUI::EditorUIContext::m_GenIcons.m_Checkbox_Enabled.GetAssetRef();
 		case RuntimeUI::WidgetTypes::ContainerWidget:
-			return EditorUI::EditorUIContext::m_SceneIcons.m_BoxCollider;
+			return EditorUI::EditorUIContext::m_SceneIcons.m_BoxCollider.GetAssetRef();
 		case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
-			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_HorizontalContainer;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_HorizontalContainer.GetAssetRef();
 		case RuntimeUI::WidgetTypes::VerticalContainerWidget:
-			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_VerticalContainer;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_VerticalContainer.GetAssetRef();
 		case RuntimeUI::WidgetTypes::InputTextWidget:
-			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_InputTextWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_InputTextWidget.GetAssetRef();
 		case RuntimeUI::WidgetTypes::DropDownWidget:
-			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_DropDownWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_DropDownWidget.GetAssetRef();
 		case RuntimeUI::WidgetTypes::SliderWidget:
-			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_SliderWidget;
+			return EditorUI::EditorUIContext::m_RuntimeUIIcons.m_SliderWidget.GetAssetRef();
 		default:
 			KG_ERROR("Invalid widget type provided");
-			return nullptr;
+			return {};
 		}
 	}
 }
@@ -91,7 +93,7 @@ namespace Kargono::RuntimeUI
 				* glm::scale(Math::mat4(1.0f), size);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color,
 				Utility::FileSystem::CRCFromString("a_Color"),
-				renderSpec.m_Buffer, renderSpec.m_Shader);
+				renderSpec.m_Buffer, renderSpec.m_Shader.GetAssetRef());
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
@@ -222,8 +224,9 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Get the aspect ratio from the image value as a vec2
-		Assets::Metadata metadata = Assets::AssetService::GetTexture2DInfo(currentImageData->m_ImageHandle);
-		Assets::TextureMetaData* textureMetadata = metadata.GetSpecificMetaData<Assets::TextureMetaData>();
+		Optional<Assets::Metadata> metadata = Assets::s_Texture2DManager.GetMetadata(currentImageData->m_ImageRef.GetAssetHandle());
+		KG_ASSERT(metadata);
+		Rendering::TextureMetaData* textureMetadata = metadata->GetSpecificMetaData<Rendering::TextureMetaData>();
 		Math::vec2 textureAspectRatio = Math::vec2((float)textureMetadata->m_Width, (float)textureMetadata->m_Height);
 
 		// Ensure we avoid division by 0
@@ -301,7 +304,7 @@ namespace Kargono::RuntimeUI
 		// Selectable fields
 		emitter << YAML::Key << "Selectable" << YAML::Value << m_Selectable;
 		// Function pointer fields
-		emitter << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)m_FunctionPointers.m_OnPressHandle;
+		emitter << YAML::Key << "FunctionPointerOnPress" << YAML::Value << (uint64_t)m_FunctionPointers.m_OnPress.GetAssetHandle();
 	}
 
 	void SelectionData::Deserialize(YAML::Node& node)
@@ -311,14 +314,15 @@ namespace Kargono::RuntimeUI
 		// Selectable field
 		m_Selectable = node["Selectable"].as<bool>();
 		// Function pointer fields
-		m_FunctionPointers.m_OnPressHandle = node["FunctionPointerOnPress"].as<uint64_t>();
-		if (m_FunctionPointers.m_OnPressHandle == Assets::k_EmptyHandle)
+		 
+		Assets::AssetHandle onPressHandle = node["FunctionPointerOnPress"].as<uint64_t>();
+		if (onPressHandle == Assets::k_EmptyHandle)
 		{
-			m_FunctionPointers.m_OnPress = nullptr;
+			m_FunctionPointers.m_OnPress.Reset();
 		}
 		else
 		{
-		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(m_FunctionPointers.m_OnPressHandle);
+		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(m_FunctionPointers.m_OnPress.GetAssetHandle());
 			if (!onPressScript)
 			{
 				KG_WARN("Unable to locate OnPress Script!");
@@ -384,7 +388,7 @@ namespace Kargono::RuntimeUI
 			* glm::scale(Math::mat4(1.0f), Math::vec3(textScalingFactor * 0.05f, ascender * textScalingFactor, 1.0f));
 		Rendering::Shader::SetDataAtInputLocation<Math::vec4>(Math::vec4(1.0f),
 			Utility::FileSystem::CRCFromString("a_Color"),
-			renderSpec.m_Buffer, renderSpec.m_Shader);
+			renderSpec.m_Buffer, renderSpec.m_Shader.GetAssetRef());
 
 		// Submit background data to GPU
 		Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
@@ -440,19 +444,19 @@ namespace Kargono::RuntimeUI
 	}
 	void ImageData::Serialize(YAML::Emitter& emitter, std::string_view label)
 	{
-		emitter << YAML::Key << ((std::string)label + "Image") << YAML::Value << (uint64_t)m_ImageHandle;
+		emitter << YAML::Key << ((std::string)label + "Image") << YAML::Value << (uint64_t)m_ImageRef.GetAssetHandle();
 		emitter << YAML::Key << ((std::string)label + "FixedAspectRatio") << YAML::Value << m_FixedAspectRatio;
 	}
 	void ImageData::Deserialize(YAML::Node& node, std::string_view title)
 	{
-		m_ImageHandle = node[((std::string)title + "Image")].as<uint64_t>();
-		if (m_ImageHandle == Assets::k_EmptyHandle)
+		Assets::AssetHandle imageHandle = node[((std::string)title + "Image")].as<uint64_t>();
+		if (imageHandle == Assets::k_EmptyHandle)
 		{
-			m_ImageRef = nullptr;
+			m_ImageRef.Reset();
 		}
 		else
 		{
-			Assets::AssetRef<Rendering::Texture2D> imageRef = Assets::AssetService::m_Texture2DManager.GetAssetByHandle(m_ImageHandle);
+			Assets::AssetRef<Rendering::Texture2D> imageRef = Assets::s_Texture2DManager.GetAssetByHandle(m_ImageRef.GetAssetHandle());
 			if (!imageRef)
 			{
 				KG_WARN("Unable to locate provided image reference");
@@ -492,7 +496,7 @@ namespace Kargono::RuntimeUI
 		emitter << YAML::EndSeq; // End container widgets sequence
 	}
 
-	void ContainerData::Deserialize(YAML::Node& node, UserInterface* parentUI)
+	void ContainerData::Deserialize(const YAML::Node& node, UserInterface* parentUI)
 	{
 		// Deserialize background color
 		m_BackgroundColor = node["BackgroundColor"].as<Math::vec4>();

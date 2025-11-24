@@ -2,7 +2,7 @@
 #include "Modules/Rendering/Assets/Texture2D.h"
 #include "Modules/RuntimeUI/RuntimeUICommon.h"
 #include "Modules/RuntimeUI/Assets/Font.h"
-
+#include "Modules/Assets/AssetReference.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Kargono/Core/Base.h"
 #include "Modules/Assets/AssetsCommon.h"
@@ -69,8 +69,7 @@ namespace Kargono::RuntimeUI
 
 	struct WidgetCallbacks
 	{
-		Assets::AssetHandle m_OnPressHandle{ Assets::k_EmptyHandle };
-		Ref<Scripting::Script> m_OnPress{ nullptr };
+		Assets::TAssetRef<Scripting::Script> m_OnPress{};
 	};
 
 	struct SelectionData
@@ -112,7 +111,7 @@ namespace Kargono::RuntimeUI
 		// Serialization
 		//============================
 		void Serialize(YAML::Emitter& emitter);
-		void Deserialize(YAML::Node& node, UserInterface* parentUI);
+		void Deserialize(const YAML::Node& node, UserInterface* parentUI);
 	public:
 		//============================
 		// Modify Container

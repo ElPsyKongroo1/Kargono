@@ -6,6 +6,7 @@
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
 #include "Modules/Rendering/ShaderBuilder.h"
+#include "Modules/Assets/Managers/ShaderManager.h"
 
 #include "Modules/Rendering/ExternalAPI/VulkanAPI.h"
 #include "API/Platform/gladAPI.h"
@@ -168,7 +169,7 @@ namespace Kargono::Rendering
 	{
 	}
 
-	void ShaderMetaData::Deserialize(void* context)
+	void ShaderMetaData::Serialize(void* context)
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");

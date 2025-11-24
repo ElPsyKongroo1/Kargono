@@ -2,6 +2,7 @@
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUIHorizontalContainerWidget.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
+#include "Modules/RuntimeUI/FontContext.h"
 
 namespace Kargono::RuntimeUI
 {
@@ -29,11 +30,11 @@ namespace Kargono::RuntimeUI
 			// Push widget ID
 			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
 				Utility::FileSystem::CRCFromString("a_EntityID"),
-				backgroundSpec.m_Buffer, backgroundSpec.m_Shader);
+				backgroundSpec.m_Buffer, backgroundSpec.m_Shader.GetAssetRef());
 			RuntimeUI::FontService::GetActiveContext().SetID((uint32_t)containedWidget->m_ID);
 			Rendering::Shader::SetDataAtInputLocation<int32_t>(containedWidget->m_ID,
 				Utility::FileSystem::CRCFromString("a_EntityID"),
-				imageSpec.m_Buffer, imageSpec.m_Shader);
+				imageSpec.m_Buffer, imageSpec.m_Shader.GetAssetRef());
 
 			Math::vec3 outputSize{ widgetSize.x * m_ColumnWidth, widgetSize.y, widgetSize.z };
 			Math::vec3 outputTranslation

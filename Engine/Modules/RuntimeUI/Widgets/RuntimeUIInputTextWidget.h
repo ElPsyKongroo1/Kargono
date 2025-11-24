@@ -64,7 +64,6 @@ namespace Kargono::RuntimeUI
 		//============================
 		SingleLineTextData m_TextData;
 		SelectionData m_SelectionData;
-		Assets::AssetHandle m_OnMoveCursorHandle{ Assets::k_EmptyHandle };
-		Ref<Scripting::Script> m_OnMoveCursor{ nullptr };
+		Assets::TAssetRef<Scripting::Script> m_OnMoveCursor{};
 	};
 }

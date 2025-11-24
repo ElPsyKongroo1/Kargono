@@ -56,7 +56,7 @@ namespace Kargono::RuntimeUI
 				* glm::scale(Math::mat4(1.0f), sliderSize);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color,
 				Utility::FileSystem::CRCFromString("a_Color"),
-				renderSpec.m_Buffer, renderSpec.m_Shader);
+				renderSpec.m_Buffer, renderSpec.m_Shader.GetAssetRef());
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
