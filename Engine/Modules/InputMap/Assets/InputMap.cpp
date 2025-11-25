@@ -12,13 +12,13 @@ namespace Kargono::InputMap
 	void InputMap::Serialize(void* context)
 	{
 		// Get asset context
-		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<InputMap>* assetContext = (Assets::SerializeAssetContext<InputMap>*)context;
 		KG_ASSERT(assetContext, "Context cannot be null");
-		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		Assets::Metadata<InputMap>* metadata{ assetContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<InputMap>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		// Serialize
 		YAML::Emitter out;
@@ -120,13 +120,13 @@ namespace Kargono::InputMap
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext* assetContext = (Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<InputMap>* assetContext = (Assets::DeserializeAssetContext<InputMap>*)context;
 		KG_ASSERT(assetContext, "Context cannot be null");
-		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		Assets::Metadata<InputMap>* metadata{ assetContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<InputMap>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		YAML::Node data;
 		try
@@ -225,13 +225,13 @@ namespace Kargono::InputMap
 		}
 	}
 
-	void InputMap::CreateFromName(Assets::Metadata& metadata)
+	void InputMap::CreateFromName(Assets::Metadata<InputMap>& metadata)
 	{
 		// Create default input map
 		InputMap defaultInputMap{};
 
 		// Save binary into file
-		Assets::SerializeAssetContext context{ &metadata };
+		Assets::SerializeAssetContext<InputMap> context{ &metadata };
 		defaultInputMap.Serialize((void*)&context);
 	}
 

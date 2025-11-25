@@ -186,7 +186,7 @@ namespace Kargono::ECSInternal
 		{
             if constexpr (t_NumComponents == 1)
             {
-			    return PackedIterator<t_NumComponents>( m_EntityStorage, m_EntityStorage.size() );
+			    return PackedIterator<t_NumComponents>(m_EntityStorage, m_EntityStorage.size() );
             }
             else
             {

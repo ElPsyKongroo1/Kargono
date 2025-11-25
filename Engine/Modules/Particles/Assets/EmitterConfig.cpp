@@ -10,13 +10,13 @@ namespace Kargono::Particles
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<EmitterConfig>* assetContext = (Assets::SerializeAssetContext<EmitterConfig>*)context;
 		KG_ASSERT(assetContext, "Context cannot be null");
-		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		Assets::Metadata<EmitterConfig>* metadata{ assetContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<EmitterConfig>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -58,13 +58,13 @@ namespace Kargono::Particles
 	void EmitterConfig::Deserialize(void* context)
 	{
 		// Get context
-		Assets::DeserializeAssetContext* deserializeContext = (Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<EmitterConfig>* deserializeContext = (Assets::DeserializeAssetContext<EmitterConfig>*)context;
 		KG_ASSERT(deserializeContext, "Context cannot be null");
-		Assets::Metadata* metadata{ deserializeContext->m_AssetMetadata };
+		Assets::Metadata<EmitterConfig>* metadata{ deserializeContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
-		const std::filesystem::path& assetPath = metadata->GetAssetFullFilePath<EmitterConfig>();
+		const std::filesystem::path& assetPath = metadata->GetAssetFullFilePath();
 
 		YAML::Node data;
 		try
@@ -109,7 +109,7 @@ namespace Kargono::Particles
 		m_SizeEnd = data["SizeEnd"].as<Math::vec3>();
 	}
 
-	void EmitterConfig::ValidateDelete(Assets::Metadata& metadata)
+	void EmitterConfig::ValidateDelete(Assets::Metadata<EmitterConfig>& metadata)
 	{
 		// Ensure all other assets do not contain this emitter config
 		// If they do, remove the reference
@@ -129,13 +129,13 @@ namespace Kargono::Particles
 		}
 	}
 
-	void EmitterConfig::CreateFromName(Assets::Metadata& metadata)
+	void EmitterConfig::CreateFromName(Assets::Metadata<EmitterConfig>& metadata)
 	{
 		// Create default emitter config
 		EmitterConfig defaultConfig{};
 
 		// Save binary into file
-		Assets::SerializeAssetContext context {&metadata};
+		Assets::SerializeAssetContext<EmitterConfig> context {&metadata};
 		defaultConfig.Serialize((void*)&context);
 	}
 }

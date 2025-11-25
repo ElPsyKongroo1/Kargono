@@ -51,7 +51,7 @@ namespace Kargono::RuntimeUI
 		Ref<UserInterface> m_ActiveUI{ nullptr };
 		Assets::AssetHandle m_ActiveUIHandle{ Assets::k_EmptyHandle };
 		// Default values
-		Ref<Font> m_DefaultFont{ nullptr };
+		Assets::AssetRef<Font> m_DefaultFont{};
 		// Rendering data
 		Rendering::RendererInputSpec m_BackgroundInputSpec{};
 		Rendering::RendererInputSpec m_ImageInputSpec{};

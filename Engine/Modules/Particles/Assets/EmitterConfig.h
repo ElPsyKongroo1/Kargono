@@ -48,7 +48,7 @@ namespace Kargono::Particles
 		{
 			return ".kgparticle";
 		}
-		static void CreateFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata<EmitterConfig>& metadata);
 	public:
 		//==============================
 		// Serialization
@@ -59,7 +59,7 @@ namespace Kargono::Particles
 		//==============================
 		// Validation
 		//==============================
-		void ValidateDelete(Assets::Metadata& metadata);
+		void ValidateDelete(Assets::Metadata<EmitterConfig>& metadata);
 	public:
 		//==============================
 		// Public Fields

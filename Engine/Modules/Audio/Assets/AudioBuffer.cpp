@@ -13,7 +13,7 @@ namespace Kargono::Audio
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
+		Assets::SerializeMetaDataContext<AudioBuffer>& metadataContext = *(Assets::SerializeMetaDataContext<AudioBuffer>*)context;
 
 		// Get context fields
 		YAML::Emitter& emitter = *metadataContext.m_Serializer;
@@ -28,7 +28,7 @@ namespace Kargono::Audio
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
+		Assets::DeserializeMetaDataContext<AudioBuffer>& assetContext = *(Assets::DeserializeMetaDataContext<AudioBuffer>*)context;
 
 		// Get context fields
 		YAML::Node& metadataNode = *assetContext.m_Node;
@@ -40,7 +40,7 @@ namespace Kargono::Audio
 		m_TotalSize = metadataNode["TotalSize"].as<uint64_t>();
 	}
 
-	void AudioBuffer::CreateFromFile(Assets::Metadata& metadata,
+	void AudioBuffer::CreateFromFile(Assets::Metadata<AudioBuffer>& metadata,
 		std::filesystem::path& sourceFile)
 	{
 		// Get intermediate location
@@ -50,7 +50,7 @@ namespace Kargono::Audio
 		};
 		std::filesystem::path intermediateLocation
 		{
-			metadata.GetAssetFullIntermediatePath<AudioBuffer>(intermediateExtension.StringView())
+			metadata.GetAssetFullIntermediatePath(intermediateExtension.StringView())
 		};
 
 		// Create buffers
@@ -88,7 +88,7 @@ namespace Kargono::Audio
 		}
 
 		// Load data into in-memory metadata object
-		AudioBufferMetaData* audioMetadata{ metadata.GetSpecificMetaData<AudioBufferMetaData>() };
+		AudioBufferMetaData* audioMetadata{ metadata.GetSpecificMetaData() };
 		KG_ASSERT(audioMetadata);
 		audioMetadata->m_Channels = channels;
 		audioMetadata->m_SampleRate = sampleRate;
@@ -114,11 +114,11 @@ namespace Kargono::Audio
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<AudioBuffer>& assetContext = *(Assets::DeserializeAssetContext<AudioBuffer>*)context;
 
 		// Get context fields
 		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
-		Assets::Metadata& metadata{ *assetContext.m_AssetMetadata };
+		Assets::Metadata<AudioBuffer>& metadata{ *assetContext.m_AssetMetadata };
 		// Get intermediate location
 		const FixedBufStr16& intermediateExtension
 		{
@@ -126,11 +126,11 @@ namespace Kargono::Audio
 		};
 		std::filesystem::path intermediateLocation
 		{
-			metadata.GetAssetFullIntermediatePath<AudioBuffer>(intermediateExtension.StringView())
+			metadata.GetAssetFullIntermediatePath(intermediateExtension.StringView())
 		};
 
 		// Get specific metadata
-		AudioBufferMetaData audioBufferMetadata = *metadata.GetSpecificMetaData<AudioBufferMetaData>();
+		AudioBufferMetaData audioBufferMetadata = *metadata.GetSpecificMetaData();
 
 		// Load audio data from file
 		Buffer currentResource{};

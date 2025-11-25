@@ -193,7 +193,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		Math::vec3 GetTextStartingPosition(const Math::vec3& translation, const Math::vec3 size, float textScalingFactor);
 		Math::vec2 GetTextDimensions(UserInterface* parentUI, std::string_view text) const;
-		size_t GetCursorIndexFromMousePosition(Ref<Font> font, float textStartingPosition, float mouseXPosition, float textScalingFactor);
+		size_t GetCursorIndexFromMousePosition(Font* font, float textStartingPosition, float mouseXPosition, float textScalingFactor);
 	public:
 		//============================
 		// Public Fields

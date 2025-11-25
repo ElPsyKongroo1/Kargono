@@ -108,9 +108,9 @@ namespace Kargono::Rendering
 			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
 		}
 
-		static void CreateFromName(Assets::Metadata& metadata);
-		static void CreateFromFile(Assets::Metadata& metadata, const std::filesystem::path& sourcePath);
-		static void CreateFromSpec(Assets::Metadata& metadata, const TextureSpecification& spec);
+		static void CreateFromName(Assets::Metadata<Texture2D>& metadata);
+		static void CreateFromFile(Assets::Metadata<Texture2D>& metadata, const std::filesystem::path& sourcePath);
+		static void CreateFromSpec(Assets::Metadata<Texture2D>& metadata, const TextureSpecification& spec);
 	public:
 		//==============================
 		// Constructors/Destructors
@@ -127,7 +127,7 @@ namespace Kargono::Rendering
 		//==============================
 		// Validate Functions
 		//==============================
-		void ValidateDelete(Assets::Metadata& metadata);
+		void ValidateDelete(Assets::Metadata<Texture2D>& metadata);
 	public:
 		//==============================
 		// Interact w/ Renderer
@@ -165,6 +165,8 @@ namespace Kargono::Rendering
 		GLenum m_InternalFormat {};
 		GLenum m_DataFormat{};
 	};
+
+	Register_Module_Type(Texture2D, Assets::AssetTag)
 }
 
 namespace Kargono::Utility

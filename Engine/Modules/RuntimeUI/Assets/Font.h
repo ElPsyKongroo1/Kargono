@@ -111,8 +111,8 @@ namespace Kargono::RuntimeUI
 		{
 			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
 		}
-		static void CreateFromName(Assets::Metadata& metadata);
-		static void CreateFromFile(Assets::Metadata& metadata, const std::filesystem::path& sourcePath);
+		static void CreateFromName(Assets::Metadata<Font>& metadata);
+		static void CreateFromFile(Assets::Metadata<Font>& metadata, const std::filesystem::path& sourcePath);
 	public:
 		//==============================
 		// Constructors/Destructors

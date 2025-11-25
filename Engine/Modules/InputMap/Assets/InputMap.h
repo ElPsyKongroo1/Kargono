@@ -44,7 +44,7 @@ namespace Kargono::InputMap
 			return ".kginput";
 		}
 
-		static void CreateFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata<InputMap>& metadata);
 	public:
 		//=========================
 		// Constructors/Destructors

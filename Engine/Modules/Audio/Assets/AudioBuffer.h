@@ -76,7 +76,7 @@ namespace Kargono::Audio
 			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
 		}
 
-		static void CreateFromFile(Assets::Metadata& metadata, std::filesystem::path& sourcePath);
+		static void CreateFromFile(Assets::Metadata<AudioBuffer>& metadata, std::filesystem::path& sourcePath);
 	public:
 		//==============================
 		// Constructors and Destructors

@@ -19,7 +19,7 @@ namespace Kargono::Scripting
 		// Load in Engine Scripts
 		for (Ref<Scripting::Script> script : Scripting::ScriptBinderService::GetActiveContext().GetAllEngineScripts())
 		{
-			Assets::Metadata newMetadata{};
+			Assets::Metadata<Script> newMetadata{};
 			newMetadata.m_Handle = script->m_ID;
 
 			// TODO: Access script service/context and set default metadata settings please??
@@ -36,13 +36,7 @@ namespace Kargono::Scripting
 			scriptMetaData.m_FunctionType = script->m_FuncType;
 			scriptMetaData.m_ExplicitFuncType = script->m_ExplicitFuncType;
 
-			newMetadata.SetSpecificMetaData<ScriptMetaData>(&scriptMetaData);
-
-			// TODO: Access script service/context and insert the engine script yeah??
-
-			// Insert Engine Script into registry/in-memory
-			//m_AssetRegistry.insert({ newMetadata.m_Handle, newMetadata });
-			//m_AssetCache.insert({ newMetadata.m_Handle, script });
+			newMetadata.SetSpecificMetaData(&scriptMetaData);
 		}
 
 		// Get Section Labels
@@ -126,7 +120,7 @@ namespace Kargono::Scripting
 
 		for (auto& [handle, metadata] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
-			ScriptMetaData* scriptMetaData = metadata.GetSpecificMetaData<ScriptMetaData>();
+			ScriptMetaData* scriptMetaData = metadata.GetSpecificMetaData();
 
 			if (scriptMetaData->m_SectionLabel.StringView() == oldLabel)
 			{
@@ -167,7 +161,7 @@ namespace Kargono::Scripting
 
 		for (auto& [handle, metadata] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
-			ScriptMetaData* scriptMetaData = metadata.GetSpecificMetaData<ScriptMetaData>();
+			ScriptMetaData* scriptMetaData = metadata.GetSpecificMetaData();
 			if (scriptMetaData->m_SectionLabel.StringView() == label)
 			{
 				scriptMetaData->m_SectionLabel = "None";
@@ -190,7 +184,7 @@ namespace Kargono::Scripting
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
+		Assets::DeserializeMetaDataContext<Script>& assetContext = *(Assets::DeserializeMetaDataContext<Script>*)context;
 
 		// Get context fields
 		YAML::Node& metadataNode = *assetContext.m_Node;
@@ -232,13 +226,13 @@ namespace Kargono::Scripting
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
+		Assets::SerializeMetaDataContext<Script>& metadataContext = *(Assets::SerializeMetaDataContext<Script>*)context;
 
 		// Get context fields
 		KG_ASSERT(metadataContext.m_Serializer);
 		YAML::Emitter& serializer = *metadataContext.m_Serializer;
 		KG_ASSERT(metadataContext.m_Metadata);
-		Assets::Metadata& metadata = *metadataContext.m_Metadata;
+		Assets::Metadata<Script>& metadata = *metadataContext.m_Metadata;
 
 		// Serialize
 		serializer << YAML::Key << "SectionLabel" << YAML::Value << m_SectionLabel;
@@ -279,13 +273,13 @@ namespace Kargono::Scripting
 	void Script::Serialize(void* context)
 	{
 		// Get asset context
-		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<Script>* assetContext = (Assets::SerializeAssetContext<Script>*)context;
 		KG_ASSERT(assetContext, "Context cannot be null");
-		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		Assets::Metadata<Script>* metadata{ assetContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<Script>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		KG_ERROR("We got some splaining to dooooooo");
 
@@ -296,15 +290,15 @@ namespace Kargono::Scripting
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<Script>& assetContext = *(Assets::DeserializeAssetContext<Script>*)context;
 		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
-		Assets::Metadata* metadata{ assetContext.m_AssetMetadata };
+		Assets::Metadata<Script>* metadata{ assetContext.m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<Script>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
-		ScriptMetaData& scriptMetadata = *metadata->GetSpecificMetaData<ScriptMetaData>();
+		ScriptMetaData& scriptMetadata = *metadata->GetSpecificMetaData();
 
 		m_ID = metadata->m_Handle;
 		m_ScriptName = metadata->m_Name;
@@ -315,16 +309,16 @@ namespace Kargono::Scripting
 		Scripting::ScriptBinderService::GetActiveContext().LoadScriptFunction(this, scriptMetadata.m_FunctionType);
 	}
 
-	void Script::CreateFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec)
+	void Script::CreateFromSpec(Assets::Metadata<Script>& metadata, const ScriptSpec& spec)
 	{
-		const std::filesystem::path fullPath = metadata.GetAssetFullFilePath<Script>();
+		const std::filesystem::path fullPath = metadata.GetAssetFullFilePath();
 
 		// Create the script file on-disk
 		Utility::FileSystem::WriteFileString(fullPath, Utility::GenerateFunctionStub(spec.m_FunctionType, 
 			metadata.m_Name.StringView(), spec.m_ExplicitFuncType));
 
 		// Load data into in-memory metadata object
-		ScriptMetaData* scriptMetadata = metadata.GetSpecificMetaData<ScriptMetaData>();
+		ScriptMetaData* scriptMetadata = metadata.GetSpecificMetaData();
 		KG_ASSERT(scriptMetadata);
 		scriptMetadata->m_ScriptType = spec.m_Type;
 		scriptMetadata->m_SectionLabel = spec.m_SectionLabel;
@@ -343,7 +337,7 @@ namespace Kargono::Scripting
 		return true;
 	}
 
-	void Script::ValidateDelete(Assets::Metadata& metadata)
+	void Script::ValidateDelete(Assets::Metadata<Script>& metadata)
 	{
 		// Ensure all other assets do not contain this script
 		// If they do, remove the reference
@@ -407,9 +401,9 @@ namespace Kargono::Scripting
 		}
 	}
 
-	void Script::UpdateFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec)
+	void Script::UpdateFromSpec(Assets::Metadata<Script>& metadata, const ScriptSpec& spec)
 	{
-		ScriptMetaData* scriptMetadata = metadata.GetSpecificMetaData<ScriptMetaData>();
+		ScriptMetaData* scriptMetadata = metadata.GetSpecificMetaData();
 		KG_ASSERT(scriptMetadata);
 
 		// Update script metadata

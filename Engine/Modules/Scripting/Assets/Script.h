@@ -104,10 +104,10 @@ namespace Kargono::Scripting
 			return ".kgscript";
 		}
 
-		void CreateFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec);
+		void CreateFromSpec(Assets::Metadata<Script>& metadata, const ScriptSpec& spec);
 		static bool ValidateCreateFromSpec(const Assets::AssetCreationData& creationData, const ScriptSpec& spec);
-		void ValidateDelete(Assets::Metadata& metadata);
-		void UpdateFromSpec(Assets::Metadata& metadata, const ScriptSpec& spec);
+		void ValidateDelete(Assets::Metadata<Script>& metadata);
+		void UpdateFromSpec(Assets::Metadata<Script>& metadata, const ScriptSpec& spec);
 		
 	public:
 		//==============================

@@ -48,7 +48,7 @@ namespace Kargono::Scenes
 		{
 			return ".kgscene";
 		}
-		static void CreateFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata<Scene>& metadata);
 	public:
 		//====================
 		// Constructor/Destructor

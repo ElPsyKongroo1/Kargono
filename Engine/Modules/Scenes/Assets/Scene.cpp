@@ -34,26 +34,26 @@
 
 namespace Kargono::Scenes
 {
-	void Scene::CreateFromName(Assets::Metadata& metadata)
+	void Scene::CreateFromName(Assets::Metadata<Scene>& metadata)
 	{
 		// Create default scene
 		Scene defaultScene{};
 
 		// Save Binary into File
-		Assets::SerializeAssetContext serializeContext{};
+		Assets::SerializeAssetContext<Scene> serializeContext{};
 		serializeContext.m_AssetMetadata = &metadata;
 		defaultScene.Serialize((void*)&serializeContext);
 	}
 	void Scene::Serialize(void* context)
 	{
 		// Get asset context
-		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<Scene>* assetContext = (Assets::SerializeAssetContext<Scene>*)context;
 		KG_ASSERT(assetContext, "Context cannot be null");
-		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		Assets::Metadata<Scene>* metadata{ assetContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<Scene>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		bool submitScene{ true };
 		YAML::Emitter out;
@@ -105,13 +105,13 @@ namespace Kargono::Scenes
 	void Scene::Deserialize(void* context)
 	{
 		// Get context
-		Assets::DeserializeAssetContext* deserializeContext = (Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<Scene>* deserializeContext = (Assets::DeserializeAssetContext<Scene>*)context;
 		KG_ASSERT(deserializeContext, "Context cannot be null");
-		Assets::Metadata* metadata = deserializeContext->m_AssetMetadata;
+		Assets::Metadata<Scene>* metadata = deserializeContext->m_AssetMetadata;
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<Scene>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		YAML::Node data;
 		try
@@ -194,20 +194,19 @@ namespace Kargono::Scenes
 			ECS::Entity currentEntity{ m_EntityRegistry.GetEntityByECSID(enttEntity) };
 			Physics2D::RigidBody2D& component = currentEntity.GetComponent<Physics2D::RigidBody2D>();
 
-			if (component.m_OnCollisionStartScriptHandle == scriptHandle)
+			if (component.m_OnCollisionStartScript.GetAssetHandle()  == scriptHandle)
 			{
-				component.m_OnCollisionStartScriptHandle = Assets::k_EmptyHandle;
-				component.m_OnCollisionStartScript = nullptr;
+				component.m_OnCollisionStartScript.Reset();
 				sceneModified = true;
 			}
 
-			if (component.m_OnCollisionEndScriptHandle == scriptHandle)
+			if (component.m_OnCollisionEndScript.GetAssetHandle() == scriptHandle)
 			{
-				component.m_OnCollisionEndScriptHandle = Assets::k_EmptyHandle;
-				component.m_OnCollisionEndScript = nullptr;
+				component.m_OnCollisionEndScript.Reset();
 				sceneModified = true;
 			}
 		}
+
 		return sceneModified;
 	}
 	bool Scene::RemoveState(Assets::AssetHandle aiStateHandle)
@@ -262,10 +261,9 @@ namespace Kargono::Scenes
 			ECS::Entity currentEntity{ m_EntityRegistry.GetEntityByECSID(enttEntity) };
 			Particles::ParticleEmitter& component = currentEntity.GetComponent<Particles::ParticleEmitter>();
 
-			if (component.m_EmitterConfigHandle == emitterConfigHandle)
+			if (component.m_EmitterConfigRef.GetAssetHandle() == emitterConfigHandle)
 			{
-				component.m_EmitterConfigHandle = Assets::k_EmptyHandle;
-				component.m_EmitterConfigRef = nullptr;
+				component.m_EmitterConfigRef.Reset();
 				emitterConfigModified = true;
 			}
 		}
@@ -478,7 +476,7 @@ namespace Kargono::Scenes
 		KG_ASSERT(currentEntity);
 
 		// Get the indicated custom component
-		Assets::AssetRef<ECSInternal::CustomComponent> projectComponent = Assets::s_CustomComponentManager.GetAssetByHandle<ECSInternal::CustomComponent>(projectComponentID);
+		Assets::AssetRef<ECSInternal::CustomComponent> projectComponent = Assets::s_CustomComponentManager.GetAssetByHandle(projectComponentID);
 		KG_ASSERT(projectComponent);
 		KG_ASSERT(fieldLocation < projectComponent->m_DataOffsets.size());
 
@@ -499,7 +497,7 @@ namespace Kargono::Scenes
 
 		// Get the indicated custom component
 		Assets::AssetRef<ECSInternal::CustomComponent> projectComponent = 
-			Assets::s_CustomComponentManager.GetAssetByHandle<ECSInternal::CustomComponent>(projectComponentID);
+			Assets::s_CustomComponentManager.GetAssetByHandle(projectComponentID);
 		KG_ASSERT(projectComponent);
 		KG_ASSERT(fieldLocation < projectComponent->m_DataOffsets.size());
 

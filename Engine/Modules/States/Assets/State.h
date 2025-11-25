@@ -31,7 +31,7 @@ namespace Kargono::States
 		{
 			return ".kgstate";
 		}
-		static void CreateFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata<State>& metadata);
 
 	public:
 		//==============================
@@ -44,7 +44,7 @@ namespace Kargono::States
 		//==============================
 		// Validation
 		//==============================
-		void ValidateDelete(Assets::Metadata& metadata);
+		void ValidateDelete(Assets::Metadata<State>& metadata);
 		bool RemoveScript(Assets::AssetHandle scriptHandle);
 	public:
 		//==============================

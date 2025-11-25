@@ -7,13 +7,13 @@ namespace Kargono::EditorUI
 	void ColorPalette::Serialize(void* context)
 	{
 		// Get context
-		Assets::SerializeAssetContext* serializeContext = (Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<ColorPalette>* serializeContext = (Assets::SerializeAssetContext<ColorPalette>*)context;
 		KG_ASSERT(serializeContext);
-		Assets::Metadata* metadata{ serializeContext->m_AssetMetadata };
+		Assets::Metadata<ColorPalette>* metadata{ serializeContext->m_AssetMetadata };
 		KG_ASSERT(metadata);
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<ColorPalette>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		// Serialize asset
 		YAML::Emitter out;
@@ -37,13 +37,13 @@ namespace Kargono::EditorUI
 	void ColorPalette::Deserialize(void* context)
 	{
 		// Get context
-		Assets::DeserializeAssetContext* deserializeContext = (Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<ColorPalette>* deserializeContext = (Assets::DeserializeAssetContext<ColorPalette>*)context;
 		KG_ASSERT(deserializeContext);
-		Assets::Metadata* metadata{ deserializeContext->m_AssetMetadata };
+		Assets::Metadata<ColorPalette>* metadata{ deserializeContext->m_AssetMetadata };
 		KG_ASSERT(metadata);
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<ColorPalette>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		// Deserialize asset
 		YAML::Node data;
@@ -72,11 +72,11 @@ namespace Kargono::EditorUI
 		}
 	}
 
-	void ColorPalette::CreateFromName(Assets::Metadata& metadata)
+	void ColorPalette::CreateFromName(Assets::Metadata<ColorPalette>& metadata)
 	{
 		// Serialize default color palette to file
 		ColorPalette defaultColorPalette;
-		Assets::SerializeAssetContext serializeContext{ &metadata };
+		Assets::SerializeAssetContext<ColorPalette> serializeContext{ &metadata };
 		defaultColorPalette.Serialize((void*)&serializeContext);
 	}
 }

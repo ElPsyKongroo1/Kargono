@@ -146,13 +146,13 @@ namespace Kargono::ECSInternal
 	void CustomComponent::Serialize(void* context)
 	{
 		// Get asset context
-		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<CustomComponent>* assetContext = (Assets::SerializeAssetContext<CustomComponent>*)context;
 		KG_ASSERT(assetContext, "Context cannot be null");
-		Assets::Metadata* metadata { assetContext->m_AssetMetadata };
+		Assets::Metadata<CustomComponent>* metadata { assetContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<CustomComponent>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -200,13 +200,13 @@ namespace Kargono::ECSInternal
 	void CustomComponent::Deserialize(void* context)
 	{
 		// Get context & metadata
-		Assets::DeserializeAssetContext* deserializeContext = (Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<CustomComponent>* deserializeContext = (Assets::DeserializeAssetContext<CustomComponent>*)context;
 		KG_ASSERT(deserializeContext, "Context cannot be null");
-		Assets::Metadata* metadata = deserializeContext->m_AssetMetadata;
+		Assets::Metadata<CustomComponent>* metadata = deserializeContext->m_AssetMetadata;
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get file path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<CustomComponent>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		// Deserialize
 		YAML::Node data;
@@ -262,17 +262,17 @@ namespace Kargono::ECSInternal
 		}
 	}
 
-	Ref<void> CustomComponent::ValidateUpdateFromAsset(Assets::Metadata& metadata, Assets::AssetReference<CustomComponent> newAssetRef )
+	Ref<void> CustomComponent::ValidateUpdateFromAsset(Assets::Metadata<CustomComponent>& metadata, Assets::AssetReference<CustomComponent> newAssetRef )
 	{
 		// Get new asset reference	
 		KG_ASSERT(newAssetRef.IsValid() && !newAssetRef.IsEmpty(), "Attempt to save an invalid asset reference");
 		CustomComponent* newAsset{ &newAssetRef.GetAsset() };
 
 		// Get path to asset file
-		const std::filesystem::path assetPath{ metadata.GetAssetFullFilePath<CustomComponent>() };
+		const std::filesystem::path assetPath{ metadata.GetAssetFullFilePath() };
 
 		// Deserialize context into current asset to ensure up-to-date information
-		Assets::DeserializeAssetContext assetContext{&metadata};
+		Assets::DeserializeAssetContext<CustomComponent> assetContext{&metadata};
 		Deserialize((void*)&assetContext);
 
 		// Create reallocation instructions which stores information for transferring data from old entity components to new entity components
@@ -337,7 +337,7 @@ namespace Kargono::ECSInternal
 		}
 	}
 
-	void CustomComponent::CreateFromName(Assets::Metadata& metadata)
+	void CustomComponent::CreateFromName(Assets::Metadata<CustomComponent>& metadata)
 	{
 		// Create new custom component
 		CustomComponent tempComponent{};
@@ -348,11 +348,11 @@ namespace Kargono::ECSInternal
 		tempComponent.m_Identifier = identifier;
 
 		// Save into file
-		Assets::SerializeAssetContext serializeContext{ &metadata };
+		Assets::SerializeAssetContext<CustomComponent> serializeContext{ &metadata };
 		tempComponent.Serialize((void*)&serializeContext);
 	}
 
-	void CustomComponent::ValidateDelete(Assets::Metadata& metadata)
+	void CustomComponent::ValidateDelete(Assets::Metadata<CustomComponent>& metadata)
 	{
 		// Handle deleting the custom component by removing entity data from all scenes
 		for (auto& [sceneHandle, assetInfo] : Assets::s_SceneManager.GetAssetRegistry())

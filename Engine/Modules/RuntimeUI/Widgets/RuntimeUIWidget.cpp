@@ -408,7 +408,7 @@ namespace Kargono::RuntimeUI
 		// Calculate the text size of the widget using the active user interface font
 		return parentUI->m_Config.m_Font->GetSingleLineTextSize(text);
 	}
-	size_t SingleLineTextData::GetCursorIndexFromMousePosition(Ref<Font> font, float textStartingPosition, float mouseXPosition, float textScalingFactor)
+	size_t SingleLineTextData::GetCursorIndexFromMousePosition(Font* font, float textStartingPosition, float mouseXPosition, float textScalingFactor)
 	{
 		return font->GetIndexFromMousePosition(m_Text, textStartingPosition, mouseXPosition, textScalingFactor);
 	}

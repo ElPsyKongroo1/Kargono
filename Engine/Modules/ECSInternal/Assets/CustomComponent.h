@@ -57,7 +57,7 @@ namespace Kargono::ECSInternal
 			return ".kgcomponent";
 		}
 
-		static void CreateFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata<CustomComponent>& metadata);
 	public:
 		//==============================
 		// Constructors/Destructors
@@ -89,8 +89,8 @@ namespace Kargono::ECSInternal
 		//==============================
 		// Validation
 		//==============================
-		Ref<void> ValidateUpdateFromAsset(Assets::Metadata& metadata, Assets::AssetReference<CustomComponent> newAssetRef);
-		void ValidateDelete(Assets::Metadata& metadata);
+		Ref<void> ValidateUpdateFromAsset(Assets::Metadata<CustomComponent>& metadata, Assets::AssetReference<CustomComponent> newAssetRef);
+		void ValidateDelete(Assets::Metadata<CustomComponent>& metadata);
 	public:
 		//==============================
 		// Getters/Setters

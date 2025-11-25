@@ -4,27 +4,27 @@
 
 namespace Kargono::GlobalState
 {
-	void GameState::CreateFromName(Assets::Metadata& metadata)
+	void GameState::CreateFromName(Assets::Metadata<GameState>& metadata)
 	{
 		// Create default game state
 		GameState defaultGameState{};
 		defaultGameState.SetName(metadata.m_Name.StringView());
 
 		// Serialize default game state into asset
-		Assets::SerializeAssetContext assetContext{};
+		Assets::SerializeAssetContext<GameState> assetContext{};
 		assetContext.m_AssetMetadata = &metadata;
 		defaultGameState.Serialize((void*)&assetContext);
 	}
 	void GameState::Serialize(void* context)
 	{
 		// Get context
-		Assets::SerializeAssetContext* serializeContext = (Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<GameState>* serializeContext = (Assets::SerializeAssetContext<GameState>*)context;
 		KG_ASSERT(serializeContext);
-		Assets::Metadata* metadata{ serializeContext->m_AssetMetadata };
+		Assets::Metadata<GameState>* metadata{ serializeContext->m_AssetMetadata };
 		KG_ASSERT(metadata);
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<GameState>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -56,13 +56,13 @@ namespace Kargono::GlobalState
 	void GameState::Deserialize(void* context)
 	{
 		// Get asset context
-		Assets::DeserializeAssetContext* assetContext = (Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<GameState>* assetContext = (Assets::DeserializeAssetContext<GameState>*)context;
 		KG_ASSERT(assetContext, "Context cannot be null");
-		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		Assets::Metadata<GameState>* metadata{ assetContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<GameState>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		YAML::Node data;
 		try

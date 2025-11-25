@@ -38,8 +38,8 @@ namespace Kargono::RuntimeUI
 
 	struct UserInterfaceCallbacks
 	{
-		Assets::AssetRef<Scripting::Script> m_OnMove{};
-		Assets::AssetRef<Scripting::Script> m_OnHover{};
+		Assets::TAssetRef<Scripting::Script> m_OnMove{};
+		Assets::TAssetRef<Scripting::Script> m_OnHover{};
 	};
 
 	struct Bounds
@@ -117,21 +117,20 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Lifecycle Function(s)
 		//============================
-		void Init(UIWindowsState* windowsState, Ref<Font> defaultFont);
+		void Init(UIWindowsState* windowsState, Assets::AssetRef<Font> defaultFont);
 		void Terminate();
 	public:
 		//============================
 		// Modify State
 		//============================
-		void SetFont(Ref<Font> newFont, Assets::AssetHandle fontHandle);
-		void SetOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
-		void SetOnHover(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function);
+		void SetFont(Assets::AssetRef<Font> newFont, Assets::AssetHandle fontHandle);
+		void SetOnMove(Assets::AssetHandle functionHandle, Assets::AssetRef<Scripting::Script> function);
+		void SetOnHover(Assets::AssetHandle functionHandle, Assets::AssetRef<Scripting::Script> function);
 	public:
 		//============================
 		// Public Fields
 		//============================
-		Ref<Font> m_Font{ nullptr };
-		Assets::AssetHandle m_FontHandle{ Assets::k_EmptyHandle };
+		Assets::TAssetRef<Font> m_Font{};
 		Math::vec4 m_SelectColor{ 1.0f };
 		Math::vec4 m_HoveredColor{ 0.5f };
 		Math::vec4 m_EditingColor{ 0.15f, 0.15f, 0.15f, 1.0f };

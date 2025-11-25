@@ -23,10 +23,6 @@ namespace Kargono::RuntimeUI
 		void Init();
 		void Terminate();
 	public:
-		//==============================
-		// Create Unmanaged Font
-		//==============================
-		Ref<Font> InstantiateEditorFont(const std::filesystem::path& filepath);
 		void SetID(uint32_t id);
 	public:
 		//==============================

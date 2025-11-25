@@ -43,7 +43,7 @@ namespace Kargono::EditorUI
 			return ".kgpalette";
 		}
 
-		static void CreateFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata<ColorPalette>& metadata);
 	public:
 		//==============================
 		// Constructors/Destructors

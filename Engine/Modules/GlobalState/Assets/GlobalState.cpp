@@ -5,27 +5,27 @@
 namespace Kargono::GlobalState
 {
 
-	void GlobalState::CreateFromName(Assets::Metadata& metadata)
+	void GlobalState::CreateFromName(Assets::Metadata<GlobalState>& metadata)
 	{
 		// Create default global state
 		GlobalState defaultGlobalState{};
 		defaultGlobalState.m_Name = metadata.m_Name;
 
 		// Write default global state to asset file
-		Assets::SerializeAssetContext assetContext{};
+		Assets::SerializeAssetContext<GlobalState> assetContext{};
 		assetContext.m_AssetMetadata = &metadata;
 		defaultGlobalState.Serialize((void*)&assetContext);
 	}
 	void GlobalState::Serialize(void* context)
 	{
 		// Get context
-		Assets::SerializeAssetContext* serializeContext = (Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<GlobalState>* serializeContext = (Assets::SerializeAssetContext<GlobalState>*)context;
 		KG_ASSERT(serializeContext);
-		Assets::Metadata* metadata{ serializeContext->m_AssetMetadata };
+		Assets::Metadata<GlobalState>* metadata{ serializeContext->m_AssetMetadata };
 		KG_ASSERT(metadata);
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<GlobalState>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -88,13 +88,13 @@ namespace Kargono::GlobalState
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext* assetContext = (Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<GlobalState>* assetContext = (Assets::DeserializeAssetContext<GlobalState>*)context;
 		KG_ASSERT(assetContext, "Context cannot be null");
-		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		Assets::Metadata<GlobalState>* metadata{ assetContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<GlobalState>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		YAML::Node data;
 		try

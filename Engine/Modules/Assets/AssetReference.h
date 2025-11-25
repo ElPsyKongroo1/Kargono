@@ -278,6 +278,15 @@ namespace Kargono::Assets
 			return i_AssetReference.GetAsset();
 		}
 
+		t_AssetType* GetAssetPtr()
+		{
+			// Ensure asset reference should be usable
+			KG_ASSERT(IsAssetUsable());
+
+			// Note that this function assumes you have verified the asset is loaded
+			return &i_AssetReference.GetAsset();
+		}
+
 		AssetHandle GetAssetHandle()
 		{
 			return i_AssetReference.GetHandle();

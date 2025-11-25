@@ -173,7 +173,7 @@ namespace Kargono::Rendering
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
+		Assets::SerializeMetaDataContext<Shader>& metadataContext = *(Assets::SerializeMetaDataContext<Shader>*)context;
 
 		// Get context fields
 		YAML::Emitter& emitter = *metadataContext.m_Serializer;
@@ -217,7 +217,7 @@ namespace Kargono::Rendering
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
+		Assets::DeserializeMetaDataContext<Shader>& assetContext = *(Assets::DeserializeMetaDataContext<Shader>*)context;
 
 		// Get context fields
 		YAML::Node& metadataNode = *assetContext.m_Node;
@@ -268,12 +268,12 @@ namespace Kargono::Rendering
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<Shader>& assetContext = *(Assets::DeserializeAssetContext<Shader>*)context;
 		KG_ASSERT(assetContext.m_AssetMetadata);
-		Assets::Metadata* metadata{ assetContext.m_AssetMetadata };
+		Assets::Metadata<Shader>* metadata{ assetContext.m_AssetMetadata };
 		KG_ASSERT(metadata);
 
-		ShaderMetaData* shaderMetadata = metadata->GetSpecificMetaData<ShaderMetaData>();
+		ShaderMetaData* shaderMetadata = metadata->GetSpecificMetaData();
 		KG_ASSERT(shaderMetadata);
 
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
@@ -281,7 +281,7 @@ namespace Kargono::Rendering
 
 		for (const FixedBufStr16& extension : shaderStageExtensions)
 		{
-			const std::filesystem::path fullPath = metadata->GetAssetFullIntermediatePath<Shader>(extension.StringView());
+			const std::filesystem::path fullPath = metadata->GetAssetFullIntermediatePath(extension.StringView());
 			std::ifstream in(fullPath, std::ios::in | std::ios::binary);
 
 			if (in.is_open())
@@ -303,13 +303,13 @@ namespace Kargono::Rendering
 		openGLSPIRV.clear();
 	}
 
-	Utility::SHA256Hash Rendering::Shader::GetHashFromSpec(const ShaderSpecification& spec)
+	Utility::SHA256Hash Shader::GetHashFromSpec(const ShaderSpecification& spec)
 	{
 		auto [shaderSource, bufferLayout, uniformList] = ShaderBuilder::BuildShader(spec);
 		return Utility::FileSystem::SHA256HashFromString(shaderSource.c_str());
 	}
 
-	bool Rendering::Shader::GetAssetFromSpec(Assets::Metadata& metadata, const ShaderSpecification& querySpec)
+	bool Shader::GetAssetFromSpec(Assets::Metadata<Shader>& metadata, const ShaderSpecification& querySpec)
 	{
 		Assets::AssetReference<Shader> currentRef = Assets::s_ShaderManager.GetAssetByHandle(metadata.m_Handle);
 		Shader& currentShader = currentRef.GetAsset();
@@ -321,7 +321,7 @@ namespace Kargono::Rendering
 
 		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
-		ShaderMetaData* shaderMetadata = metadata.GetSpecificMetaData<ShaderMetaData>();
+		ShaderMetaData* shaderMetadata = metadata.GetSpecificMetaData();
 		if (shaderMetadata->m_ShaderSpec == querySpec)
 		{
 			return true;
@@ -330,14 +330,14 @@ namespace Kargono::Rendering
 		return false;
 	}
 
-	void Rendering::Shader::CreateFromSpec(Assets::Metadata& metadata, const ShaderSpecification& spec)
+	void Rendering::Shader::CreateFromSpec(Assets::Metadata<Shader>& metadata, const ShaderSpecification& spec)
 	{
 		// Build the shader source from the specification
 		auto [shaderSource, bufferLayout, uniformList] = ShaderBuilder::BuildShader(spec);
 
 		// Get the intermediate paths
 		const std::filesystem::path shaderSourcePath = 
-			metadata.GetAssetFullIntermediatePath<Shader>(k_IntermediateExtensions[0].StringView());
+			metadata.GetAssetFullIntermediatePath(k_IntermediateExtensions[0].StringView());
 
 		// Compile shader(s) to SPIR-V
 #if defined(KG_EXPORT_SERVER) || defined(KG_EXPORT_RUNTIME)
@@ -356,7 +356,7 @@ namespace Kargono::Rendering
 		for (const auto& [stage, source] : openGLSPIRV)
 		{
 			const std::filesystem::path intermediateFullPath =
-				metadata.GetAssetFullIntermediatePath<Shader>(Utility::ShaderBinaryFileExtension(stage));
+				metadata.GetAssetFullIntermediatePath(Utility::ShaderBinaryFileExtension(stage));
 			std::ofstream out(intermediateFullPath, std::ios::out | std::ios::binary);
 			if (out.is_open())
 			{
@@ -372,7 +372,7 @@ namespace Kargono::Rendering
 		Utility::FileSystem::WriteFileString(shaderSourcePath, debugString);
 
 		// Load in-memory metadata object
-		ShaderMetaData* shaderMetadata = metadata.GetSpecificMetaData<ShaderMetaData>();
+		ShaderMetaData* shaderMetadata = metadata.GetSpecificMetaData();
 		shaderMetadata->m_ShaderSpec = spec;
 		shaderMetadata->m_InputLayout = bufferLayout;
 		shaderMetadata->m_UniformList = uniformList;
@@ -500,8 +500,6 @@ namespace Kargono::Rendering
 		quadVertexBuffer->SetLayout(m_InputBufferLayout);
 		m_VertexArray->AddVertexBuffer(quadVertexBuffer);
 	}
-
-
 
 	void Shader::FillRenderFunctionList()
 	{

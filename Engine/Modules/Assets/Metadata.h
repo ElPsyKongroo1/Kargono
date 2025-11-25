@@ -9,15 +9,18 @@
 #include "Modules/Assets/Concepts/AssetFileConcepts.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Projects/Project.h"
+#include "Modules/Core/MetaProgramming/MetaProgrammingTools.h"
 
 #include <filesystem>
 #include <vector>
 #include <utility>
 #include <cstdint>
 #include <array>
+#include <type_traits>
 
 namespace Kargono::Assets
 {
+	template<typename t_AssetType>
 	struct Metadata
 	{
 	public:
@@ -39,49 +42,43 @@ namespace Kargono::Assets
 		//=============================
 		// Generate File Paths
 		//=============================
-		template<AssetConcept t_AssetType> requires HasFileLocation<t_AssetType>
-		std::filesystem::path GetAssetFullFilePath()
+		std::filesystem::path GetAssetFullFilePath() requires HasFileLocation<t_AssetType>
 		{
 			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
-			return projectPaths.GetAssetDirectory() / GetAssetRelativeFilePath<t_AssetType>();
+			return projectPaths.GetAssetDirectory() / GetAssetRelativeFilePath();
 		}
-		template<AssetConcept t_AssetType> requires HasFileLocation<t_AssetType>
-		std::filesystem::path GetAssetRelativeFilePath()
+		std::filesystem::path GetAssetRelativeFilePath() requires HasFileLocation<t_AssetType>
 		{
 			KG_ASSERT(!m_Name.IsEmpty());
 			KG_ASSERT(!m_FileDirectory.empty());
 			return m_FileDirectory / (m_Name.String() + t_AssetType::GetFileExtension().String());
 		}
-		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
-		std::filesystem::path GetAssetFullIntermediatePath(std::string_view extension)
+		std::filesystem::path GetAssetFullIntermediatePath(std::string_view extension) requires HasIntermediates<t_AssetType>
 		{
 			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
 			return projectPaths.GetIntermediateDirectory().string() /
-				GetAssetRelativeIntermediatePath<t_AssetType>(extension);
+				GetAssetRelativeIntermediatePath(extension);
 		}
-		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
-		std::filesystem::path GetAssetRelativeIntermediatePath(std::string_view extension)
+		std::filesystem::path GetAssetRelativeIntermediatePath(std::string_view extension) requires HasIntermediates<t_AssetType>
 		{
 			KG_ASSERT(!m_Name.IsEmpty());
-			KG_ASSERT(ValidateExtension<t_AssetType>(extension));
+			KG_ASSERT(ValidateExtension(extension));
 
 			std::stringstream pathWithoutExtension;
 			pathWithoutExtension << GetModuleName<t_AssetType>() << "/" <<
 				GetTypeName<t_AssetType>() << "/" << m_Name;
 			return { std::filesystem::path(pathWithoutExtension.str()).replace_extension(extension)};
 		}
-		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
-		std::filesystem::path GetAssetFullHiddenFolder()
+		std::filesystem::path GetAssetFullHiddenFolder() requires HasIntermediates<t_AssetType>
 		{
 			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
 			return projectPaths.GetIntermediateDirectory().string() /
-				GetAssetRelativeHiddenFolder<t_AssetType>();
+				GetAssetRelativeHiddenFolder();
 		}
-		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
-		std::filesystem::path GetAssetRelativeHiddenFolder()
+		std::filesystem::path GetAssetRelativeHiddenFolder() requires HasIntermediates<t_AssetType>
 		{
 			std::stringstream folderPath;
 			folderPath << GetModuleName<t_AssetType>() << "/" <<
@@ -90,8 +87,7 @@ namespace Kargono::Assets
 		}
 	private:
 		// Helper(s)
-		template<AssetConcept t_AssetType> requires HasIntermediates<t_AssetType>
-		bool ValidateExtension(std::string_view queryExtension)
+		bool ValidateExtension(std::string_view queryExtension) requires HasIntermediates<t_AssetType>
 		{
 			std::span<const FixedBufStr16> validExtensions{ t_AssetType::GetIntermediateExtensions() };
 			for (const FixedBufStr16& extension : validExtensions)
@@ -107,16 +103,17 @@ namespace Kargono::Assets
 		//==============================
 		// Getters/Setters
 		//==============================
-		template <MetadataConcept t_MetadataType>
-		t_MetadataType* GetSpecificMetaData()
+		auto* GetSpecificMetaData() requires HasMetadata<t_AssetType>
 		{
 			KG_ASSERT(m_SpecificMetaData);
-			return static_cast<t_MetadataType*>(m_SpecificMetaData);
+			return static_cast<t_AssetType::Metadata*>(m_SpecificMetaData);
 		}
 
-		template <MetadataConcept t_MetadataType>
-		void SetSpecificMetaData(t_MetadataType* newMetaData)
+		void SetSpecificMetaData(auto* newMetaData) requires HasMetadata<t_AssetType>
 		{
+			// Ensure provided type matches expected metadata type
+			EnforceTypesMatch<t_AssetType::Metadata, decltype(newMetaData)>();
+
 			KG_ASSERT(newMetaData);
 			m_SpecificMetaData = static_cast<void*>(newMetaData);
 		}

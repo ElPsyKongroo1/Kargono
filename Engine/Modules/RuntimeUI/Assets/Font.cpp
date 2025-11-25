@@ -21,7 +21,7 @@ namespace Kargono::RuntimeUI
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::SerializeMetaDataContext& metadataContext = *(Assets::SerializeMetaDataContext*)context;
+		Assets::SerializeMetaDataContext<Font>& metadataContext = *(Assets::SerializeMetaDataContext<Font>*)context;
 
 		// Get context fields
 		YAML::Emitter& emitter = *metadataContext.m_Serializer;
@@ -52,7 +52,7 @@ namespace Kargono::RuntimeUI
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::DeserializeMetaDataContext& assetContext = *(Assets::DeserializeMetaDataContext*)context;
+		Assets::DeserializeMetaDataContext<Font>& assetContext = *(Assets::DeserializeMetaDataContext<Font>*)context;
 
 		// Get context fields
 		YAML::Node& metadataNode = *assetContext.m_Node;
@@ -90,15 +90,15 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext* assetContext = (Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<Font>* assetContext = (Assets::DeserializeAssetContext<Font>*)context;
 		KG_ASSERT(assetContext, "Context cannot be null");
-		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		Assets::Metadata<Font>* metadata{ assetContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<Font>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
-		FontMetaData fontMetadata = *metadata->GetSpecificMetaData<FontMetaData>();
+		FontMetaData fontMetadata = *metadata->GetSpecificMetaData();
 		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
 
 		// Create Texture
@@ -123,11 +123,11 @@ namespace Kargono::RuntimeUI
 		currentResource.Release();
 	}
 
-	void Font::CreateFromName(Assets::Metadata& metadata)
+	void Font::CreateFromName(Assets::Metadata<Font>& metadata)
 	{
 		KG_TRACE_CRITICAL("We are calling the create font w/ name, " 
 			"but I'm skeptical of this function bruhh");
-		const std::filesystem::path assetPath{ metadata.GetAssetFullFilePath<Font>() };
+		const std::filesystem::path assetPath{ metadata.GetAssetFullFilePath() };
 
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of File Map
@@ -138,7 +138,7 @@ namespace Kargono::RuntimeUI
 		fout << out.c_str();
 		KG_INFO("Successfully created font inside asset directory at {}", assetPath);
 	}
-	void Font::CreateFromFile(Assets::Metadata& metadata,
+	void Font::CreateFromFile(Assets::Metadata<Font>& metadata,
 		const std::filesystem::path& sourcePath)
 	{
 		std::string_view intermediateExtension
@@ -147,7 +147,7 @@ namespace Kargono::RuntimeUI
 		};
 		const std::filesystem::path intermediatePath
 		{
-			metadata.GetAssetFullIntermediatePath<Font>(intermediateExtension)
+			metadata.GetAssetFullIntermediatePath(intermediateExtension)
 		};
 
 		// Create Buffers
@@ -270,7 +270,7 @@ namespace Kargono::RuntimeUI
 		Utility::FileSystem::WriteFileBinary(intermediatePath, buffer);
 
 		// Load data into In-Memory Metadata object
-		FontMetaData& fontMetadata = *metadata.GetSpecificMetaData<FontMetaData>();
+		FontMetaData& fontMetadata = *metadata.GetSpecificMetaData();
 		fontMetadata.m_AtlasWidth = static_cast<float>(textureSpec.m_Width);
 		fontMetadata.m_AtlasHeight = static_cast<float>(textureSpec.m_Height);
 		fontMetadata.m_LineHeight = lineHeight;

@@ -34,7 +34,7 @@ namespace Kargono::GlobalState
 			return ".kgstate";
 		}
 
-		static void CreateFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata<GameState>& metadata);
 	public:
 		//==============================
 		// Constructors/Destructors

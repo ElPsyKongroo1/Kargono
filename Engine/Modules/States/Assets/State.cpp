@@ -2,6 +2,8 @@
 
 #include "Modules/States/Assets/State.h"
 #include "Modules/Scenes/Assets/Scene.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
+#include "Modules/Assets/Managers/SceneManager.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 
@@ -12,13 +14,13 @@ namespace Kargono::States
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<State>& assetContext = *(Assets::DeserializeAssetContext<State>*)context;
 
 		// Get context fields
 		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
-		Assets::Metadata* metadata{ assetContext.m_AssetMetadata };
+		Assets::Metadata<State>* metadata{ assetContext.m_AssetMetadata };
 		KG_ASSERT(metadata);
-		const std::filesystem::path& assetPath = metadata->GetAssetFullFilePath<State>();
+		const std::filesystem::path& assetPath = metadata->GetAssetFullFilePath();
 
 		YAML::Node data;
 		try
@@ -96,13 +98,13 @@ namespace Kargono::States
 	{
 		// Get asset context
 		KG_ASSERT(context);
-		Assets::SerializeAssetContext& assetContext = *(Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<State>& assetContext = *(Assets::SerializeAssetContext<State>*)context;
 
 		// Get context fields
-		Assets::Metadata* metadata = assetContext.m_AssetMetadata;
+		Assets::Metadata<State>* metadata = assetContext.m_AssetMetadata;
 		KG_ASSERT(metadata);
 
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<State>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		// Serialize
 		YAML::Emitter out;
@@ -119,18 +121,18 @@ namespace Kargono::States
 		KG_INFO("Successfully Serialized State at {}", assetPath.string());
 	}
 
-	void State::CreateFromName(Assets::Metadata& metadata)
+	void State::CreateFromName(Assets::Metadata<State>& metadata)
 	{
 		// Create default StateMachines State
 		State temporaryState{};
 
 		// Serialize a default copy
-		Assets::SerializeAssetContext serializeContext{};
+		Assets::SerializeAssetContext<State> serializeContext{};
 		serializeContext.m_AssetMetadata = &metadata;
 		temporaryState.Serialize((void*)&serializeContext);
 	}
 
-	void State::ValidateDelete(Assets::Metadata& metadata)
+	void State::ValidateDelete(Assets::Metadata<State>& metadata)
 	{
 		// Handle deleting the StateMachines state by removing entity data from all scenes
 		for (auto& [sceneHandle, metadata] : Assets::s_SceneManager.GetAssetRegistry())

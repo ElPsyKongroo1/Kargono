@@ -23,15 +23,16 @@ namespace Kargono::Assets
 	{
 		return GetModuleTypeIdentifier<t_AssetType>();
 	}
-
+	template<AssetConcept t_AssetType>
 	struct DeserializeAssetContext
 	{
-		Metadata* m_AssetMetadata{ nullptr };
+		Metadata<t_AssetType>* m_AssetMetadata{ nullptr };
 	};
 
+	template<AssetConcept t_AssetType>
 	struct SerializeAssetContext
 	{
-		Metadata* m_AssetMetadata{ nullptr };
+		Metadata<t_AssetType>* m_AssetMetadata{ nullptr };
 	};
 
 	struct DeserializeRegistryContext
@@ -44,15 +45,17 @@ namespace Kargono::Assets
 		YAML::Emitter* m_Serializer{ nullptr };
 	};
 
+	template<AssetConcept t_AssetType>
 	struct SerializeMetaDataContext
 	{
 		YAML::Emitter* m_Serializer{ nullptr };
-		Metadata* m_Metadata{ nullptr };
+		Metadata<t_AssetType>* m_Metadata{ nullptr };
 	};
 
+	template<AssetConcept t_AssetType>
 	struct DeserializeMetaDataContext
 	{
 		YAML::Node* m_Node{ nullptr };
-		Metadata* m_Metadata{ nullptr };
+		Metadata<t_AssetType>* m_Metadata{ nullptr };
 	};
 }

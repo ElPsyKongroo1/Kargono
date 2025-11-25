@@ -7,7 +7,7 @@
 #include "Kargono/Core/Window.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/Rendering/Components/ShapeComponent.h"
-
+#include "Modules/Assets/Managers/FontManager.h"
 #include "Modules/Rendering/Assets/Shader.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Math/Interpolation.h"
@@ -21,6 +21,7 @@ namespace Kargono::RuntimeUI
 		// Initialize Runtime UI Context
 		m_ActiveUI = nullptr;
 		m_ActiveUIHandle = Assets::k_EmptyHandle;
+		m_DefaultFont = Assets::s_FontManager.CreateAssetFromFile("Resources/Fonts/arial.ttf");
 		m_DefaultFont = FontService::GetActiveContext().InstantiateEditorFont("Resources/Fonts/arial.ttf");
 
 		// Initialize Window/Widget background Rendering Data

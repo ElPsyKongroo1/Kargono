@@ -20,7 +20,8 @@
 
 namespace Kargono::Assets
 {
-	using AssetRegistry = std::unordered_map<AssetHandle, Metadata>;
+	template<AssetConcept t_AssetType>
+	using AssetRegistry = std::unordered_map<AssetHandle, Metadata<t_AssetType>>;
 
 	template<AssetConcept t_AssetType>
 	using AssetCache = std::unordered_map<AssetHandle, AssetReference<t_AssetType>>;
@@ -39,7 +40,7 @@ namespace Kargono::Assets
 		}
 		~AssetManager() = default;
 	public:
-		Optional<Metadata> GetMetadata(AssetHandle handle)
+		Optional<Metadata<t_AssetType>> GetMetadata(AssetHandle handle)
 		{
 			if (!m_AssetRegistry.contains(handle))
 			{
@@ -74,7 +75,7 @@ namespace Kargono::Assets
 			// Check registry second
 			if (m_AssetRegistry.contains(handle))
 			{
-				Metadata& metadata = m_AssetRegistry[handle];
+				Metadata<t_AssetType>& metadata = m_AssetRegistry[handle];
 				AssetReference<t_AssetType> newAssetRef{ DeserializeAssetImpl(metadata)};
 				KG_ASSERT(newAssetRef.IsUsable());
 				
@@ -189,7 +190,7 @@ namespace Kargono::Assets
 			}
 
 			// Get metadata
-			Metadata& metadata{ GetRawMetadata(handle) };
+			Metadata<t_AssetType>& metadata{ GetRawMetadata(handle) };
 			KG_ASSERT(metadata.IsValid());
 
 			// Provide asset specific validation
@@ -262,7 +263,7 @@ namespace Kargono::Assets
 			}
 
 			// Get associated metadata
-			Metadata& metadata{ GetRawMetadata(handle) };
+			Metadata<t_AssetType>& metadata{ GetRawMetadata(handle) };
 
 			// Provide asset specific validation
 			Ref<void> providedData{ nullptr };
@@ -318,7 +319,7 @@ namespace Kargono::Assets
 			}
 
 			// Get current metadata 
-			Metadata& metadata{ GetRawMetadata(handle) };
+			Metadata<t_AssetType>& metadata{ GetRawMetadata(handle) };
 			
 			// Provide asset specific validation
 			if constexpr (HasValidateDelete<t_AssetType>)
@@ -370,7 +371,7 @@ namespace Kargono::Assets
 		{
 			KG_ASSERT(m_AssetRegistry.contains(handle));
 
-			Metadata& metadata{ GetRawMetadata(handle) };
+			Metadata<t_AssetType>& metadata{ GetRawMetadata(handle) };
 			KG_ASSERT(metadata.IsValid());
 
 			return metadata.m_IsHidden;
@@ -380,7 +381,7 @@ namespace Kargono::Assets
 		{
 			KG_ASSERT(HasAssetByHandle(handle));
 
-			Metadata& metadata{ GetRawMetadata(handle) };
+			Metadata<t_AssetType>& metadata{ GetRawMetadata(handle) };
 			KG_ASSERT(metadata.IsValid());
 
 			metadata.m_IsHidden = isHidden;
@@ -418,9 +419,9 @@ namespace Kargono::Assets
 			}
 
 			// Create metadata
-			Metadata newMetadata 
+			Metadata<t_AssetType> newMetadata
 			{ 
-				CreateAssetMetadata(GetAssetIdentifier<t_AssetType>, 
+				CreateAssetMetadata(GetAssetIdentifier<t_AssetType>(),
 				creationData.m_AssetName, 
 				metadataFileDirectory, 
 				creationData.m_IsHidden) 
@@ -510,7 +511,7 @@ namespace Kargono::Assets
 			}
 
 			// Create metadata
-			Metadata newMetadata{ CreateAssetMetadata(GetAssetIdentifier<t_AssetType>, creationData.m_AssetName,
+			Metadata<t_AssetType> newMetadata{ CreateAssetMetadata(GetAssetIdentifier<t_AssetType>(), creationData.m_AssetName,
 				metadataFileDirectory, creationData.m_IsHidden) };
 
 			// Validate metadata
@@ -603,7 +604,7 @@ namespace Kargono::Assets
 			}
 
 			// Create metadata
-			Metadata newMetadata{ CreateAssetMetadata(GetAssetIdentifier<t_AssetType>(),
+			Metadata<t_AssetType> newMetadata{ CreateAssetMetadata(GetAssetIdentifier<t_AssetType>(),
 				creationData.m_AssetName, metadataFileDirectory, creationData.m_IsHidden) };
 
 			// Validate metadata
@@ -771,7 +772,7 @@ namespace Kargono::Assets
 			{
 				for (const YAML::Node& asset : assets)
 				{
-					Metadata newMetadata{};
+					Metadata<t_AssetType> newMetadata{};
 					newMetadata.m_Handle = asset["AssetHandle"].as<uint64_t>();
 
 					// Get generic metadata
@@ -846,7 +847,7 @@ namespace Kargono::Assets
 			}
 
 			// Get metadata
-			Metadata& metadata { GetRawMetadata(handle) };
+			Metadata<t_AssetType>& metadata { GetRawMetadata(handle) };
 
 			// Update directory inside metadata
 			metadata.m_FileDirectory = cachedDirectory;
@@ -859,7 +860,7 @@ namespace Kargono::Assets
 			return true;
 		}
 
-		AssetRegistry& GetAssetRegistry()
+		AssetRegistry<t_AssetType>& GetAssetRegistry()
 		{
 			return m_AssetRegistry;
 		}
@@ -902,7 +903,7 @@ namespace Kargono::Assets
 			return k_EmptyHandle;
 		}
 
-		AssetReference<t_AssetType> DeserializeAssetImpl(Metadata& metadata)
+		AssetReference<t_AssetType> DeserializeAssetImpl(Metadata<t_AssetType>& metadata)
 		{
 			// Check if asset already exists
 			t_AssetType* newAsset{ nullptr };
@@ -934,7 +935,7 @@ namespace Kargono::Assets
 			return { metadata.m_Handle, LoadState::Loaded, newAsset };
 		}
 
-		void SerializeAssetImpl(Metadata& metadata, AssetReference<t_AssetType> assetReference)
+		void SerializeAssetImpl(Metadata<t_AssetType>& metadata, AssetReference<t_AssetType> assetReference)
 		{
 			// Ensure asset type supports serialization
 			KG_ASSERT(assetReference.IsUsable(), "Attempt to serialize an invalid asset reference");
@@ -979,11 +980,11 @@ namespace Kargono::Assets
 			registryData->Serialize((void*)&context);
 		}
 
-		void DeserializeAssetSpecificMetadata(YAML::Node& node, Metadata& metadata)
+		void DeserializeAssetSpecificMetadata(YAML::Node& node, Metadata<t_AssetType>& metadata)
 			requires HasMetadata<t_AssetType>
 		{
 			// Get specific metadata
-			typename t_AssetType::Metadata* specificMetadata = metadata.GetSpecificMetaData<typename t_AssetType::Metadata>();
+			typename t_AssetType::Metadata* specificMetadata = metadata.GetSpecificMetaData();
 			if (!specificMetadata)
 			{
 				specificMetadata = i_BackingAllocator->Alloc<typename t_AssetType::Metadata>();
@@ -995,11 +996,11 @@ namespace Kargono::Assets
 			specificMetadata->Deserialize((void*)&context);
 		}
  
-		void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Metadata& metadata)
+		void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Metadata<t_AssetType>& metadata)
 			requires HasMetadata<t_AssetType>
 		{
 			// Get specific metadata
-			typename t_AssetType::Metadata* specificMetadata = metadata.GetSpecificMetaData<typename t_AssetType::Metadata>();
+			typename t_AssetType::Metadata* specificMetadata = metadata.GetSpecificMetaData();
 			KG_ASSERT(specificMetadata);
 
 			// Serialize specific metadata
@@ -1045,7 +1046,7 @@ namespace Kargono::Assets
 			return path.str();
 		}
 
-		Utility::SHA256Hash GenerateAssetHash(Metadata metadata)
+		Utility::SHA256Hash GenerateAssetHash(Metadata<t_AssetType> metadata)
 		{
 			Utility::SHA256Hash resultHash{};
 
@@ -1061,7 +1062,7 @@ namespace Kargono::Assets
 			if constexpr (HasFileLocation<t_AssetType>)
 			{
 				Utility::SHA256Hash fileChecksum{};
-				fileChecksum = Utility::FileSystem::SHA256HashFromFile(metadata.GetAssetFullFilePath<t_AssetType>());
+				fileChecksum = Utility::FileSystem::SHA256HashFromFile(metadata.GetAssetFullFilePath());
 				resultHash = resultHash ^ fileChecksum;
 			}
 
@@ -1082,7 +1083,7 @@ namespace Kargono::Assets
 			return resultHash;
 		}
 
-		void DeleteAssetFiles(Metadata& metadata)
+		void DeleteAssetFiles(Metadata<t_AssetType>& metadata)
 		{
 			// Delete the asset's data on-disk
 			if constexpr (HasFileLocation<t_AssetType>)
@@ -1096,9 +1097,9 @@ namespace Kargono::Assets
 			if constexpr (HasIntermediates<t_AssetType>)
 			{
 				std::filesystem::path intermediateFolder{ metadata.GetAssetRelativeIntermediatePath({})};
-				intermediateFolder.replace_filename(metadata.m_Name);
+				intermediateFolder.replace_filename(metadata.m_Name.CString());
 
-				std::span<FixedBufStr16> allIntermediateExtensions{ t_AssetType::GetIntermediateExtensions };
+				std::span<const FixedBufStr16> allIntermediateExtensions{ t_AssetType::GetIntermediateExtensions()};
 				for (const FixedBufStr16& extension : allIntermediateExtensions)
 				{
 					intermediateFolder.replace_extension(extension.CString());
@@ -1138,17 +1139,17 @@ namespace Kargono::Assets
 			m_AssetRegistry.erase(handle);
 		}
 
-		void LoadAssetIntoCache(Metadata& metadata) requires HasAssetCacheFlag<t_AssetType>
+		void LoadAssetIntoCache(Metadata<t_AssetType>& metadata) requires HasAssetCacheFlag<t_AssetType>
 		{
 			// Fill in-memory cache if appropriate
 			KG_ASSERT(!m_AssetCache.contains(metadata.m_Handle));
 
 			AssetReference<t_AssetType> newAssetRef{ DeserializeAssetImpl(metadata) };
 			KG_ASSERT(newAssetRef.IsUsable());
-			m_AssetCache.insert(metadata.m_Handle, newAssetRef);
+			m_AssetCache.insert({ metadata.m_Handle, newAssetRef });
 		}
  
-		void CustomUpdateFromAssetImpl(Metadata& metadata,
+		void CustomUpdateFromAssetImpl(Metadata<t_AssetType>& metadata,
 			AssetReference<t_AssetType> currentRef, AssetReference<t_AssetType> otherRef)
 			requires HasCustomUpdateFromAsset<t_AssetType>
 		{
@@ -1164,7 +1165,7 @@ namespace Kargono::Assets
 			currentAsset.UpdateFromAsset(metadata, otherRef);
 		}
 
-		Ref<void> ValidateUpdateFromAssetImpl(Metadata& metadata, AssetReference<t_AssetType> newAsset)
+		Ref<void> ValidateUpdateFromAssetImpl(Metadata<t_AssetType>& metadata, AssetReference<t_AssetType> newAsset)
 			requires HasValidateUpdateFromAsset<t_AssetType>
 		{
 			// Ensure asset reference is valid
@@ -1174,7 +1175,7 @@ namespace Kargono::Assets
 			return t_AssetType::ValidateUpdateFromAsset(metadata, newAsset);
 		};
 
-		void UpdateFromSpecImpl(Metadata& metadata,
+		void UpdateFromSpecImpl(Metadata<t_AssetType>& metadata,
 			AssetReference<t_AssetType> currentRef, const auto& spec)
 			requires HasUpdateFromSpec<t_AssetType>
 		{
@@ -1192,7 +1193,7 @@ namespace Kargono::Assets
 			currentAsset.UpdateFromSpec(metadata, spec);
 		}
 
-		Ref<void> ValidateUpdateFromSpecImpl(Metadata& metadata, const auto& spec)
+		Ref<void> ValidateUpdateFromSpecImpl(Metadata<t_AssetType>& metadata, const auto& spec)
 			requires HasValidateUpdateFromSpec<t_AssetType>
 		{
 			// Ensure spec type matches expected type
@@ -1204,7 +1205,7 @@ namespace Kargono::Assets
 			return t_AssetType::ValidateUpdateFromSpec(metadata, spec);
 		};
 
-		void ValidateDeleteImpl(Metadata& metadata)
+		void ValidateDeleteImpl(Metadata<t_AssetType>& metadata)
 			requires HasValidateDelete<t_AssetType>
 		{
 			KG_ASSERT(metadata.IsValid());
@@ -1213,7 +1214,7 @@ namespace Kargono::Assets
 			t_AssetType::ValidateDelete(metadata);
 		};
 
-		void CreateFromNameImpl(Metadata& metadata)
+		void CreateFromNameImpl(Metadata<t_AssetType>& metadata)
 			requires HasCreateFromName<t_AssetType>
 		{
 			KG_ASSERT(metadata.IsValid());
@@ -1222,7 +1223,7 @@ namespace Kargono::Assets
 			t_AssetType::CreateFromName(metadata);
 		};
 
-		void CreateFromFileImpl(Metadata& metadata, const std::filesystem::path& sourcePath)
+		void CreateFromFileImpl(Metadata<t_AssetType>& metadata, const std::filesystem::path& sourcePath)
 			requires HasCreateFromFile<t_AssetType>
 		{
 			KG_ASSERT(metadata.IsValid());
@@ -1232,7 +1233,7 @@ namespace Kargono::Assets
 			t_AssetType::CreateFromFile(metadata, sourcePath);
 		};
 
-		void CreateFromSpecImpl(Metadata& metadata, const auto& spec)
+		void CreateFromSpecImpl(Metadata<t_AssetType>& metadata, const auto& spec)
 			requires HasCreateFromSpec<t_AssetType>
 		{
 			// Ensure spec type matches expected type
@@ -1255,7 +1256,7 @@ namespace Kargono::Assets
 			t_AssetType::ValidateCreateFromSpec(creationData, spec);
 		};
 
-		bool GetAssetFromSpecImpl(Metadata& metadata, const auto& spec)
+		bool GetAssetFromSpecImpl(Metadata<t_AssetType>& metadata, const auto& spec)
 			requires HasGetAssetFromSpec<t_AssetType>
 		{
 			// Ensure spec type matches expected type
@@ -1440,7 +1441,7 @@ namespace Kargono::Assets
 			return true;
 		}
 
-		Metadata CreateAssetMetadata(AssetIdentifier identifier, std::string_view assetName, 
+		Metadata<t_AssetType> CreateAssetMetadata(AssetIdentifier identifier, std::string_view assetName,
 			const std::filesystem::path& assetDirectory, bool isHidden)
 		{
 			// Generate new ID
@@ -1464,7 +1465,7 @@ namespace Kargono::Assets
 			}
 
 			// Create basic metadata
-			Metadata newMetadata{};
+			Metadata<t_AssetType> newMetadata{};
 			newMetadata.m_Handle = newHandle;
 			newMetadata.m_Name = assetName;
 			newMetadata.m_TypeIdentifier = identifier;
@@ -1483,11 +1484,11 @@ namespace Kargono::Assets
 			return newMetadata;
 		}
 
-		Metadata& GetRawMetadata(AssetHandle handle)
+		Metadata<t_AssetType>& GetRawMetadata(AssetHandle handle)
 		{
 			KG_ASSERT(m_AssetRegistry.contains(handle));
 
-			Metadata& metadata{ m_AssetRegistry.at(handle)};
+			Metadata<t_AssetType>& metadata{ m_AssetRegistry.at(handle)};
 			KG_ASSERT(metadata.IsValid());
 
 			return metadata;
@@ -1517,7 +1518,7 @@ namespace Kargono::Assets
 			return k_EmptyHandle;
 		}
 
-		void SendManageAssetEvent(Metadata& metadata, Events::ManageAssetAction action, 
+		void SendManageAssetEvent(Metadata<t_AssetType>& metadata, Events::ManageAssetAction action,
 			Ref<void> optionalData = nullptr)
 		{
 			Ref<Events::ManageAsset> event = CreateRef<Events::ManageAsset>
@@ -1534,7 +1535,7 @@ namespace Kargono::Assets
 		//==============================
 		// Internal Fields
 		//==============================
-		AssetRegistry m_AssetRegistry{};
+		AssetRegistry<t_AssetType> m_AssetRegistry{};
 		AssetCache<t_AssetType> m_AssetCache{};
 		void* m_RegistrySpecificData{ nullptr };
 	private:

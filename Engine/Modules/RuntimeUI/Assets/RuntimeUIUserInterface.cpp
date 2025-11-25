@@ -8,6 +8,8 @@
 #include "Modules/RuntimeUI/Widgets/RuntimeUIVerticalContainerWidget.h"
 #include "Modules/RuntimeUI/RuntimeUIWindow.h"
 #include "Modules/Assets/Managers/Texture2DManager.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
+#include "Modules/Assets/Managers/FontManager.h"
 
 #include "Modules/Input/InputService.h"
 #include "Kargono/Utility/Operations.h"
@@ -574,10 +576,9 @@ namespace Kargono::RuntimeUI
 		if (widgetRef->m_WidgetType == RuntimeUI::WidgetTypes::InputTextWidget)
 		{
 			RuntimeUI::InputTextWidget& inputTextWidget = *(RuntimeUI::InputTextWidget*)widgetRef.get();
-			if (inputTextWidget.m_OnMoveCursorHandle == scriptHandle)
+			if (inputTextWidget.m_OnMoveCursor.GetAssetHandle() == scriptHandle)
 			{
-				inputTextWidget.m_OnMoveCursorHandle = Assets::k_EmptyHandle;
-				inputTextWidget.m_OnMoveCursor = nullptr;
+				inputTextWidget.m_OnMoveCursor.Reset();
 				uiModified = true;
 			}
 		}
@@ -596,10 +597,9 @@ namespace Kargono::RuntimeUI
 		if (widgetRef->m_WidgetType == RuntimeUI::WidgetTypes::DropDownWidget)
 		{
 			RuntimeUI::DropDownWidget& dropDownWidget = *(RuntimeUI::DropDownWidget*)widgetRef.get();
-			if (dropDownWidget.m_OnSelectOptionHandle == scriptHandle)
+			if (dropDownWidget.m_OnSelectOption.GetAssetHandle() == scriptHandle)
 			{
-				dropDownWidget.m_OnSelectOptionHandle = Assets::k_EmptyHandle;
-				dropDownWidget.m_OnSelectOption = nullptr;
+				dropDownWidget.m_OnSelectOption.Reset();
 				uiModified = true;
 			}
 		}
@@ -625,10 +625,9 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Remove script references from widget if necessary
-		if (selectionData->m_FunctionPointers.m_OnPressHandle == scriptHandle)
+		if (selectionData->m_FunctionPointers.m_OnPress.GetAssetHandle() == scriptHandle)
 		{
-			selectionData->m_FunctionPointers.m_OnPressHandle = Assets::k_EmptyHandle;
-			selectionData->m_FunctionPointers.m_OnPress = nullptr;
+			selectionData->m_FunctionPointers.m_OnPress.Reset();
 			uiModified = true;
 		}
 
@@ -697,16 +696,14 @@ namespace Kargono::RuntimeUI
 	{
 		// Handle UI level function pointers
 		bool uiModified{ false };
-		if (m_Config.m_FunctionPointers.m_OnMoveHandle == scriptHandle)
+		if (m_Config.m_FunctionPointers.m_OnMove.GetAssetHandle() == scriptHandle)
 		{
-			m_Config.m_FunctionPointers.m_OnMoveHandle = Assets::k_EmptyHandle;
-			m_Config.m_FunctionPointers.m_OnMove = nullptr;
+			m_Config.m_FunctionPointers.m_OnMove.Reset();
 			uiModified = true;
 		}
-		if (m_Config.m_FunctionPointers.m_OnHoverHandle == scriptHandle)
+		if (m_Config.m_FunctionPointers.m_OnHover.GetAssetHandle() == scriptHandle)
 		{
-			m_Config.m_FunctionPointers.m_OnHoverHandle = Assets::k_EmptyHandle;
-			m_Config.m_FunctionPointers.m_OnHover = nullptr;
+			m_Config.m_FunctionPointers.m_OnHover.Reset();
 			uiModified = true;
 		}
 
@@ -793,7 +790,7 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<UserInterface>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		// Deserialize
 		YAML::Node data;
@@ -812,14 +809,14 @@ namespace Kargono::RuntimeUI
 		m_Config.m_HoveredColor = data["HoveredColor"].as<Math::vec4>();
 		m_Config.m_EditingColor = data["EditingColor"].as<Math::vec4>();
 		// Function Pointers
-		m_Config.m_FunctionPointers.m_OnMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
-		if (m_Config.m_FunctionPointers.m_OnMoveHandle == Assets::k_EmptyHandle)
+		Assets::AssetHandle onMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
+		if (onMoveHandle == Assets::k_EmptyHandle)
 		{
-			m_Config.m_FunctionPointers.m_OnMove = nullptr;
+			m_Config.m_FunctionPointers.m_OnMove.Reset();
 		}
 		else
 		{
-			Assets::AssetRef<Scripting::Script> onMoveScript = Assets::s_ShaderManager.GetAssetByHandle(m_Config.m_FunctionPointers.m_OnMoveHandle);
+			Assets::AssetRef<Scripting::Script> onMoveScript = Assets::s_ScriptManager.GetAssetByHandle(onMoveHandle);
 			if (!onMoveScript)
 			{
 				KG_WARN("Unable to locate OnMove Script!");
@@ -827,14 +824,14 @@ namespace Kargono::RuntimeUI
 			}
 			m_Config.m_FunctionPointers.m_OnMove = onMoveScript;
 		}
-		m_Config.m_FunctionPointers.m_OnHoverHandle = data["FunctionPointerOnHover"].as<uint64_t>();
-		if (m_Config.m_FunctionPointers.m_OnHoverHandle == Assets::k_EmptyHandle)
+		Assets::AssetHandle onHoverHandle = data["FunctionPointerOnHover"].as<uint64_t>();
+		if (onHoverHandle == Assets::k_EmptyHandle)
 		{
-			m_Config.m_FunctionPointers.m_OnHover = nullptr;
+			m_Config.m_FunctionPointers.m_OnHover.Reset();
 		}
 		else
 		{
-			Ref<Scripting::Script> onHoverScript = AssetService::GetScript(m_Config.m_FunctionPointers.m_OnHoverHandle);
+			Assets::AssetRef<Scripting::Script> onHoverScript = Assets::s_ScriptManager.GetAssetByHandle(onHoverHandle);
 			if (!onHoverScript)
 			{
 				KG_WARN("Unable to locate OnHover Script!");
@@ -844,8 +841,8 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Get Font
-		m_Config.m_FontHandle = data["Font"].as<uint64_t>();
-		m_Config.m_Font = AssetService::GetFont(m_Config.m_FontHandle);
+		Assets::AssetHandle fontHandle = data["Font"].as<uint64_t>();
+		m_Config.m_Font = Assets::s_FontManager.GetAssetByHandle(fontHandle);
 		// Get Windows
 		YAML::Node windows = data["Windows"];
 		if (windows)
@@ -962,7 +959,7 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<UserInterface>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		// Serialize
 		YAML::Emitter out;
@@ -973,10 +970,10 @@ namespace Kargono::RuntimeUI
 		out << YAML::Key << "EditingColor" << YAML::Value << m_Config.m_EditingColor;
 
 		// Function Pointers
-		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)m_Config.m_FunctionPointers.m_OnMoveHandle;
-		out << YAML::Key << "FunctionPointerOnHover" << YAML::Value << (uint64_t)m_Config.m_FunctionPointers.m_OnHoverHandle;
+		out << YAML::Key << "FunctionPointerOnMove" << YAML::Value << (uint64_t)m_Config.m_FunctionPointers.m_OnMove.GetAssetHandle();
+		out << YAML::Key << "FunctionPointerOnHover" << YAML::Value << (uint64_t)m_Config.m_FunctionPointers.m_OnHover.GetAssetHandle();
 		// Font
-		out << YAML::Key << "Font" << YAML::Value << static_cast<uint64_t>(m_Config.m_FontHandle);
+		out << YAML::Key << "Font" << YAML::Value << static_cast<uint64_t>(m_Config.m_Font.GetAssetHandle());
 		// Windows
 		out << YAML::Key << "Windows" << YAML::Value;
 		out << YAML::BeginSeq; // Start of Windows Seq
@@ -1221,7 +1218,7 @@ namespace Kargono::RuntimeUI
 			Math::vec3 textStartingPoint = textData->GetTextStartingPosition(widgetTransform.m_Translation, widgetTransform.m_Size, textScalingFactor);
 
 			// Find new cursor location
-			size_t newCursorIndex = textData->GetCursorIndexFromMousePosition(m_Config.m_Font, textStartingPoint.x, mousePosition.x, textScalingFactor);
+			size_t newCursorIndex = textData->GetCursorIndexFromMousePosition(m_Config.m_Font.GetAssetPtr(), textStartingPoint.x, mousePosition.x, textScalingFactor);
 
 			// Update the cursor
 			textData->m_CaretIndex = newCursorIndex;
@@ -1586,25 +1583,22 @@ namespace Kargono::RuntimeUI
 		}
 	}
 
-	void UIConfig::SetFont(Ref<Font> newFont, Assets::AssetHandle fontHandle)
+	void UIConfig::SetFont(Assets::AssetRef<Font> newFont, Assets::AssetHandle fontHandle)
 	{
 		// Set the active font for the active user interface
 		m_Font = newFont;
-		m_FontHandle = fontHandle;
 
 		i_WindowsState->RevalidateTextDimensions();
 	}
 
-	void UIConfig::SetOnMove(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
+	void UIConfig::SetOnMove(Assets::AssetHandle functionHandle, Assets::AssetRef<Scripting::Script> function)
 	{
 		m_FunctionPointers.m_OnMove = function;
-		m_FunctionPointers.m_OnMoveHandle = functionHandle;
 	}
 
-	void UIConfig::SetOnHover(Assets::AssetHandle functionHandle, Ref<Scripting::Script> function)
+	void UIConfig::SetOnHover(Assets::AssetHandle functionHandle, Assets::AssetRef<Scripting::Script> function)
 	{
 		m_FunctionPointers.m_OnHover = function;
-		m_FunctionPointers.m_OnHoverHandle = functionHandle;
 	}
 
 	void UIInteractionState::ClearSelectedWidget()
@@ -2356,7 +2350,7 @@ namespace Kargono::RuntimeUI
 
 		m_Active = false;
 	}
-	void UIConfig::Init(UIWindowsState* windowsState, Ref<Font> defaultFont)
+	void UIConfig::Init(UIWindowsState* windowsState, Assets::AssetRef<Font> defaultFont)
 	{
 		KG_ASSERT(windowsState);
 		KG_ASSERT(defaultFont);
@@ -2366,7 +2360,6 @@ namespace Kargono::RuntimeUI
 		if (!m_Font)
 		{
 			m_Font = defaultFont;
-			m_FontHandle = Assets::k_EmptyHandle;
 		}
 
 		m_Active = true;

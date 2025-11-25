@@ -7,13 +7,13 @@ namespace Kargono::Scripting
 	void CustomEnum::Serialize(void* context)
 	{
 		// Get asset context
-		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<CustomEnum>* assetContext = (Assets::SerializeAssetContext<CustomEnum>*)context;
 		KG_ASSERT(assetContext, "Context cannot be null");
-		Assets::Metadata* metadata{ assetContext->m_AssetMetadata };
+		Assets::Metadata<CustomEnum>* metadata{ assetContext->m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<CustomEnum>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		YAML::Emitter out;
 		out << YAML::BeginMap; // Start of file map
@@ -40,13 +40,13 @@ namespace Kargono::Scripting
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext& assetContext = *(Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<CustomEnum>& assetContext = *(Assets::DeserializeAssetContext<CustomEnum>*)context;
 		KG_ASSERT(assetContext.m_AssetMetadata, "Metadata cannot be null");
-		Assets::Metadata* metadata{ assetContext.m_AssetMetadata };
+		Assets::Metadata<CustomEnum>* metadata{ assetContext.m_AssetMetadata };
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath<CustomEnum>() };
+		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
 		YAML::Node data;
 		try
@@ -74,7 +74,7 @@ namespace Kargono::Scripting
 		}
 	}
 
-	void CustomEnum::CreateFromName(Assets::Metadata& metadata)
+	void CustomEnum::CreateFromName(Assets::Metadata<CustomEnum>& metadata)
 	{
 		// Create new custom component
 		CustomEnum tempEnum{};
