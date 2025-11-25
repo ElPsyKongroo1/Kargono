@@ -21,7 +21,7 @@ namespace Kargono::ECSInternal
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(Memory::IAllocator* backingAlloc)
+		bool Init(Memory::IAllocator* backingAlloc)
 		{
 			KG_ASSERT(backingAlloc);
 			KG_ASSERT(!m_Active);
@@ -42,7 +42,7 @@ namespace Kargono::ECSInternal
 			return m_Active;
 		}
 
-		[[nodiscard]] bool Terminate()
+		bool Terminate()
 		{
 			KG_ASSERT(m_Active);
 			if (m_EntityRegistry.Terminate())
@@ -61,7 +61,7 @@ namespace Kargono::ECSInternal
 			return true;
 		}
 
-		[[nodiscard]] bool Clear()
+		bool Clear()
 		{
 			if (!m_EntityRegistry.Clear())
 			{
@@ -78,12 +78,12 @@ namespace Kargono::ECSInternal
 		//==============================
 		// Manage Entities
 		//==============================
-		[[nodiscard]] Expected<EntityID> CreateEntity()
+		Expected<EntityID> CreateEntity()
 		{
 			return m_EntityRegistry.CreateEntity();
 		}
 
-		[[nodiscard]] bool DestroyEntity(EntityID entityID)
+		bool DestroyEntity(EntityID entityID)
 		{
 			if (!m_EntityRegistry.HasEntity(entityID))
 			{
@@ -92,7 +92,10 @@ namespace Kargono::ECSInternal
 
 			m_ComponentRegistry.DestroyEntity(entityID);
 
-			m_EntityRegistry.DestroyEntity(entityID);
+			if (!m_EntityRegistry.DestroyEntity(entityID))
+			{
+				return false;
+			}
 			
 			return true;
 		}
@@ -101,19 +104,19 @@ namespace Kargono::ECSInternal
 		// Manage Components
 		//==============================
 		template<typename t_Component>
-		[[nodiscard]] bool RegisterComponent()
+		bool RegisterComponent()
 		{
 			return m_ComponentRegistry.RegisterComponent<t_Component>();
 		}
 
-		[[nodiscard]] bool RegisterComponent(ComponentIdentifier componentIdentifier,
+		bool RegisterComponent(ComponentIdentifier componentIdentifier,
 			ComponentMetadata metadata)
 		{
 			return m_ComponentRegistry.RegisterComponent(componentIdentifier, 
 				metadata);
 		}
 
-		[[nodiscard]] bool ClearComponentStore(ComponentIdentifier identifier)
+		bool ClearComponentStore(ComponentIdentifier identifier)
 		{
 #if 0
 			PackedView<1> view{ GetPackedView<1>({identifier}) };
@@ -154,7 +157,7 @@ namespace Kargono::ECSInternal
 		}
 
 		template<typename t_Component>
-		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component& component)
+		bool AddComponent(EntityID entityID, t_Component& component)
 		{
 			// Ensure the entity exists in the registry
 			if (!m_EntityRegistry.HasEntity(entityID))
@@ -183,7 +186,7 @@ namespace Kargono::ECSInternal
 			return true;
 		}
 
-		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentIdentifier identifier,
+		bool AddComponent(EntityID entityID, ComponentIdentifier identifier,
 			void* component)
 		{
 			// Ensure the entity exists in the registry
@@ -213,7 +216,7 @@ namespace Kargono::ECSInternal
 			return true;
 		}
 
-		[[nodiscard]] void* CreateComponent(EntityID entityID, ComponentIdentifier identifier)
+		void* CreateComponent(EntityID entityID, ComponentIdentifier identifier)
 		{
 			// Ensure the entity exists in the registry
 			if (!m_EntityRegistry.HasEntity(entityID))
@@ -246,7 +249,7 @@ namespace Kargono::ECSInternal
 			return newComponent;
 		}
 
-		[[nodiscard]] bool CopyComponents(EntityID srcID, EntityID destID)
+		bool CopyComponents(EntityID srcID, EntityID destID)
 		{
 			// Ensure the entities exists in the registry
 			if (!m_EntityRegistry.HasEntity(srcID) || !m_EntityRegistry.HasEntity(destID))
@@ -282,7 +285,7 @@ namespace Kargono::ECSInternal
 		}
 
 		template<typename t_Component, typename... t_Args>
-		[[nodiscard]] t_Component& EmplaceComponent(EntityID entityID, t_Args... args)
+		t_Component& EmplaceComponent(EntityID entityID, t_Args... args)
 		{
 			KG_ASSERT(m_EntityRegistry.HasEntity(entityID));
 
@@ -309,7 +312,7 @@ namespace Kargono::ECSInternal
 		}
 
 		template<typename t_Component, typename... t_Args>
-		[[nodiscard]] t_Component& EmplaceOrReplaceComponent(EntityID entityID, t_Args... args)
+		t_Component& EmplaceOrReplaceComponent(EntityID entityID, t_Args... args)
 		{
 			KG_ASSERT(m_EntityRegistry.HasEntity(entityID));
 
@@ -336,7 +339,7 @@ namespace Kargono::ECSInternal
 		}
 
 		template<typename t_Component>
-		[[nodiscard]] bool RemoveComponent(EntityID entityID)
+		bool RemoveComponent(EntityID entityID)
 		{
 			// Remove the component from the registry
 			if (!m_ComponentRegistry.RemoveComponent<t_Component>(entityID))
@@ -359,7 +362,7 @@ namespace Kargono::ECSInternal
 			return true;
 		}
 
-		[[nodiscard]] bool RemoveComponent(EntityID entityID, ComponentIdentifier identifier)
+		bool RemoveComponent(EntityID entityID, ComponentIdentifier identifier)
 		{
 			// Remove the component from the registry
 			if (!m_ComponentRegistry.RemoveComponent(entityID, identifier))

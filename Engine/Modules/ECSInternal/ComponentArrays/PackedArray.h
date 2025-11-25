@@ -122,7 +122,7 @@ namespace Kargono::ECSInternal
 			return (void*)rawComponent;
 		}
 
-		[[nodiscard]] bool RemoveComponent(EntityID entityID) override
+		bool RemoveComponent(EntityID entityID) override
 		{
 			// Check if component does not exist
 			if (!HasComponent(entityID))

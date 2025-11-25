@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Modules/GlobalState/Assets/GameState.h"
+#include "Modules/Assets/AssetReference.h"
 
 namespace Kargono::GlobalState
 {
@@ -10,20 +11,18 @@ namespace Kargono::GlobalState
 		//=========================
 		// Modify Active Game State
 		//=========================
-		void SetActiveGameState(Ref<GameState> newGameState, Assets::AssetHandle newHandle);
+		void SetActiveGameState(Assets::AssetRef<GameState> newGameState);
 		void ClearActiveGameState();
 	public:
 		//=========================
 		// Get Active Game State
 		//=========================
-		Assets::AssetHandle GetActiveGameStateHandle();
-		Ref<GameState> GetActiveGameState();
+		Assets::AssetRef<GameState> GetActiveGameState();
 	private:
 		//=========================
 		// Internal Fields
 		//=========================
-		Ref<GameState> m_ActiveGameState{ nullptr };
-		Assets::AssetHandle m_ActiveGameStateHandle{ Assets::k_EmptyHandle };
+		Assets::TAssetRef<GameState> m_ActiveGameState{};
 	};
 
 	class GameStateService // TODO: EWWWWW UGHHHHHHH

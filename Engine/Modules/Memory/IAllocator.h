@@ -16,14 +16,14 @@ namespace Kargono::Memory
 		//==============================
 		// Raw Allocation API (No In-Place Construction)
 		//==============================
-		[[nodiscard]] virtual uint8_t* AllocRaw(size_t dataSize, size_t alignment) = 0;
-		[[nodiscard]] virtual bool DeallocRaw(uint8_t* dataPtr, size_t alignment) = 0;
+		virtual uint8_t* AllocRaw(size_t dataSize, size_t alignment) = 0;
+		virtual bool DeallocRaw(uint8_t* dataPtr, size_t alignment) = 0;
 
 		//==============================
 		// Type Allocation & Construction API
 		//==============================
 		template<typename t_Type, size_t t_Align = alignof(t_Type)>
-		[[nodiscard]] t_Type* Alloc(auto&&... args)
+		t_Type* Alloc(auto&&... args)
 		{
 			// Allocate memory
 			uint8_t* rawAlloc = AllocRaw(sizeof(t_Type), t_Align);
@@ -40,7 +40,7 @@ namespace Kargono::Memory
 		}
 
 		template<typename t_Type, size_t t_Align = alignof(t_Type)>
-		[[nodiscard]] bool Dealloc(t_Type* dataPtr)
+		bool Dealloc(t_Type* dataPtr)
 		{
 			if (!dataPtr)
 			{

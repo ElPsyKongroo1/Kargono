@@ -41,16 +41,15 @@ namespace Kargono
 	public:
 		//==============================
 		// System Information
-		//==============================
-		[[nodiscard]] virtual SystemInfo GetSystemInfo() const = 0;
+		virtual SystemInfo GetSystemInfo() const = 0;
 
 	public:
 		//==============================
 		// System Functions
 		//==============================
-		[[nodiscard]] virtual Optional<InitCallback> GetInit() const = 0;
-		[[nodiscard]] virtual Optional<TerminateCallback> GetTerminate() const = 0;
-		[[nodiscard]] virtual Optional<UpdateCallback> GetUpdate() const = 0;
+		virtual Optional<InitCallback> GetInit() const = 0;
+		virtual Optional<TerminateCallback> GetTerminate() const = 0;
+		virtual Optional<UpdateCallback> GetUpdate() const = 0;
 	};
 
 	template<typename t_CallbackType>
@@ -72,7 +71,7 @@ namespace Kargono
 		//==============================
 		// Call System Functions
 		//==============================
-		[[nodiscard]] bool InitSystems() const
+		bool InitSystems() const
 		{
 			bool initSuccess{ true };
 			for (const auto& [id, initCallback] : m_InitCallbacks)
@@ -86,7 +85,7 @@ namespace Kargono
 			return initSuccess;
 		}
 
-		[[nodiscard]] bool TerminateSystems() const
+		bool TerminateSystems() const
 		{
 			bool terminateSuccess{ true };
 			for (const auto& [id, terminateCallback] : m_TerminateCallbacks)
@@ -112,7 +111,7 @@ namespace Kargono
 		//==============================
 		// Manage Systems
 		//==============================
-		[[nodiscard]] bool RegisterSystem(ISystem* system)
+		bool RegisterSystem(ISystem* system)
 		{
 			KG_ASSERT(system);
 
@@ -159,7 +158,7 @@ namespace Kargono
 			m_ActiveSystems.insert(info.m_SystemID);
 		}
 
-		[[nodiscard]] bool RemoveSystem(SystemID systemID)
+		bool RemoveSystem(SystemID systemID)
 		{
 			// Ensure the system exists
 			if (!m_ActiveSystems.contains(systemID))

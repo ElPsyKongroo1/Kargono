@@ -35,7 +35,7 @@ namespace Kargono::Scenes
 		// Getters/Setters
 		//====================
 		Assets::AssetRef<Scene> GetActiveScene();
-		Assets::AssetHandle GetActiveSceneHandle();
+		void ClearActiveScene();
 		void SetActiveScene(Assets::AssetRef<Scene> newScene);
 	public:
 		//====================

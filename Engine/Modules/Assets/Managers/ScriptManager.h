@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<Scripting::Script> s_ScriptManager{};
+	extern AssetManager<Scripting::Script> s_ScriptManager;
 }

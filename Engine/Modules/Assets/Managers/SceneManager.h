@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<Scenes::Scene> s_SceneManager{};
+	extern AssetManager<Scenes::Scene> s_SceneManager;
 }

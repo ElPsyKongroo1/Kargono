@@ -32,9 +32,9 @@ namespace Kargono::ECSInternal
 		//==============================
 		// Manage Components
 		//==============================
-		[[nodiscard]] virtual void* CreateComponent(EntityID entityID) = 0;
-		[[nodiscard]] virtual bool RemoveComponent(EntityID entityID) = 0;
-		[[nodiscard]] virtual void* GetComponent(EntityID entityID) = 0;
+		virtual void* CreateComponent(EntityID entityID) = 0;
+		virtual bool RemoveComponent(EntityID entityID) = 0;
+		virtual void* GetComponent(EntityID entityID) = 0;
 
 		//==============================
 		// Query State

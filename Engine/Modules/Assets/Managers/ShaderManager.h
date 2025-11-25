@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<Rendering::Shader> s_ShaderManager{};
+	extern AssetManager<Rendering::Shader> s_ShaderManager;
 }

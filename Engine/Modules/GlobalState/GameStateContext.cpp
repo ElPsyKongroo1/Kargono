@@ -6,20 +6,16 @@ namespace Kargono::GlobalState
 {
 	void GameStateContext::ClearActiveGameState()
 	{
-		m_ActiveGameState = nullptr;
-		m_ActiveGameStateHandle = Assets::k_EmptyHandle;
+		m_ActiveGameState.Reset();
 	}
-	void GameStateContext::SetActiveGameState(Ref<GameState> newGameState, Assets::AssetHandle newHandle)
+	void GameStateContext::SetActiveGameState(Assets::AssetRef<GameState> newGameState)
 	{
+		KG_ASSERT(newGameState.IsUsable());
+
 		m_ActiveGameState = newGameState;
-		m_ActiveGameStateHandle = newHandle;
 	}
-	Ref<GameState> GameStateContext::GetActiveGameState()
+	Assets::AssetRef<GameState> GameStateContext::GetActiveGameState()
 	{
-		return m_ActiveGameState;
-	}
-	Assets::AssetHandle GameStateContext::GetActiveGameStateHandle()
-	{
-		return m_ActiveGameStateHandle;
+		return m_ActiveGameState.GetAssetRef();
 	}
 }

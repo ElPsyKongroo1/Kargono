@@ -19,6 +19,11 @@ namespace Kargono::Cameras
 		//==============================
 		const Math::mat4& GetProjection() const { return m_Projection; }
 		void SetProjection(const Math::mat4& projection) { m_Projection = projection; }
+	public:
+		//==============================
+		// Operator Overloads
+		//==============================
+		operator Math::mat4& () { return m_Projection; }
 	private:
 		//==============================
 		// Internal Fields

@@ -5,14 +5,14 @@
 //		the core engine functionality.
 
 //-----------------StateMachines-----------------//
-#include "Modules/AI/StatesContext.h"
+#include "Modules/States/StatesContext.h"
 
 //-----------------Assets-----------------//
 #include "Modules/Assets/AssetsCommon.h"
 
 
 //-----------------Audio-----------------//
-#include "Modules/Audio/Audio.h"
+#include "Modules/Audio/AudioContext.h"
 
 //-----------------Core-----------------//
 #include "Kargono/Core/Base.h"
@@ -28,7 +28,7 @@
 
 //-----------------ECS-----------------//
 #include "Modules/ECS/Entity.h"
-#include "Modules/ECSInternal/CustomComponent.h"
+#include "Modules/ECSInternal/Assets/CustomComponent.h"
 
 //-----------------Events-----------------//
 #include "Modules/Events/KeyEvent.h"
@@ -74,7 +74,7 @@
 
 //-----------------Runtime-UserInterface-----------------//
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
-#include "Modules/RuntimeUI/Font.h"
+#include "Modules/RuntimeUI/Assets/Font.h"
 
 //-----------------Editor-UserInterface-----------------//
 #include "Modules/EditorUI/EditorUIInclude.h"

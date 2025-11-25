@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<GlobalState::GameState> s_GameStateManager{};
+	extern AssetManager<GlobalState::GameState> s_GameStateManager;
 }

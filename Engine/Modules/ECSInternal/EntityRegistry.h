@@ -22,7 +22,7 @@ namespace Kargono::ECSInternal
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init()
+		bool Init()
 		{
 			ResetEntities();
 
@@ -30,7 +30,7 @@ namespace Kargono::ECSInternal
 			return true;
 		}
 
-		[[nodiscard]] bool Terminate()
+		bool Terminate()
 		{
 			ResetEntities();
 
@@ -38,7 +38,7 @@ namespace Kargono::ECSInternal
 			return true;
 		}
 
-		[[nodiscard]] bool Clear()
+		bool Clear()
 		{
 			ResetEntities();
 			return true;
@@ -66,7 +66,7 @@ namespace Kargono::ECSInternal
 		//==============================
 		// Manage Entity(s)
 		//==============================
-		[[nodiscard]] Expected<EntityID> CreateEntity()
+		Expected<EntityID> CreateEntity()
 		{
 			EntityID newEntityID{ m_FreeListHead };
 
@@ -93,7 +93,7 @@ namespace Kargono::ECSInternal
 			return newEntityID;
 		}
 
-		[[nodiscard]] bool DestroyEntity(EntityID entityID)
+		bool DestroyEntity(EntityID entityID)
 		{
 			// Destroy the entity in the sparse set
 			EntityID removedDenseIndex{ m_EntitySet.DeleteElement(entityID) };
@@ -114,7 +114,7 @@ namespace Kargono::ECSInternal
 			return true;
 		}
 
-		[[nodiscard]] bool SetEntitySignature(EntityID entityID, Signature newSignature)
+		bool SetEntitySignature(EntityID entityID, Signature newSignature)
 		{
 			KG_ASSERT(entityID < m_Signatures.size());
 

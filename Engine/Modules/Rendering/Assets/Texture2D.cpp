@@ -297,7 +297,7 @@ namespace Kargono::Rendering
 		TextureMetaData& textureMetadata{ *metadata.GetSpecificMetaData() };
 		textureMetadata.m_Width = spec.m_Width;
 		textureMetadata.m_Height = spec.m_Height;
-		textureMetadata.m_Channels = Utility::ImageFormatToBytes(spec.m_Format);
+		textureMetadata.m_Channels = static_cast<uint32_t>(Utility::ImageFormatToBytes(spec.m_Format));
 	}
 
 	void Texture2D::ValidateDelete(Assets::Metadata<Texture2D>& metadata)

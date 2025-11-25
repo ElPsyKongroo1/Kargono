@@ -4,6 +4,7 @@
 #include "Modules/Assets/AssetManager.h"
 #include "Modules/Assets/Module/AssetTag.h"
 #include "Kargono/Core/Base.h"
+#include "Modules/Memory/IAllocator.h"
 
 #include "Modules/Assets/Managers/StateManager.h"
 #include "Modules/Assets/Managers/AudioBufferManager.h"
@@ -27,6 +28,44 @@ namespace Kargono::Assets
 	class AssetService
 	{
 	public:
+		static void Init(Memory::IAllocator* allocator)
+		{
+			s_ShaderManager.Init(allocator);
+			s_Texture2DManager.Init(allocator);
+			s_AudioBufferManager.Init(allocator);
+			s_FontManager.Init(allocator);
+			s_ScriptManager.Init(allocator);
+			s_CustomComponentManager.Init(allocator);
+			s_CustomEnumManager.Init(allocator);
+			s_ColorPaletteManager.Init(allocator);
+			s_InputMapManager.Init(allocator);
+			s_EmitterConfigManager.Init(allocator);
+			s_GameStateManager.Init(allocator);
+			s_GlobalStateManager.Init(allocator);
+			s_UserInterfaceManager.Init(allocator);
+			s_StateManager.Init(allocator);
+			s_SceneManager.Init(allocator);
+		}
+
+		static void Terminate()
+		{
+			s_ShaderManager.Terminate();
+			s_Texture2DManager.Terminate();
+			s_AudioBufferManager.Terminate();
+			s_FontManager.Terminate();
+			s_ScriptManager.Terminate();
+			s_CustomComponentManager.Terminate();
+			s_CustomEnumManager.Terminate();
+			s_ColorPaletteManager.Terminate();
+			s_InputMapManager.Terminate();
+			s_EmitterConfigManager.Terminate();
+			s_GameStateManager.Terminate();
+			s_GlobalStateManager.Terminate();
+			s_UserInterfaceManager.Terminate();
+			s_StateManager.Terminate();
+			s_SceneManager.Terminate();
+		}
+
 		// Deserializes all registries into memory
 		static void DeserializeAll()
 		{

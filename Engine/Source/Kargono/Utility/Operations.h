@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Kargono/Core/Base.h"
+
 #include <string>
 #include <algorithm>
 #include <tuple>

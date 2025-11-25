@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<Audio::AudioBuffer> s_AudioBufferManager{};
+	extern AssetManager<Audio::AudioBuffer> s_AudioBufferManager;
 }

@@ -109,7 +109,7 @@ namespace Kargono::RuntimeUI
 		spec.m_GenerateMipMaps = false;
 		// TODO: Might want a register method in the asset manager that takes in an already created asset
 		m_AtlasTexture = Assets::s_Texture2DManager.CreateAssetFromSpec({}, spec);
-		m_AtlasTexture->SetData((void*)currentResource.m_Data, spec.m_Width * spec.m_Height * Utility::ImageFormatToBytes(spec.m_Format));
+		m_AtlasTexture->SetData((void*)currentResource.m_Data, static_cast<uint32_t>(spec.m_Width * spec.m_Height * Utility::ImageFormatToBytes(spec.m_Format)));
 
 		m_LineHeight = fontMetadata.m_LineHeight;
 		m_Ascender = fontMetadata.m_Ascender;

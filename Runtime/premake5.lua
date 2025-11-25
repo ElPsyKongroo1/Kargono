@@ -28,11 +28,11 @@ project "Runtime"
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.Box2D}",
+        "%{IncludeDir.GLAD}",
 		"%{IncludeDir.hash_library}",
         "%{IncludeDir.dr_wav}",
         "%{IncludeDir.OpenALSoft}",
         "%{IncludeDir.optick}"
-
     }
 
     links 

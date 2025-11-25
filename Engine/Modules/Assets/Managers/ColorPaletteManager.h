@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<EditorUI::ColorPalette> s_ColorPaletteManager{};
+	extern AssetManager<EditorUI::ColorPalette> s_ColorPaletteManager;
 }

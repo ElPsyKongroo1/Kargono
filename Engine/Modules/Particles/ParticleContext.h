@@ -32,8 +32,8 @@ namespace Kargono::Particles
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init();
-		[[nodiscard]] bool Terminate();
+		bool Init();
+		bool Terminate();
 		void OnUpdate(Timestep ts);
 	public:
 		//==============================
@@ -45,11 +45,11 @@ namespace Kargono::Particles
 		//==============================
 		// Manage Emitters
 		//==============================
-		[[nodiscard]] UUID AddEmitter(Assets::AssetRef<EmitterConfig> config, const Math::vec3& position);
+		UUID AddEmitter(Assets::AssetRef<EmitterConfig> config, const Math::vec3& position);
 		// TODO: YOU SHOULD RETURN A UUID YEA?
 		void AddEmitterByHandle(Assets::AssetHandle emitterHandle, const Math::vec3& position);
-		[[nodiscard]] UUID AddEmitter(Assets::AssetRef<EmitterConfig> config, Scenes::Scene* parentScene, UUID entityID);
-		[[nodiscard]] bool RemoveEmitter(UUID emitterID);
+		UUID AddEmitter(Assets::AssetRef<EmitterConfig> config, Scenes::Scene* parentScene, UUID entityID);
+		bool RemoveEmitter(UUID emitterID);
 		void ClearEmitters();
 		void ClearSceneEmitters();
 		void LoadSceneEmitters(Assets::AssetRef<Scenes::Scene> scene);

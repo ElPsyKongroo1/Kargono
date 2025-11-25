@@ -15,7 +15,7 @@
 
 namespace Kargono::Rendering
 {
-	enum class ImageFormat
+	enum class ImageFormat : uint8_t
 	{
 		None = 0,
 		R8,
@@ -37,8 +37,8 @@ namespace Kargono::Rendering
 		// Public Fields
 		//==============================
 		Buffer m_Buffer{};
-		size_t m_Width{ 1 };
-		size_t m_Height{ 1 };
+		uint32_t m_Width{ 1 };
+		uint32_t m_Height{ 1 };
 		ImageFormat m_Format{ ImageFormat::RGBA8 };
 		bool m_GenerateMipMaps{ true };
 	};

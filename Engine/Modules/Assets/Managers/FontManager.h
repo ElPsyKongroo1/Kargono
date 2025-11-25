@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<RuntimeUI::Font> s_FontManager{};
+	extern AssetManager<RuntimeUI::Font> s_FontManager;
 }

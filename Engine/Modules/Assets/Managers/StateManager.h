@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<States::State> s_StateManager{};
+	extern AssetManager<States::State> s_StateManager;
 }

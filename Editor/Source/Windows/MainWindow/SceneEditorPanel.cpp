@@ -3356,12 +3356,12 @@ namespace Kargono::Panels
 		newEntry.m_OnDoubleLeftClick = [](EditorUI::TreeEntry& entry)
 			{
 				ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->m_EntityRegistry.GetEntityByECSID(ECSInternal::EntityID((int)entry.m_Handle));
-				Rendering::PerspectiveCamera& editorCamera = s_MainWindow->m_ViewportPanel->m_EditorCamera;
+				Cameras::PerspectiveCamera& editorCamera = s_MainWindow->m_ViewportPanel->m_EditorCamera;
 				Transform& transformComponent = entity.GetComponent<Transform>();
 				editorCamera.SetFocalPoint(transformComponent.m_Translation);
 				editorCamera.SetDistance(std::max({ transformComponent.m_Scale.x, 
 					transformComponent.m_Scale.y, transformComponent.m_Scale.z }) * 2.5f);
-				editorCamera.SetMovementType(Rendering::PerspectiveCamera::MovementType::ModelView);
+				editorCamera.SetMovementType(Cameras::PerspectiveCamera::MovementType::ModelView);
 			};
 
 		newEntry.m_OnRightClick = [&](EditorUI::TreeEntry& entry) 

@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<ECSInternal::CustomComponent> s_CustomComponentManager{};
+	extern AssetManager<ECSInternal::CustomComponent> s_CustomComponentManager;
 }

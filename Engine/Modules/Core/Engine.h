@@ -56,8 +56,8 @@ namespace Kargono
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(Application* currentApp, Window* currentWindow);
-		[[nodiscard]] bool Terminate(bool withinThread);
+		bool Init(Application* currentApp, Window* currentWindow);
+		bool Terminate(bool withinThread);
 	private:
 		// Terminate helper
 		void ClearThreadResources();
@@ -132,8 +132,8 @@ namespace Kargono
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(const EngineConfig& config, Application* app);
-		[[nodiscard]] bool Terminate();
+		bool Init(const EngineConfig& config, Application* app);
+		bool Terminate();
 
 		//==============================
 		// Register Event Callbacks
@@ -150,7 +150,7 @@ namespace Kargono
 		EngineThread& GetThread() { return m_Thread; }
 		Application& GetApp() { return *m_CurrentApp; }
 
-		[[nodiscard]] bool IsApplicationActive() // TODO: PLEASE REMOVE THIS
+		bool IsApplicationActive() // TODO: PLEASE REMOVE THIS
 		{
 			if (!m_Active)
 			{

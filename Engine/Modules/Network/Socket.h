@@ -60,8 +60,8 @@ namespace Kargono::Network
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool AddUsage();
-		[[nodiscard]] bool RemoveUsage();
+		bool AddUsage();
+		bool RemoveUsage();
 
 	private:
 		SocketsReferenceCount m_SocketsReferenceCount{ 0 };

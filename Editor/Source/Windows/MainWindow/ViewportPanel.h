@@ -73,11 +73,11 @@ namespace Kargono::Panels
 		// These functions are called in OnUpdate() depending on the current scene state (Edit, Runtime, and Simulation)
 
 		// This function simply renders the active scene
-		void OnUpdateEditor(Timestep ts, Rendering::PerspectiveCamera& camera);
+		void OnUpdateEditor(Timestep ts, Cameras::PerspectiveCamera& camera);
 		// This function renders the active scene, updates scripts, and updates the scene's physics.
 		void OnUpdateRuntime(Timestep ts);
 		// This functions renders the active scene and updates the scene's physics.
-		void OnUpdateSimulation(Timestep ts, Rendering::PerspectiveCamera& camera);
+		void OnUpdateSimulation(Timestep ts, Cameras::PerspectiveCamera& camera);
 
 		// This function initializes the static data used by the OnOverlayRender()
 		//		function below. This function is called in Init().
@@ -104,7 +104,7 @@ namespace Kargono::Panels
 		// Core Panel Data
 		//=========================
 		FixedBufStr32 m_PanelName{ "Viewport" };
-		Rendering::PerspectiveCamera m_EditorCamera;
+		Cameras::PerspectiveCamera m_EditorCamera;
 		int m_GizmoType{ -1 };
 		ViewportData m_ViewportData;
 		Math::uvec2 m_ViewportAspectRatio{ 1, 1 };

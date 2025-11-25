@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<RuntimeUI::UserInterface> s_UserInterfaceManager{};
+	extern AssetManager<RuntimeUI::UserInterface> s_UserInterfaceManager;
 }

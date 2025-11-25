@@ -66,10 +66,7 @@ namespace Kargono::Assets
 			KG_ASSERT(!m_Name.IsEmpty());
 			KG_ASSERT(ValidateExtension(extension));
 
-			std::stringstream pathWithoutExtension;
-			pathWithoutExtension << GetModuleName<t_AssetType>() << "/" <<
-				GetTypeName<t_AssetType>() << "/" << m_Name;
-			return { std::filesystem::path(pathWithoutExtension.str()).replace_extension(extension)};
+			return std::filesystem::path(GetModuleName<t_AssetType>()) / GetTypeName<t_AssetType>() / (m_Name.String() + std::string(extension));
 		}
 		std::filesystem::path GetAssetFullHiddenFolder() requires HasIntermediates<t_AssetType>
 		{
@@ -78,12 +75,9 @@ namespace Kargono::Assets
 			return projectPaths.GetIntermediateDirectory().string() /
 				GetAssetRelativeHiddenFolder();
 		}
-		std::filesystem::path GetAssetRelativeHiddenFolder() requires HasIntermediates<t_AssetType>
+		std::filesystem::path GetAssetRelativeHiddenFolder()
 		{
-			std::stringstream folderPath;
-			folderPath << GetModuleName<t_AssetType>() << "/" <<
-				GetTypeName<t_AssetType>();
-			return { folderPath.str() };
+			return std::filesystem::path(GetModuleName<t_AssetType>()) / GetTypeName<t_AssetType>();
 		}
 	private:
 		// Helper(s)

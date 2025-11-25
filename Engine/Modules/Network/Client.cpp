@@ -521,7 +521,7 @@ namespace Kargono::Network
 
 		// Send the message
 		bool sendSuccess{ false };
-		sendSuccess = i_ClientSocket->Send(connection.m_Address, buffer, msg.m_Header.m_PayloadSize + k_PacketHeaderSize);
+		sendSuccess = i_ClientSocket->Send(connection.m_Address, buffer, static_cast<int>(msg.m_Header.m_PayloadSize + k_PacketHeaderSize));
 
 		return sendSuccess;
 	}

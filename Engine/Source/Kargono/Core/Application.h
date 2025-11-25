@@ -18,8 +18,8 @@ namespace Kargono
 		//==============================
 		// LifeCycle Functions
 		//==============================
-		[[nodiscard]] virtual bool Init() = 0;
-		[[nodiscard]] virtual bool Terminate() = 0;
+		virtual bool Init() = 0;
+		virtual bool Terminate() = 0;
 
 		//==============================
 		// Event Functions

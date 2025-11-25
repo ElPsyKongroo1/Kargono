@@ -48,7 +48,7 @@ namespace Kargono
 		//==============================
 		// Remove Item
 		//==============================
-		[[nodiscard]] bool RemoveIndex(PriorityListIndex index)
+		bool RemoveIndex(PriorityListIndex index)
 		{
 			KG_ASSERT(m_DataList.size() == m_Priorities.size());
 

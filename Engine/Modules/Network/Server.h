@@ -276,8 +276,8 @@ namespace Kargono::Network
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(const ServerConfig& initConfig);
-		[[nodiscard]] bool Terminate(bool withinNetworkThread);
+		bool Init(const ServerConfig& initConfig);
+		bool Terminate(bool withinNetworkThread);
 
 		// Allows other threads to wait on the server to close
 		void WaitOnThreads();

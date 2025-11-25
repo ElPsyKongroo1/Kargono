@@ -34,11 +34,30 @@ namespace Kargono::Assets
 		// Constructors/Destructors
 		//==============================
 		AssetManager() = default;
-		AssetManager(Memory::IAllocator* backingAllocator)
+		~AssetManager()
 		{
-			KG_ASSERT(backingAllocator);
+			KG_ASSERT(!m_Active, "Did you not call Terminate()?");
 		}
-		~AssetManager() = default;
+
+	public:
+		//==============================
+		// Lifecycle Functions
+		//==============================
+		void Init(Memory::IAllocator* backingAllocator)
+		{
+			KG_ASSERT(!m_Active, "Did you already call Init()?");
+			KG_ASSERT(backingAllocator);
+			i_BackingAllocator = backingAllocator;
+
+			m_Active = true;
+		}
+		void Terminate()
+		{
+			KG_ASSERT(m_Active, "Did you not call Init()?");
+
+			i_BackingAllocator = nullptr;
+			m_Active = false;
+		}
 	public:
 		Optional<Metadata<t_AssetType>> GetMetadata(AssetHandle handle)
 		{
@@ -243,6 +262,8 @@ namespace Kargono::Assets
 
 			// Send update event
 			SendManageAssetEvent(metadata, Events::ManageAssetAction::UpdateAsset, providedData);
+
+			return true;
 		}
 
 		void UpdateAsset(AssetHandle handle, const auto& spec)
@@ -387,6 +408,26 @@ namespace Kargono::Assets
 			metadata.m_IsHidden = isHidden;
 		}
 
+		AssetRef<t_AssetType> CreateHiddenAssetFromName(std::string_view assetName)
+			requires HasCreateFromName<t_AssetType>
+		{
+			AssetCreationData creationData{};
+			creationData.m_AssetName = assetName;
+			creationData.m_IsHidden = true;
+			return CreateAssetFromName(creationData);
+		}
+
+		AssetRef<t_AssetType> CreateAssetAtLocation(std::filesystem::path creationDirectory, std::string_view assetName)
+			requires HasCreateFromName<t_AssetType>
+		{
+			AssetCreationData creationData{};
+			creationData.m_CreationDirectory = creationDirectory;
+			creationData.m_AssetName = assetName;
+			creationData.m_IsHidden = false;
+			return CreateAssetFromName(creationData);
+		}
+
+	private:
 		AssetRef<t_AssetType> CreateAssetFromName(const AssetCreationData& creationData)
 			requires HasCreateFromName<t_AssetType>
 		{
@@ -400,22 +441,27 @@ namespace Kargono::Assets
 			
 			// Handle file location information
 			std::filesystem::path metadataFileDirectory = creationData.m_CreationDirectory;
+
 			if constexpr (HasFileLocation<t_AssetType>)
 			{
-				// Validate creation directory
-				bool validDirectoryPath{ ValidateCreationDirectory(metadataFileDirectory) };
-				if (!validDirectoryPath)
+				if (creationData.m_IsHidden)
 				{
-					KG_WARN("Creation directory validation failed for path: {}", 
-						metadataFileDirectory.c_str());
-					return {};
+					// Hidden assets should not have user-defined directories
+					KG_ASSERT(metadataFileDirectory.empty(),
+						"Attempt to provide a creation directory for a hidden asset");
 				}
-				metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
-			}
-			else
-			{
-				KG_ASSERT(creationData.m_CreationDirectory.empty(), 
-					"Attempt to provide a creation directory for an asset type that does not support it");
+				else
+				{
+					// Validate creation directory
+					bool validDirectoryPath{ ValidateCreationDirectory(metadataFileDirectory) };
+					if (!validDirectoryPath)
+					{
+						KG_WARN("Creation directory validation failed for path: {}",
+							metadataFileDirectory.string().c_str());
+						return {};
+					}
+					metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
+				}
 			}
 
 			// Create metadata
@@ -470,6 +516,7 @@ namespace Kargono::Assets
 			return GetAssetByHandle(newMetadata.m_Handle);
 		}
 
+	public:
 		AssetRef<t_AssetType> CreateAssetFromFile(const std::filesystem::path& sourcePath, bool isHidden)
 			requires HasCreateFromFile<t_AssetType>
 		{
@@ -895,23 +942,12 @@ namespace Kargono::Assets
 		{
 			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
-			std::stringstream path;
-			path << projectPaths.GetIntermediateDirectory().string() <<
-				GetModuleName<t_AssetType>() << "/" << GetTypeName<t_AssetType>();
-			return path.str();
+			return projectPaths.GetIntermediateDirectory() / GetModuleName<t_AssetType>() / GetTypeName<t_AssetType>();
 		}
 
 		std::filesystem::path GetAssetRegistryPath()
 		{
-			if constexpr (!HasIntermediates<t_AssetType>)
-			{
-				return {};
-			}
-
-			std::stringstream path;
-			path << GetIntermediateDirectory() << "/" << 
-				GetTypeName<t_AssetType>() << "Registry" << ".kgreg";
-			return path.str();
+			return GetIntermediateDirectory() / (std::string(GetTypeName<t_AssetType>()) + "Registry.kgreg");
 		}
 
 	private:
@@ -1150,7 +1186,8 @@ namespace Kargono::Assets
 					if (currentRef.GetLoadState() == LoadState::Loaded)
 					{
 						// Deallocate the data
-						i_BackingAllocator->Dealloc<t_AssetType>(&currentRef.GetAsset()); // GOTTA LOVE UB
+						bool success = i_BackingAllocator->Dealloc<t_AssetType>(&currentRef.GetAsset()); // GOTTA LOVE UB
+						KG_ASSERT(success);
 					}
 
 					// Remove asset listing from cache map
@@ -1497,7 +1534,6 @@ namespace Kargono::Assets
 			// Set file directory
 			if (isHidden)
 			{
-				KG_ASSERT(assetDirectory.empty());
 				newMetadata.m_FileDirectory = newMetadata.GetAssetRelativeHiddenFolder();
 			}
 			else
@@ -1558,6 +1594,7 @@ namespace Kargono::Assets
 		//==============================
 		// Internal Fields
 		//==============================
+		bool m_Active{ false };
 		AssetRegistry<t_AssetType> m_AssetRegistry{};
 		AssetCache<t_AssetType> m_AssetCache{};
 		void* m_RegistrySpecificData{ nullptr };

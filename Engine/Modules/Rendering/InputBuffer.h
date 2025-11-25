@@ -115,8 +115,8 @@ namespace Kargono::Rendering
 		//==============================
 		// Getters/Setters
 		//==============================
-		const InputBufferLayout& GetLayout() const;
-		void SetLayout(const InputBufferLayout& layout);
+		const InputBufferLayout& GetLayout() const { return m_Layout; }
+		void SetLayout(const InputBufferLayout& layout) { m_Layout = layout; }
 	private:
 		bool m_Registered{ false };
 		uint32_t m_RendererID;

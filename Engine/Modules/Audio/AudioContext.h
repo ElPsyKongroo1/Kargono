@@ -29,8 +29,8 @@ namespace Kargono::Audio
 		//==============================
 		// LifeCycle Functions
 		//==============================
-		[[nodiscard]] bool Init();
-		[[nodiscard]] bool Terminate();
+		bool Init();
+		bool Terminate();
 
 		//==============================
 		// Sound Playback

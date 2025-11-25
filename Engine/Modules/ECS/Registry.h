@@ -25,8 +25,8 @@ namespace Kargono::ECS
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(Memory::IAllocator* backingAlloc);
-		[[nodiscard]] bool Terminate();
+		bool Init(Memory::IAllocator* backingAlloc);
+		bool Terminate();
 
 		//==============================
 		// Entity Management
@@ -58,11 +58,11 @@ namespace Kargono::ECS
 		// Component Registration
 		//==============================
 		// Handle custom component(s)
-		[[nodiscard]] bool RegisterCustomComponent(Assets::AssetHandle customComponentHandle);
-		[[nodiscard]] bool UnRegisterCustomComponent(Assets::AssetHandle customComponentHandle);
+		bool RegisterCustomComponent(Assets::AssetHandle customComponentHandle);
+		bool UnRegisterCustomComponent(Assets::AssetHandle customComponentHandle);
 		// Handle templated components
 		template<typename t_ComponentType>
-		[[nodiscard]] bool RegisterComponent()
+		bool RegisterComponent()
 		{
 			return m_Registry.RegisterComponent<t_ComponentType>();
 		}

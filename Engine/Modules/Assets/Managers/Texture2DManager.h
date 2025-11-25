@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<Rendering::Texture2D> s_Texture2DManager{};
+	extern AssetManager<Rendering::Texture2D> s_Texture2DManager;
 }

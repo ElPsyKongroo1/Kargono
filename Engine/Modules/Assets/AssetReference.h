@@ -223,7 +223,7 @@ namespace Kargono::Assets
 			m_PostUpdateCallback = nullptr;
 		}
 
-		[[nodiscard]] ListenerIndex Reset()
+		ListenerIndex Reset()
 		{
 			// Cache listener index
 			ListenerIndex oldIndex{ m_ListenerIndex };

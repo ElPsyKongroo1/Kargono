@@ -79,7 +79,7 @@ namespace Kargono
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(Memory::IAllocator* backingAllocator)
+		bool Init(Memory::IAllocator* backingAllocator)
 		{
 			KG_ASSERT(!m_Active);
 
@@ -92,7 +92,7 @@ namespace Kargono
 			return m_Active;
 		}
 
-		[[nodiscard]] bool Terminate()
+		bool Terminate()
 		{
 			KG_ASSERT(m_Active);
 			
@@ -112,7 +112,7 @@ namespace Kargono
 		// Register Data
 		//==============================
 		template<typename T>
-		[[nodiscard]] bool Register(SharedDataID dataID)
+		bool Register(SharedDataID dataID)
 		{
 			KG_ASSERT(m_Active);
 
@@ -143,7 +143,7 @@ namespace Kargono
 		// Access Data
 		//==============================
 		template<typename T>
-		[[nodiscard]] ExpectedRef<T> Get(SharedDataID dataID)
+		ExpectedRef<T> Get(SharedDataID dataID)
 		{
 			KG_ASSERT(m_Active);
 
@@ -163,7 +163,7 @@ namespace Kargono
 		}
 
 
-		[[nodiscard]] ExpectedRef<SharedData> GetSharedData(SharedDataID dataID)
+		ExpectedRef<SharedData> GetSharedData(SharedDataID dataID)
 		{
 			KG_ASSERT(m_Active);
 
@@ -182,7 +182,7 @@ namespace Kargono
 		//==============================
 		// Remove Data
 		//==============================
-		[[nodiscard]] bool RemoveSharedData(SharedDataID dataID)
+		bool RemoveSharedData(SharedDataID dataID)
 		{
 			KG_ASSERT(m_Active);
 

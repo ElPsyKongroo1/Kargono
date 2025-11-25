@@ -62,8 +62,8 @@ namespace Kargono::Physics
 		//=========================
 		// Lifecycle Functions
 		//=========================
-		[[nodiscard]] bool Init(Scenes::Scene* scene, PhysicsSpecification& physicsSpec);
-		[[nodiscard]] bool Terminate();
+		bool Init(Scenes::Scene* scene, PhysicsSpecification& physicsSpec);
+		bool Terminate();
 
 		//=========================
 		// On Event Functionality

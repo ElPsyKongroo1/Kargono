@@ -29,6 +29,7 @@ namespace Kargono::Cameras
 		//==============================
 		// Getters/Setters
 		//==============================
+		CameraProjection& GetProjection() { return m_CameraProjection; }
 		// Set projection
 		void SetOrthographic(float size, float nearClip, float farClip);
 		void SetPerspective(float verticalFOV, float nearClip, float farClip);

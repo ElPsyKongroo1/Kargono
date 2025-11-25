@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<InputMap::InputMap> s_InputMapManager{};
+	extern AssetManager<InputMap::InputMap> s_InputMapManager;
 }

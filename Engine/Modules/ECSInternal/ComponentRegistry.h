@@ -31,7 +31,7 @@ namespace Kargono::ECSInternal
 		//==============================
 		// Lifecycle Functions
 		//==============================
-		[[nodiscard]] bool Init(Memory::IAllocator* parentAlloc, EntityRegistry* registry)
+		bool Init(Memory::IAllocator* parentAlloc, EntityRegistry* registry)
 		{
 			KG_ASSERT(parentAlloc);
 			KG_ASSERT(registry);
@@ -44,7 +44,7 @@ namespace Kargono::ECSInternal
 			return true;
 		}
 
-		[[nodiscard]] bool Terminate()
+		bool Terminate()
 		{
 			TerminateComponentStores();
 
@@ -55,7 +55,7 @@ namespace Kargono::ECSInternal
 			return true;
 		}
 
-		[[nodiscard]] bool Clear()
+		bool Clear()
 		{
 			ClearComponentStores();
 
@@ -100,11 +100,12 @@ namespace Kargono::ECSInternal
 			for (auto [mask, componentStore] : m_ComponentArrays)
 			{
 #if 0 // Packed Array
-				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(PackedArray));
+				bool success = i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(PackedArray));
 #endif
 #if 1 // Flat Array
-				i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(FlatArray));
+				bool success = i_RegistryAlloc->DeallocRaw((uint8_t*)componentStore, alignof(FlatArray));
 #endif
+				KG_ASSERT(success);
 			}
 
 			// Reset data structures
@@ -117,7 +118,7 @@ namespace Kargono::ECSInternal
 		// Manage Component(s)
 		//==============================
 		template<typename t_Component>
-		[[nodiscard]] bool RegisterComponent()
+		bool RegisterComponent()
 		{
 			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_Component>();
 
@@ -125,7 +126,7 @@ namespace Kargono::ECSInternal
 				{ sizeof(t_Component), alignof(t_Component), CreateComponentFunctors<t_Component>() });
 		}
 
-		[[nodiscard]] bool RegisterComponent(ComponentIdentifier identifier, 
+		 bool RegisterComponent(ComponentIdentifier identifier, 
 			ComponentMetadata metadata)
 		{
 			KG_ASSERT(metadata.m_ComponentSize > 0);
@@ -174,7 +175,7 @@ namespace Kargono::ECSInternal
 		}
 
 		template<typename t_Component>
-		[[nodiscard]] bool AddComponent(EntityID entityID, t_Component& component)
+		 bool AddComponent(EntityID entityID, t_Component& component)
 		{
 			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_Component>();
 
@@ -183,7 +184,7 @@ namespace Kargono::ECSInternal
 			return AddComponentByMask(entityID, mask, (void*)&component);
 		}
 
-		[[nodiscard]] bool AddComponent(EntityID entityID, ComponentIdentifier identifier,
+		 bool AddComponent(EntityID entityID, ComponentIdentifier identifier,
 			void* component)
 		{
 			ComponentMask mask{ GetComponentMask(identifier).value() };
@@ -191,7 +192,7 @@ namespace Kargono::ECSInternal
 			return AddComponentByMask(entityID, mask, component);
 		}
 
-		[[nodiscard]] bool AddComponentByMask(EntityID entityID, ComponentMask mask,
+		 bool AddComponentByMask(EntityID entityID, ComponentMask mask,
 			void* component)
 		{
 			IComponentStore* componentStore{ GetComponentArrayByMask(mask) };
@@ -224,7 +225,7 @@ namespace Kargono::ECSInternal
 			return true;
 		}
 
-		[[nodiscard]] void* CreateComponent(EntityID entityID, ComponentMask mask)
+		 void* CreateComponent(EntityID entityID, ComponentMask mask)
 		{
 			IComponentStore* componentStore{ GetComponentArrayByMask(mask) };
 			KG_ASSERT(componentStore);
@@ -242,7 +243,7 @@ namespace Kargono::ECSInternal
 			return newComponent;
 		}
 
-		[[nodiscard]] bool AddOrReplaceComponent(EntityID entityID, ComponentMask mask,
+		 bool AddOrReplaceComponent(EntityID entityID, ComponentMask mask,
 			void* component)
 		{
 			IComponentStore* componentStore{ GetComponentArrayByMask(mask) };
@@ -270,7 +271,7 @@ namespace Kargono::ECSInternal
 		}
 
 		template<typename t_Component, typename... t_Args>
-		[[nodiscard]] void* EmplaceComponent(EntityID entityID, t_Args... args)
+		 void* EmplaceComponent(EntityID entityID, t_Args... args)
 		{	
 			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_Component>();
 
@@ -298,7 +299,7 @@ namespace Kargono::ECSInternal
 		}
 
 		template<typename t_Component, typename... t_Args>
-		[[nodiscard]] void* EmplaceOrReplaceComponent(EntityID entityID, t_Args... args)
+		 void* EmplaceOrReplaceComponent(EntityID entityID, t_Args... args)
 		{
 			constexpr ComponentIdentifier identifier = GetComponentIdentifier<t_Component>();
 
@@ -320,7 +321,7 @@ namespace Kargono::ECSInternal
 		}
 
 		template<typename t_Component>
-		[[nodiscard]] bool RemoveComponent(EntityID entityID)
+		 bool RemoveComponent(EntityID entityID)
 		{
 			IComponentStore* componentStore{ GetComponentArray<t_Component>() };
 			KG_ASSERT(componentStore);
@@ -328,7 +329,7 @@ namespace Kargono::ECSInternal
 			return componentStore->RemoveComponent(entityID);
 		}
 
-		[[nodiscard]] bool RemoveComponent(EntityID entityID, ComponentIdentifier identifier)
+		bool RemoveComponent(EntityID entityID, ComponentIdentifier identifier)
 		{
 			IComponentStore* componentStore{ GetComponentArray(identifier) };
 			KG_ASSERT(componentStore);
@@ -336,7 +337,7 @@ namespace Kargono::ECSInternal
 			return componentStore->RemoveComponent(entityID);
 		}
 
-		[[nodiscard]] bool RemoveComponentByMask(EntityID entityID, ComponentMask mask)
+		bool RemoveComponentByMask(EntityID entityID, ComponentMask mask)
 		{
 			IComponentStore* componentStore{ GetComponentArrayByMask(mask) };
 			KG_ASSERT(componentStore);
@@ -442,7 +443,8 @@ namespace Kargono::ECSInternal
 					KG_ASSERT(customComp);
 				}
 
-				otherRegistry.RegisterComponent(componentIdentifier, metadata);
+				bool success = otherRegistry.RegisterComponent(componentIdentifier, metadata);
+				KG_ASSERT(success);
 
 				// Get a view of all entities in each component store
 #if 1 // Flat View

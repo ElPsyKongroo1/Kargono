@@ -938,7 +938,7 @@ namespace Kargono::Network
 			memcpy(&buffer[k_PacketHeaderSize], msg.m_PayloadData.data(), msg.m_Header.m_PayloadSize);
 		}
 
-		i_ServerSocket->Send(connection.m_Address, buffer, msg.m_Header.m_PayloadSize + k_PacketHeaderSize);
+		i_ServerSocket->Send(connection.m_Address, buffer, static_cast<int>(msg.m_Header.m_PayloadSize + k_PacketHeaderSize));
 
 		return true;
 	}

@@ -23,7 +23,7 @@ namespace Kargono::Panels
 		InitializeFrameBuffer();
 		InitializeOverlayData();
 
-		m_EditorCamera = Rendering::PerspectiveCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+		m_EditorCamera = Cameras::PerspectiveCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		ResetCamera();
 	}
 
@@ -273,14 +273,14 @@ namespace Kargono::Panels
 				if (ImGui::BeginMenu("Movement Type"))
 				{
 					if (ImGui::MenuItem("Model Viewer", 0,
-						m_EditorCamera.GetMovementType() == Rendering::PerspectiveCamera::MovementType::ModelView))
+						m_EditorCamera.GetMovementType() == Cameras::PerspectiveCamera::MovementType::ModelView))
 					{
-						m_EditorCamera.SetMovementType(Rendering::PerspectiveCamera::MovementType::ModelView);
+						m_EditorCamera.SetMovementType(Cameras::PerspectiveCamera::MovementType::ModelView);
 					}
 					if (ImGui::MenuItem("FreeFly", 0,
-						m_EditorCamera.GetMovementType() == Rendering::PerspectiveCamera::MovementType::FreeFly))
+						m_EditorCamera.GetMovementType() == Cameras::PerspectiveCamera::MovementType::FreeFly))
 					{
-						m_EditorCamera.SetMovementType(Rendering::PerspectiveCamera::MovementType::FreeFly);
+						m_EditorCamera.SetMovementType(Cameras::PerspectiveCamera::MovementType::FreeFly);
 					}
 					ImGui::EndMenu();
 				}
@@ -895,7 +895,7 @@ namespace Kargono::Panels
 		m_EditorCamera.SetDistance(20.0f);
 		m_EditorCamera.SetPitch(0.195f);
 		m_EditorCamera.SetYaw(-0.372f);
-		m_EditorCamera.SetMovementType(Rendering::PerspectiveCamera::MovementType::ModelView);
+		m_EditorCamera.SetMovementType(Cameras::PerspectiveCamera::MovementType::ModelView);
 	}
 
 }

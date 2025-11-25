@@ -14,8 +14,8 @@ namespace Kargono::InputMap
 		//=========================
 		// Lifecycle Functions
 		//=========================
-		[[nodiscard]] bool Init();
-		[[nodiscard]] bool Terminate();
+		bool Init();
+		bool Terminate();
 
 		//=========================
 		// On Event Functionality

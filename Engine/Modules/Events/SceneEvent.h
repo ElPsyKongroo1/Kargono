@@ -6,7 +6,7 @@
 #include <sstream>
 
 namespace Kargono::Scenes { class Scene; }
-namespace Kargono::ECS { class Registry; }
+namespace Kargono::ECS { struct Registry; }
 
 namespace Kargono::Events
 {

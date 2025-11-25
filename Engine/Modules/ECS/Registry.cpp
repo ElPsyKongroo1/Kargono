@@ -166,7 +166,7 @@ namespace Kargono::ECS
 		Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::s_CustomComponentManager.GetAssetByHandle(customComponentHandle);
 		KG_ASSERT(component);
 
-		if (component->m_ComponentSize == 0 || !m_Registry.IsComponentRegistered(customComponentHandle));
+		if (component->m_ComponentSize == 0 || !m_Registry.IsComponentRegistered(static_cast<ECSInternal::ComponentIdentifier>(customComponentHandle)))
 		{
 			return 0;
 		}

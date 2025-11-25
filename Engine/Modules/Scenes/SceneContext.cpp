@@ -94,9 +94,9 @@ namespace Kargono::Scenes
 		return m_ActiveScene.GetAssetRef();
 	}
 
-	Assets::AssetHandle SceneContext::GetActiveSceneHandle()
+	void SceneContext::ClearActiveScene()
 	{
-		return m_ActiveScene.GetAssetHandle();
+		m_ActiveScene.Reset();
 	}
 
 	void SceneContext::SetActiveScene(Assets::AssetRef<Scene> newScene)

@@ -1,8 +1,14 @@
 #include "kgpch.h"
 #include "RuntimeApp.h"
 
-#include "Modules/Rendering/Components/CameraComponent.h"
+#include "Modules/Cameras/Components/CameraComponent.h"
 #include "Modules/Core/Components/Transform.h"
+#include "Modules/Assets/AssetService.h"
+#include "Modules/Scenes/SceneContext.h"
+#include "Modules/RuntimeUI/FontContext.h"
+#include "Modules/InputMap/InputMapContext.h"
+#include "Modules/GlobalState/GameStateContext.h"
+
 
 #include <filesystem>
 
@@ -22,7 +28,10 @@ namespace Kargono
 
 	bool RuntimeApp::Init()
 	{
+		Assets::AssetService::Init(&m_HeapAllocator);
+
 		Scripting::ScriptBinderService::GetActiveContext().Init();
+		
 		Audio::AudioService::CreateAudioContext();
 		Audio::AudioService::GetActiveContext().Init();
 		Scenes::SceneService::GetActiveContext().Init();
@@ -34,7 +43,7 @@ namespace Kargono
 
 		Window& currentWindow = EngineService::GetActiveEngine().GetWindow();
 
-		Scenes::SceneService::GetActiveContext().SetActiveScene(CreateRef<Scenes::Scene>(), Assets::k_EmptyHandle);
+		Scenes::SceneService::GetActiveContext().ClearActiveScene();
 
 
 		
@@ -45,20 +54,20 @@ namespace Kargono
 		if (pathToProject.empty())
 		{
 			KG_CRITICAL("Could not locate a .kproj file in local directory!");
-			Scripting::ScriptModuleBinder::Terminate();
+			Scripting::ScriptBinderService::GetActiveContext().Terminate();
 			Audio::AudioService::GetActiveContext().Terminate();
 			Audio::AudioService::RemoveAudioContext();
-			Scenes::SceneService::Terminate();
+			Scenes::SceneService::GetActiveContext().Terminate();
 			return false;
 		}
 		OpenProject(pathToProject);
 		if (!Projects::ProjectService::IsActive())
 		{
 			KG_CRITICAL("Failed to open project!");
-			Scripting::ScriptModuleBinder::Terminate();
+			Scripting::ScriptBinderService::GetActiveContext().Terminate();
 			Audio::AudioService::GetActiveContext().Terminate();
 			Audio::AudioService::RemoveAudioContext();
-			Scenes::SceneService::Terminate();
+			Scenes::SceneService::GetActiveContext().Terminate();
 			return false;
 		}
 #else
@@ -96,8 +105,8 @@ namespace Kargono
 		RuntimeUI::RuntimeUIService::GetActiveContext().Init();
 		Particles::ParticleService::CreateParticleContext();
 		Particles::ParticleService::GetActiveContext().Init();
-		Input::InputMapService::CreateInputMapContext();
-		Input::InputMapService::GetActiveContext().Init();
+		InputMap::InputMapService::CreateInputMapContext();
+		InputMap::InputMapService::GetActiveContext().Init();
 
 		if (!m_Headless)
 		{
@@ -117,8 +126,8 @@ namespace Kargono
 		// Terminate engine services
 		RuntimeUI::RuntimeUIService::GetActiveContext().Terminate();
 		RuntimeUI::RuntimeUIService::RemoveRuntimeUIContext();
-		Input::InputMapService::GetActiveContext().Terminate();
-		Input::InputMapService::RemoveInputMapContext();
+		InputMap::InputMapService::GetActiveContext().Terminate();
+		InputMap::InputMapService::RemoveInputMapContext();
 		Particles::ParticleService::GetActiveContext().Terminate();
 		Particles::ParticleService::RemoveParticleContext();
 		Audio::AudioService::GetActiveContext().Terminate();
@@ -130,6 +139,7 @@ namespace Kargono
 		RuntimeUI::FontService::GetActiveContext().Terminate();
 		Scenes::SceneService::GetActiveContext().Terminate();
 		Rendering::RenderingService::Shutdown();
+		Assets::AssetService::Terminate();
 
 		return true;
 	}
@@ -137,22 +147,22 @@ namespace Kargono
 	void RuntimeApp::InitializeFrameBuffer()
 	{
 		Rendering::FramebufferSpecification fbSpec;
-		fbSpec.Attachments = 
+		fbSpec.m_Attachments = 
 		{
 			Rendering::FramebufferDataFormat::RGBA8, 
 			Rendering::FramebufferDataFormat::RED_INTEGER, 
 			Rendering::FramebufferDataFormat::Depth 
 		};
-		fbSpec.Width = EngineService::GetActiveEngine().GetWindow().GetWidth();
-		fbSpec.Height = EngineService::GetActiveEngine().GetWindow().GetHeight();
-		m_ViewportFramebuffer = Rendering::Framebuffer::Create(fbSpec);
+		fbSpec.m_Width = EngineService::GetActiveEngine().GetWindow().GetWidth();
+		fbSpec.m_Height = EngineService::GetActiveEngine().GetWindow().GetHeight();
+		m_ViewportFramebuffer->RegisterBuffer(fbSpec);
 		m_ViewportFramebuffer->Bind();
 	}
 
 	void RuntimeApp::OnUpdate(Timestep ts)
 	{
 		// Render
-		Ref<Scenes::Scene> activeScene{ Scenes::SceneService::GetActiveContext().GetActiveScene() };
+		Assets::AssetRef<Scenes::Scene> activeScene{ Scenes::SceneService::GetActiveContext().GetActiveScene() };
 		Rendering::RenderingService::ResetStats();
 		Rendering::RendererAPI::SetClearColor(activeScene->m_BackgroundColor);
 		Rendering::RendererAPI::Clear();
@@ -166,8 +176,7 @@ namespace Kargono
 		{
 			return;
 		}
-		Rendering::CameraProjection* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
-		
+		Cameras::StaticCamera* mainCamera = &cameraEntity.GetComponent<Cameras::CameraComponent>().m_Camera;
 		// Only handle UI and particles if a main camera exists
 		if (mainCamera)
 		{
@@ -177,7 +186,7 @@ namespace Kargono
 			Math::mat4 cameraTransform = cameraEntity.GetComponent<Transform>().GetTransform();
 
 			// Draw particles
-			Particles::ParticleService::GetActiveContext().OnRender(mainCamera->GetProjection() * glm::inverse(cameraTransform));
+			Particles::ParticleService::GetActiveContext().OnRender(mainCamera->GetProjection().GetProjection() * glm::inverse(cameraTransform));
 
 			// Clear mouse picking buffer
 			m_ViewportFramebuffer->SetAttachment(1, -1);
@@ -324,7 +333,7 @@ namespace Kargono
 
 	bool RuntimeApp::OnPhysicsCollisionStart(Events::PhysicsCollisionStart event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		ECS::Entity entityOne = activeScene->m_EntityRegistry.GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -337,9 +346,8 @@ namespace Kargono
 		if (entityOne.HasComponent<Physics2D::RigidBody2D>())
 		{
 			Physics2D::RigidBody2D& component = entityOne.GetComponent<Physics2D::RigidBody2D>();
-			Assets::AssetHandle scriptHandle = component.m_OnCollisionStartScriptHandle;
-			Scripting::Script* script = component.m_OnCollisionStartScript.get();
-			if (scriptHandle.IsValid())
+			Assets::AssetRef<Scripting::Script> script = component.m_OnCollisionStartScript.GetAssetRef();
+			if (script.GetHandle().IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
@@ -348,9 +356,8 @@ namespace Kargono
 		if (!collisionHandled && entityTwo.HasComponent<Physics2D::RigidBody2D>())
 		{
 			Physics2D::RigidBody2D& component = entityTwo.GetComponent<Physics2D::RigidBody2D>();
-			Assets::AssetHandle scriptHandle = component.m_OnCollisionStartScriptHandle;
-			Scripting::Script* script = component.m_OnCollisionStartScript.get();
-			if (scriptHandle.IsValid())
+			Assets::AssetRef<Scripting::Script> script = component.m_OnCollisionStartScript.GetAssetRef();
+			if (script.GetHandle().IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
@@ -360,7 +367,7 @@ namespace Kargono
 
 	bool RuntimeApp::OnPhysicsCollisionEnd(Events::PhysicsCollisionEnd event)
 	{
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		UUID entityOneID = event.GetEntityOne();
 		ECS::Entity entityOne = activeScene->m_EntityRegistry.GetEntityByUUID(entityOneID);
 		UUID entityTwoID = event.GetEntityTwo();
@@ -373,9 +380,8 @@ namespace Kargono
 		if (entityOne.HasComponent<Physics2D::RigidBody2D>())
 		{
 			Physics2D::RigidBody2D& component = entityOne.GetComponent<Physics2D::RigidBody2D>();
-			Assets::AssetHandle scriptHandle = component.m_OnCollisionEndScriptHandle;
-			Scripting::Script* script = component.m_OnCollisionEndScript.get();
-			if (scriptHandle.IsValid())
+			Assets::AssetRef<Scripting::Script> script = component.m_OnCollisionEndScript.GetAssetRef();
+			if (script.GetHandle().IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
@@ -384,9 +390,8 @@ namespace Kargono
 		if (!collisionHandled && entityOne.HasComponent<Physics2D::RigidBody2D>())
 		{
 			Physics2D::RigidBody2D& component = entityTwo.GetComponent<Physics2D::RigidBody2D>();
-			Assets::AssetHandle scriptHandle = component.m_OnCollisionEndScriptHandle;
-			Scripting::Script* script = component.m_OnCollisionEndScript.get();
-			if (scriptHandle.IsValid())
+			Assets::AssetRef<Scripting::Script> script = component.m_OnCollisionEndScript.GetAssetRef();
+			if (script.GetHandle().IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
@@ -407,7 +412,7 @@ namespace Kargono
 
 		if (!handled)
 		{
-			Input::InputMapService::GetActiveContext().OnKeyPressed(event);
+			InputMap::InputMapService::GetActiveContext().OnKeyPressed(event);
 		}
 
 		return handled;
@@ -476,7 +481,7 @@ namespace Kargono
 		Particles::ParticleService::GetActiveContext().OnUpdate(ts);
 
 		// Update
-		Input::InputMapService::GetActiveContext().OnUpdate(ts);
+		InputMap::InputMapService::GetActiveContext().OnUpdate(ts);
 		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnUpdate(ts);
 		Physics::Physics2DService::GetActiveContext().OnUpdate(ts);
 
@@ -486,7 +491,7 @@ namespace Kargono
 		{
 			return;
 		}
-		Rendering::CameraProjection* mainCamera = &cameraEntity.GetComponent<Rendering::CameraComponent>().m_Camera;
+		Cameras::CameraProjection* mainCamera = &cameraEntity.GetComponent<Cameras::CameraComponent>().m_Camera.GetProjection();
 		Math::mat4 cameraTransform = cameraEntity.GetComponent<Transform>().GetTransform();
 
 		if (mainCamera)
@@ -713,8 +718,11 @@ namespace Kargono
 	void RuntimeApp::OpenScene(Assets::AssetHandle sceneHandle)
 	{
 	    Assets::AssetRef<Scenes::Scene> newScene = Assets::s_SceneManager.GetAssetByHandle(sceneHandle);
-		if (!newScene) { newScene = CreateRef<Scenes::Scene>(); }
-		Scenes::SceneService::GetActiveContext().SetActiveScene(newScene, sceneHandle);
+		if (!newScene) 
+		{ 
+			newScene = Assets::s_SceneManager.CreateHiddenAssetFromName("Default Scene");
+		}
+		Scenes::SceneService::GetActiveContext().SetActiveScene(newScene);
 	}
 
 
@@ -725,7 +733,7 @@ namespace Kargono
 		// Handle initializing core services
 		Particles::ParticleService::GetActiveContext().ClearEmitters();
 		Physics::Physics2DService::CreatePhysics2DWorld();
-		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveContext().GetActiveScene().get(), Scenes::SceneService::GetActiveContext().GetActiveScene()->m_PhysicsSpecification);
+		Physics::Physics2DService::GetActiveContext().Init(Scenes::SceneService::GetActiveContext().GetActiveScene().GetAssetPtr(), Scenes::SceneService::GetActiveContext().GetActiveScene()->m_PhysicsSpecification);
 		Scenes::SceneService::GetActiveContext().GetActiveScene()->OnRuntimeStart();
 		Assets::AssetHandle scriptHandle = Projects::ProjectService::GetActiveContext().GetOnRuntimeStartHandle();
 		if (scriptHandle != 0)
@@ -734,15 +742,16 @@ namespace Kargono
 		}
 
 		// Load Default Game State
-		if (activeProject.GetStartGameStateHandle() == 0)
+		if (!activeProject.GetStartGameStateHandle().IsValid())
 		{
-			Scenes::GameStateService::GetActiveContext().ClearActiveGameState();
+			GlobalState::GameStateService::GetActiveContext().ClearActiveGameState();
 		}
 		else
 		{
-			Scenes::GameStateService::GetActiveContext().SetActiveGameState(Assets::AssetService::GetGameState(
-				activeProject.GetStartGameStateHandle()),
-				activeProject.GetStartGameStateHandle());
+			GlobalState::GameStateService::GetActiveContext().SetActiveGameState
+			(
+				Assets::s_GameStateManager.GetAssetByHandle(activeProject.GetStartGameStateHandle())
+			);
 		}
 
 		if (activeProject.GetAppIsNetworked())

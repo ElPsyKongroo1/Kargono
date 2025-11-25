@@ -5,5 +5,5 @@
 
 namespace Kargono::Assets
 {
-	static inline AssetManager<Particles::EmitterConfig> s_EmitterConfigManager{};
+	extern AssetManager<Particles::EmitterConfig> s_EmitterConfigManager;
 }
