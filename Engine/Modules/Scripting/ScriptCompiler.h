@@ -1,6 +1,7 @@
 #pragma once
 #include "Modules/Scripting/ScriptCompilerCommon.h"
 #include "Modules/Scripting/ScriptLanguageDefinition.h"
+#include "Modules/Assets/AssetReference.h"
 
 namespace Kargono::Rendering { class Texture2D; }
 
@@ -8,7 +9,7 @@ namespace Kargono::Scripting
 {
 	struct SuggestionSpec
 	{
-		Assets::AssetRef<Rendering::Texture2D> m_Icon {};
+		Assets::TAssetRef<Rendering::Texture2D> m_Icon {};
 		std::string m_Label {};
 		std::string m_ReplacementText {};
 		int16_t m_ShiftValue{ 0 };

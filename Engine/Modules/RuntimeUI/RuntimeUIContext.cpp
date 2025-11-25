@@ -13,22 +13,22 @@
 #include "Kargono/Math/Interpolation.h"
 #include "Modules/EditorUI/EditorUIInclude.h"
 #include "Modules/Input/InputService.h"
+#include "Modules/Assets/Managers/ShaderManager.h"
+#include "Modules/Assets/Managers/RuntimeUIManager.h"
 
 namespace Kargono::RuntimeUI
 {
 	void RuntimeUIContext::Init()
 	{
 		// Initialize Runtime UI Context
-		m_ActiveUI = nullptr;
-		m_ActiveUIHandle = Assets::k_EmptyHandle;
-		m_DefaultFont = Assets::s_FontManager.CreateAssetFromFile("Resources/Fonts/arial.ttf");
-		m_DefaultFont = FontService::GetActiveContext().InstantiateEditorFont("Resources/Fonts/arial.ttf");
+		m_ActiveUI.Reset();
+		m_DefaultFont = Assets::s_FontManager.CreateAssetFromFile("Resources/Fonts/arial.ttf", true);
 
 		// Initialize Window/Widget background Rendering Data
 		{
 			// Create shader for UI background/quad rendering
 			Rendering::ShaderSpecification shaderSpec {Rendering::ColorInputType::FlatColor, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false};
-			auto [uuid, localShader] = Assets::s_ShaderManager.GetAssetByHandle(shaderSpec);
+			Assets::AssetRef<Rendering::Shader> localShader = Assets::s_ShaderManager.GetAssetBySpec(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>({ 1.0f, 1.0f, 1.0f, 1.0f }, 
 				Utility::FileSystem::CRCFromString("a_Color"),
@@ -49,7 +49,7 @@ namespace Kargono::RuntimeUI
 		{
 			// Create shader for UI background/quad rendering
 			Rendering::ShaderSpecification shaderSpec{ Rendering::ColorInputType::None, Rendering::TextureInputType::ColorTexture, false, true, true, Rendering::RenderingType::DrawIndex, false };
-			auto [uuid, localShader] = Assets::s_ShaderManager.GetAssetByHandle(shaderSpec);
+			Assets::AssetRef<Rendering::Shader> localShader = Assets::s_ShaderManager.GetAssetBySpec(shaderSpec);
 			Buffer localBuffer{ localShader->GetInputLayout().GetStride() };
 
 			// Create basic shape component for UI quad rendering
@@ -59,7 +59,7 @@ namespace Kargono::RuntimeUI
 			shapeComp->m_Indices = CreateRef<std::vector<uint32_t>>(Rendering::Shape::s_Quad.GetIndices());
 			shapeComp->m_TextureCoordinates = CreateRef<std::vector<Math::vec2>>(Rendering::Shape::s_Quad.GetIndexTextureCoordinates());
 			shapeComp->m_Shader = localShader;
-			shapeComp->m_Texture = nullptr;
+			shapeComp->m_Texture = {};
 			
 			float* tilingFactor = Rendering::Shader::GetInputLocation<float>(
 				Utility::FileSystem::CRCFromString("a_TilingFactor"), 
@@ -87,9 +87,9 @@ namespace Kargono::RuntimeUI
 		KG_VERIFY(!m_Active, "Runtime UI Engine Terminate");
 	}
 
-	void RuntimeUIContext::SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle)
+	void RuntimeUIContext::SetActiveUI(Assets::AssetRef<UserInterface> ui)
 	{
-		if (!userInterface || uiHandle == Assets::k_EmptyHandle)
+		if (ui.IsUsable())
 		{
 			KG_WARN("Attempt to make a user interface active that is null or has an empty handle");
 			return;
@@ -99,8 +99,7 @@ namespace Kargono::RuntimeUI
 		ClearActiveUI();
 
 		// Set new active UI
-		m_ActiveUI = userInterface;
-		m_ActiveUIHandle = uiHandle;
+		m_ActiveUI = ui;
 
 		m_ActiveUI->Init(this);
 	}
@@ -118,18 +117,19 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Set active user interface
-		SetActiveUI(uiReference, uiHandle);
+		SetActiveUI(uiReference);
 	}
 
 	bool RuntimeUIContext::IsUIActiveFromHandle(Assets::AssetHandle uiHandle)
 	{
 		// Ensure an invalid state is not presented
-		if (uiHandle == Assets::k_EmptyHandle || !m_ActiveUI)
+		if (!uiHandle.IsValid())
 		{
 			return false;
 		}
 
-		return m_ActiveUIHandle == uiHandle;
+		// Check if the provided handle matches the active UI handle
+		return m_ActiveUI.GetAssetHandle() == uiHandle;
 	}
 
 	void RuntimeUIContext::ClearActiveUI()
@@ -139,21 +139,18 @@ namespace Kargono::RuntimeUI
 			m_ActiveUI->Terminate();
 		}
 
-		m_ActiveUI = nullptr;
-		m_ActiveUIHandle = Assets::k_EmptyHandle;
+		m_ActiveUI.Reset();
 	}
 
-	Ref<UserInterface> RuntimeUIContext::GetActiveUI()
+	Assets::AssetRef<UserInterface> RuntimeUIContext::GetActiveUI()
 	{
-		return m_ActiveUI;
+		return m_ActiveUI.GetAssetRef();
 	}
 
 	Assets::AssetHandle RuntimeUIContext::GetActiveUIHandle()
 	{
-		return m_ActiveUIHandle;
+		return m_ActiveUI.GetAssetHandle();
 	}
-
-	
 
 	void NavigationLinksCalculator::CalculateNavigationLinks()
 	{

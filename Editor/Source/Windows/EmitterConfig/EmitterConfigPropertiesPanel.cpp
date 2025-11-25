@@ -356,7 +356,7 @@ namespace Kargono::Panels
 	}
 	void EmitterConfigPropertiesPanel::OnModifySizeCurve(const EditorUI::OptionEntry& entry)
 	{
-		KG_ASSERT(entry.m_Handle != Assets::k_EmptyHandle);
+		KG_ASSERT(entry.m_Handle.IsValid());
 		// Update the ending size for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_SizeInterpolationType = 
 			(Math::InterpolationType)(uint64_t)entry.m_Handle;
@@ -367,7 +367,7 @@ namespace Kargono::Panels
 	}
 	void EmitterConfigPropertiesPanel::OnModifyColorCurve(const EditorUI::OptionEntry& entry)
 	{
-		KG_ASSERT(entry.m_Handle != Assets::k_EmptyHandle);
+		KG_ASSERT(entry.m_Handle.IsValid());
 		// Update the ending color for the current emitter config
 		s_EmitterConfigWindow->m_EditorEmitterConfig->m_ColorInterpolationType =
 			(Math::InterpolationType)(uint64_t)entry.m_Handle;

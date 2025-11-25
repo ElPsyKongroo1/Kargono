@@ -52,7 +52,7 @@ namespace Kargono::Particles
 		[[nodiscard]] bool RemoveEmitter(UUID emitterID);
 		void ClearEmitters();
 		void ClearSceneEmitters();
-		void LoadSceneEmitters(Ref<Scenes::Scene> scene);
+		void LoadSceneEmitters(Assets::AssetRef<Scenes::Scene> scene);
 
 		//==============================
 		// Getters/Setters

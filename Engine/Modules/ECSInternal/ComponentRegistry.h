@@ -210,7 +210,7 @@ namespace Kargono::ECSInternal
 			CustomComponent* customComp{ nullptr };
 
 			// If this is a custom component, get the custom component data
-			if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
+			if (metadata.m_CustomComponentHandle.IsValid())
 			{
 				customComp = &Assets::s_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
 				KG_ASSERT(customComp);
@@ -255,7 +255,7 @@ namespace Kargono::ECSInternal
 			CustomComponent* customComp{ nullptr };
 
 			// If this is a custom component, get the custom component data
-			if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
+			if (metadata.m_CustomComponentHandle.IsValid())
 			{
 				customComp = &Assets::s_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
 				KG_ASSERT(customComp);
@@ -436,7 +436,7 @@ namespace Kargono::ECSInternal
 				CustomComponent* customComp{ nullptr };
 
 				// If this is a custom component, get the custom component data
-				if (metadata.m_CustomComponentHandle != Assets::k_EmptyHandle)
+				if (metadata.m_CustomComponentHandle.IsValid())
 				{
 					customComp = &Assets::s_CustomComponentManager.GetAssetByHandle(metadata.m_CustomComponentHandle).GetAsset();
 					KG_ASSERT(customComp);

@@ -224,9 +224,9 @@ namespace Kargono::RuntimeUI
 		}
 
 		// Get the aspect ratio from the image value as a vec2
-		Optional<Assets::Metadata> metadata = Assets::s_Texture2DManager.GetMetadata(currentImageData->m_ImageRef.GetAssetHandle());
+		Optional<Assets::Metadata<Rendering::Texture2D>> metadata = Assets::s_Texture2DManager.GetMetadata(currentImageData->m_ImageRef.GetAssetHandle());
 		KG_ASSERT(metadata);
-		Rendering::TextureMetaData* textureMetadata = metadata->GetSpecificMetaData<Rendering::TextureMetaData>();
+		Rendering::TextureMetaData* textureMetadata = metadata->GetSpecificMetaData();
 		Math::vec2 textureAspectRatio = Math::vec2((float)textureMetadata->m_Width, (float)textureMetadata->m_Height);
 
 		// Ensure we avoid division by 0
@@ -316,7 +316,7 @@ namespace Kargono::RuntimeUI
 		// Function pointer fields
 		 
 		Assets::AssetHandle onPressHandle = node["FunctionPointerOnPress"].as<uint64_t>();
-		if (onPressHandle == Assets::k_EmptyHandle)
+		if (!onPressHandle.IsValid())
 		{
 			m_FunctionPointers.m_OnPress.Reset();
 		}
@@ -351,14 +351,14 @@ namespace Kargono::RuntimeUI
 
 	void SingleLineTextData::OnRender(RuntimeUIContext* uiContext, const Math::vec3& textStartingPoint, float textScalingFactor)
 	{
-		Ref<UserInterface> activeUI = uiContext->m_ActiveUI;
+		Assets::AssetRef<UserInterface> activeUI = uiContext->m_ActiveUI.GetAssetRef();
 
 		// Call the text's rendering function
 		activeUI->m_Config.m_Font->OnRenderSingleLineText(m_Text, textStartingPoint, m_TextColor, textScalingFactor);
 	}
 	void SingleLineTextData::RenderTextCursor(RuntimeUIContext* uiContext, const Math::vec3& textStartingPoint, float textScalingFactor)
 	{
-		Ref<UserInterface> activeUI = uiContext->m_ActiveUI;
+		Assets::AssetRef<UserInterface> activeUI = uiContext->m_ActiveUI.GetAssetRef();
 
 		Rendering::RendererInputSpec& renderSpec = uiContext->m_BackgroundInputSpec;
 
@@ -374,7 +374,7 @@ namespace Kargono::RuntimeUI
 		}
 		else
 		{
-			cursorOffset = GetTextDimensions(uiContext->m_ActiveUI.get(), std::string_view(m_Text.data(), m_CaretIndex));
+			cursorOffset = GetTextDimensions(uiContext->m_ActiveUI.GetAssetPtr(), std::string_view(m_Text.data(), m_CaretIndex));
 			// Move the cursor back down by a half-extent
 			cursorTranslation.y += textScalingFactor * 0.5f * ascender;
 		}
@@ -450,7 +450,7 @@ namespace Kargono::RuntimeUI
 	void ImageData::Deserialize(YAML::Node& node, std::string_view title)
 	{
 		Assets::AssetHandle imageHandle = node[((std::string)title + "Image")].as<uint64_t>();
-		if (imageHandle == Assets::k_EmptyHandle)
+		if (!imageHandle.IsValid())
 		{
 			m_ImageRef.Reset();
 		}
@@ -505,8 +505,7 @@ namespace Kargono::RuntimeUI
 		YAML::Node containerWidgetNodes = node["ContainerWidgets"];
 		for (YAML::Node containerWidgetNode : containerWidgetNodes)
 		{
-			Ref<Widget> newWidget = CreateRef<Widget>(parentUI);
-			newWidget->Deserialize(node, parentUI);
+			Ref<Widget> newWidget = parentUI->DeserializeWidget(containerWidgetNode);
 			m_ContainedWidgets.push_back(newWidget);
 		}
 	}

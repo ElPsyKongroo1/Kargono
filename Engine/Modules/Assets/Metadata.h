@@ -35,7 +35,7 @@ namespace Kargono::Assets
 		//==============================
 		bool IsValid()
 		{
-			return m_Handle != Assets::k_EmptyHandle &&
+			return m_Handle.IsValid() &&
 				m_TypeIdentifier != k_InvalidAssetIdentifier;
 		}
 	public:
@@ -106,13 +106,13 @@ namespace Kargono::Assets
 		auto* GetSpecificMetaData() requires HasMetadata<t_AssetType>
 		{
 			KG_ASSERT(m_SpecificMetaData);
-			return static_cast<t_AssetType::Metadata*>(m_SpecificMetaData);
+			return static_cast<typename t_AssetType::Metadata*>(m_SpecificMetaData);
 		}
 
 		void SetSpecificMetaData(auto* newMetaData) requires HasMetadata<t_AssetType>
 		{
 			// Ensure provided type matches expected metadata type
-			EnforceTypesMatch<t_AssetType::Metadata, decltype(newMetaData)>();
+			EnforceTypesMatch<typename t_AssetType::Metadata*, decltype(newMetaData)>();
 
 			KG_ASSERT(newMetaData);
 			m_SpecificMetaData = static_cast<void*>(newMetaData);

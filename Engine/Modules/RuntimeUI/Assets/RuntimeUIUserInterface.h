@@ -397,7 +397,7 @@ namespace Kargono::RuntimeUI
 			return ".kgui";
 		}
 
-		static void CreateFromName(Assets::Metadata& metadata);
+		static void CreateFromName(Assets::Metadata<UserInterface>& metadata);
 	public:
 		//============================
 		// Constructors/Destructors

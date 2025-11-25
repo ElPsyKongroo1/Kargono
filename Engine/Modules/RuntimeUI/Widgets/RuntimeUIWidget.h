@@ -261,7 +261,6 @@ namespace Kargono::RuntimeUI
 		//============================
 		virtual void OnRender(RuntimeUIContext* uiContext, Math::vec3 translation, 
 			const Math::vec3& scale, float viewportWidth) = 0;
-
 	public:
 		//============================
 		// Serialization

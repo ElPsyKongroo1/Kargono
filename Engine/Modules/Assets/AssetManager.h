@@ -98,7 +98,7 @@ namespace Kargono::Assets
 			AssetHandle handle{ GetAssetHandleByFileLocation(queryLocation) };
 
 			// Check for invalid case
-			if (handle == k_EmptyHandle)
+			if (!handle.IsValid())
 			{
 				return {};
 			}
@@ -154,7 +154,7 @@ namespace Kargono::Assets
 			AssetHandle handle{ GetAssetHandleByFileLocation(queryLocation) };
 
 			// Return boolean response
-			if (handle == k_EmptyHandle)
+			if (!handle.IsValid())
 			{
 				return false;
 			}
@@ -470,6 +470,22 @@ namespace Kargono::Assets
 			return GetAssetByHandle(newMetadata.m_Handle);
 		}
 
+		AssetRef<t_AssetType> CreateAssetFromFile(const std::filesystem::path& sourcePath, bool isHidden)
+			requires HasCreateFromFile<t_AssetType>
+		{
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			AssetCreationData creationData{};
+			creationData.m_AssetName = sourcePath.stem().string();
+			if (!isHidden)
+			{
+				creationData.m_CreationDirectory = projectPaths.GetAssetDirectory();
+			}
+			creationData.m_IsHidden = isHidden;
+
+			return CreateAssetFromFile(sourcePath, creationData);
+		}
+
 		AssetRef<t_AssetType> CreateAssetFromFile(const std::filesystem::path& sourcePath, 
 			const AssetCreationData& creationData)
 			requires HasCreateFromFile<t_AssetType>
@@ -491,7 +507,7 @@ namespace Kargono::Assets
 				if (!validDirectoryPath)
 				{
 					KG_WARN("Creation directory validation failed for path: {}",
-						metadataFileDirectory.c_str());
+						metadataFileDirectory.string().c_str());
 					return {};
 				}
 				metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
@@ -592,7 +608,7 @@ namespace Kargono::Assets
 				if (!validDirectoryPath)
 				{
 					KG_WARN("Creation directory validation failed for path: {}",
-						metadataFileDirectory.c_str());
+						metadataFileDirectory.string().c_str());
 					return {};
 				}
 				metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
@@ -875,6 +891,29 @@ namespace Kargono::Assets
 			return m_AssetRegistry.size();
 		}
 
+		std::filesystem::path GetIntermediateDirectory()
+		{
+			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
+
+			std::stringstream path;
+			path << projectPaths.GetIntermediateDirectory().string() <<
+				GetModuleName<t_AssetType>() << "/" << GetTypeName<t_AssetType>();
+			return path.str();
+		}
+
+		std::filesystem::path GetAssetRegistryPath()
+		{
+			if constexpr (!HasIntermediates<t_AssetType>)
+			{
+				return {};
+			}
+
+			std::stringstream path;
+			path << GetIntermediateDirectory() << "/" << 
+				GetTypeName<t_AssetType>() << "Registry" << ".kgreg";
+			return path.str();
+		}
+
 	private:
 		AssetHandle GetAssetHandleFromFileLocation(const std::filesystem::path& queryFileLocation)
 			requires HasFileLocation<t_AssetType>
@@ -1028,22 +1067,6 @@ namespace Kargono::Assets
 				Utility::FileSystem::GetRelativePath(paths.GetAssetDirectory(), queryFileLocation)
 			};
 			return Utility::FileSystem::ConvertToUnixStylePath(pathRelativeToAssetDir);
-		}
-
-		std::filesystem::path GetAssetRegistryPath()
-		{
-			if constexpr (!HasIntermediates<t_AssetType>)
-			{
-				return {};
-			}
-
-			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
-
-			std::stringstream path;
-			path << projectPaths.GetIntermediateDirectory().string() <<
-				GetModuleName<t_AssetType>() << "/" << GetTypeName<t_AssetType>()
-				<< "/" << GetTypeName<t_AssetType>() << "Registry" << ".kgreg";
-			return path.str();
 		}
 
 		Utility::SHA256Hash GenerateAssetHash(Metadata<t_AssetType> metadata)

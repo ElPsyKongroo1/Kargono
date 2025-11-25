@@ -28,7 +28,8 @@ namespace Kargono::Assets
 			KG_ASSERT((state == LoadState::Loaded && asset) ||
 				(state != LoadState::Loaded && !asset));
 		}
-		~AssetReference() {}
+		AssetReference(const AssetReference<t_AssetType>& other) = default;
+		~AssetReference() = default;
 	public:
 		//==============================
 		// Notification
@@ -39,16 +40,6 @@ namespace Kargono::Assets
 			m_LoadState = state;
 
 			KG_ASSERT(IsValid());
-		}
-	public:
-		//==============================
-		// Copy Constructor(s)
-		//==============================
-		AssetReference(const AssetReference<t_AssetType>& other)
-			: m_Handle(other.m_Handle), m_LoadState(other.m_LoadState), m_Asset(other.m_Asset)
-		{
-			KG_ASSERT((m_LoadState == LoadState::Loaded && m_Asset) ||
-				(m_LoadState != LoadState::Loaded && !m_Asset));
 		}
 	public:
 		//==============================
@@ -67,7 +58,7 @@ namespace Kargono::Assets
 		t_AssetType& GetAsset()
 		{
 			KG_ASSERT(m_Asset);
-			KG_ASSERT(m_Handle != k_EmptyHandle);
+			KG_ASSERT(m_Handle.IsValid());
 			KG_ASSERT(m_LoadState == LoadState::Loaded);
 
 			// Note that this function assumes you have verified the asset is loaded
@@ -95,19 +86,27 @@ namespace Kargono::Assets
 
 		bool IsValid() const
 		{
-			return m_Handle != k_EmptyHandle && (
+			return m_Handle.IsValid() && (
 				(m_LoadState == LoadState::Loaded && m_Asset) ||
 				(m_LoadState != LoadState::Loaded && !m_Asset));
 		}
 
 		bool IsEmpty() const
 		{
-			return m_Handle == k_EmptyHandle && m_LoadState == LoadState::Unloaded && m_Asset == nullptr;
+			return !m_Handle.IsValid() && m_LoadState == LoadState::Unloaded && m_Asset == nullptr;
 		}
 
 		bool IsUsable() const
 		{
 			return IsValid() && !IsEmpty();
+		}
+
+		t_AssetType* GetAssetPtr()
+		{
+			KG_ASSERT(IsValid());
+
+			// Note that this function assumes you have verified the asset is loaded
+			return m_Asset;
 		}
 
 	public:

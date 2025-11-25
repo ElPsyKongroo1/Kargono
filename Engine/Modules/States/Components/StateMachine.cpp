@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/States/Components/StateMachine.h"
+#include "Modules/Assets/Managers/StateManager.h"
 
 
 namespace Kargono::States
@@ -35,7 +36,7 @@ namespace Kargono::States
 		// Deserialize current state
 		Assets::AssetHandle currentStateHandle = node["CurrentState"].as<uint64_t>();
 		m_CurrentStateReference = Assets::s_StateManager.GetAssetByHandle(currentStateHandle);
-		if (currentStateHandle != Assets::k_EmptyHandle && !m_CurrentStateReference)
+		if (currentStateHandle.IsValid() && !m_CurrentStateReference)
 		{
 			KG_WARN("Valid handle was found, however, could not retrieve a valid reference to current AI state");
 		}
@@ -43,7 +44,7 @@ namespace Kargono::States
 		// Deserialize previous state
 		Assets::AssetHandle previousStateHandle = node["PreviousState"].as<uint64_t>();
 		m_PreviousStateReference = Assets::s_StateManager.GetAssetByHandle(previousStateHandle);
-		if (previousStateHandle != Assets::k_EmptyHandle && !m_PreviousStateReference)
+		if (previousStateHandle.IsValid() && !m_PreviousStateReference)
 		{
 			KG_WARN("Valid handle was found, however, could not retrieve a valid reference for previous AI state");
 		}
@@ -51,7 +52,7 @@ namespace Kargono::States
 		// Deserialize global state
 		Assets::AssetHandle globalStateHandle = node["GlobalState"].as<uint64_t>();
 		m_GlobalStateReference = Assets::s_StateManager.GetAssetByHandle(globalStateHandle);
-		if (globalStateHandle != Assets::k_EmptyHandle && !m_GlobalStateReference)
+		if (globalStateHandle.IsValid() && !m_GlobalStateReference)
 		{
 			KG_WARN("Valid handle was found, however, could not retrieve a valid reference to global AI State");
 		}

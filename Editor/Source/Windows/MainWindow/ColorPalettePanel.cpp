@@ -28,7 +28,7 @@ namespace Kargono::Panels
 
 		m_OpenColorPalettePopup.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::k_EmptyHandle)
+			if (!selection.m_Handle.IsValid())
 			{
 				KG_WARN("No Color Palette Selected");
 				return;

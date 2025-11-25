@@ -119,7 +119,7 @@ namespace Kargono::ECSInternal
 	}
 	ECSInternal::ComponentMetadata CustomComponent::GenerateMetadata(Assets::AssetHandle compHandle) const
 	{
-		KG_ASSERT(compHandle != Assets::k_EmptyHandle);
+		KG_ASSERT(compHandle.IsValid());
 
 		ECSInternal::ComponentMetadata metadata{};
 		metadata.m_ComponentSize = m_ComponentSize;

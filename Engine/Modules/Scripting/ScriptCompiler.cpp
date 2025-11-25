@@ -9,9 +9,9 @@
 #include "Modules/Scripting/ScriptTokenParser.h"
 #include "Modules/Scripting/ScriptOutputGenerator.h"
 
-#include "Modules/ECSInternal/CustomComponent.h"
+#include "Modules/ECSInternal/Assets/CustomComponent.h"
 #include "Modules/ECS/Entity.h"
-#include "Kargono/ProjectData/ProjectEnum.h"
+#include "Modules/Scripting/Assets/CustomEnum.h"
 #include "Kargono/Utility/Operations.h"
 #include "Kargono/Core/KeyCodes.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"

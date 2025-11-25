@@ -249,7 +249,7 @@ namespace Kargono
 
 	bool EngineThread::OnUpdateEntityLocation(Events::UpdateEntityLocation& e)
 	{
-		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene> scene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		if (!scene) { return false; }
 		ECS::Entity entity = scene->m_EntityRegistry.GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }
@@ -267,7 +267,7 @@ namespace Kargono
 
 	bool EngineThread::OnUpdateEntityPhysics(Events::UpdateEntityPhysics& e)
 	{
-		Ref<Scenes::Scene> scene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene> scene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		if (!scene) { return false; }
 		ECS::Entity entity = scene->m_EntityRegistry.GetEntityByUUID(e.GetEntityID());
 		if (!entity) { return false; }

@@ -15,7 +15,7 @@ namespace Kargono::RuntimeUI
 	{
 		KG_PROFILE_FUNCTION();
 
-		Ref<UserInterface> activeUI = uiContext->m_ActiveUI;
+		Assets::AssetRef<UserInterface> activeUI = uiContext->m_ActiveUI.GetAssetRef();
 
 		// Get mouse position and active viewport
 		Math::vec2 mousePosition = Input::InputService::GetViewportMousePosition();
@@ -178,7 +178,7 @@ namespace Kargono::RuntimeUI
 
 		// Get slider widget specific function pointers
 		Assets::AssetHandle onSelectOptionHandle = specificWidget["OnSelectOption"].as<uint64_t>();
-		if (onSelectOptionHandle == Assets::k_EmptyHandle)
+		if (!onSelectOptionHandle.IsValid())
 		{
 			m_OnSelectOption.Reset();
 		}

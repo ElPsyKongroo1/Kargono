@@ -34,12 +34,12 @@ namespace Kargono::RuntimeUI
 		// Getters/Setters
 		//==============================
 		// Set UI
-		void SetActiveUI(Ref<UserInterface> userInterface, Assets::AssetHandle uiHandle);
+		void SetActiveUI(Assets::AssetRef<UserInterface> ui);
 		void SetActiveUIFromHandle(Assets::AssetHandle uiHandle);
 		// Query UI
 		bool IsUIActiveFromHandle(Assets::AssetHandle uiHandle);
 		// Get UI
-		Ref<UserInterface> GetActiveUI();
+		Assets::AssetRef<UserInterface> GetActiveUI();
 		Assets::AssetHandle GetActiveUIHandle();
 		// Modify UI
 		void ClearActiveUI();
@@ -48,10 +48,9 @@ namespace Kargono::RuntimeUI
 		// Public Fields
 		//==============================
 		// Active UI
-		Ref<UserInterface> m_ActiveUI{ nullptr };
-		Assets::AssetHandle m_ActiveUIHandle{ Assets::k_EmptyHandle };
+		Assets::TAssetRef<UserInterface> m_ActiveUI{};
 		// Default values
-		Assets::AssetRef<Font> m_DefaultFont{};
+		Assets::TAssetRef<Font> m_DefaultFont{};
 		// Rendering data
 		Rendering::RendererInputSpec m_BackgroundInputSpec{};
 		Rendering::RendererInputSpec m_ImageInputSpec{};

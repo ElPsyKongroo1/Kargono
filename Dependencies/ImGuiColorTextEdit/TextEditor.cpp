@@ -781,7 +781,7 @@ namespace API::EditorUI
 				suggestion.m_ReplacementText, 
 				suggestion.m_ShiftValue
 			);
-			entry.m_IconHandle = suggestion.m_Icon;
+			entry.m_IconHandle = suggestion.m_Icon.GetAssetRef();
 			entry.m_OnDoubleLeftClick = [&](Kargono::EditorUI::TreeEntry& entry)
 			{
 				// Retrieve tuple

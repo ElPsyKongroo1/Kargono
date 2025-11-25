@@ -254,7 +254,7 @@ namespace Kargono::Panels
 
 		m_OpenStatePopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::k_EmptyHandle)
+			if (!selection.m_Handle.IsValid())
 			{
 				KG_WARN("No AI State Selected");
 				return;
@@ -291,7 +291,7 @@ namespace Kargono::Panels
 			}
 
 			m_EditorStateHandle = Assets::AssetService::CreateState(m_SelectStateNameSpec.m_CurrentOption.c_str(), m_SelectStateLocationSpec.m_CurrentOption);
-			if (m_EditorStateHandle == Assets::k_EmptyHandle)
+			if (!m_EditorStateHandle.IsValid())
 			{
 				KG_WARN("AI state was not created");
 				return;
@@ -383,7 +383,7 @@ namespace Kargono::Panels
 		m_SelectOnUpdateScript.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
 			// If empty option is selected, clear script
-			if (selection.m_Handle == Assets::k_EmptyHandle)
+			if (!selection.m_Handle.IsValid())
 			{
 				m_EditorState->OnUpdateHandle = Assets::k_EmptyHandle;
 				m_EditorState->OnUpdate = nullptr;
@@ -468,7 +468,7 @@ namespace Kargono::Panels
 		m_SelectOnEnterStateScript.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
 			// If empty option is selected, clear script
-			if (selection.m_Handle == Assets::k_EmptyHandle)
+			if (!selection.m_Handle.IsValid())
 			{
 				m_EditorState->OnEnterStateHandle = Assets::k_EmptyHandle;
 				m_EditorState->OnEnterState = nullptr;
@@ -555,7 +555,7 @@ namespace Kargono::Panels
 		m_SelectOnExitStateScript.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
 			// If empty option is selected, clear script
-			if (selection.m_Handle == Assets::k_EmptyHandle)
+			if (!selection.m_Handle.IsValid())
 			{
 				m_EditorState->OnExitStateHandle = Assets::k_EmptyHandle;
 				m_EditorState->OnExitState = nullptr;
@@ -642,7 +642,7 @@ namespace Kargono::Panels
 		m_SelectOnAIMessageScript.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
 			// If empty option is selected, clear script
-			if (selection.m_Handle == Assets::k_EmptyHandle)
+			if (!selection.m_Handle.IsValid())
 			{
 				m_EditorState->OnMessageHandle = Assets::k_EmptyHandle;
 				m_EditorState->OnMessage = nullptr;

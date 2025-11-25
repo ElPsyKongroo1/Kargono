@@ -270,7 +270,7 @@ namespace Kargono::Panels
 
 		m_OpenInputMapPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::k_EmptyHandle)
+			if (!selection.m_Handle.IsValid())
 			{
 				KG_WARN("No Input Map Selected");
 				return;
@@ -307,7 +307,7 @@ namespace Kargono::Panels
 			}
 
 			m_EditorInputMapHandle = Assets::AssetService::CreateInputMap(m_SelectInputMapNameSpec.m_CurrentOption.c_str(), m_SelectInputMapLocationSpec.m_CurrentOption);
-			if (m_EditorInputMapHandle == Assets::k_EmptyHandle)
+			if (!m_EditorInputMapHandle.IsValid())
 			{
 				KG_WARN("Input Map was not created");
 				return;
@@ -401,7 +401,7 @@ namespace Kargono::Panels
 
 				EditorUI::ListEntry newEntry;
 				Assets::AssetHandle scriptHandle = keyboardBinding->GetScriptHandle();
-				if (scriptHandle == Assets::k_EmptyHandle)
+				if (!scriptHandle.IsValid())
 				{
 					newEntry = {
 						std::string("Key::") + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
@@ -452,7 +452,7 @@ namespace Kargono::Panels
 			Ref<Input::KeyboardActionBinding> newBinding = CreateRef<Input::KeyboardActionBinding>();
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnUpdateAddKeyCode.m_CurrentOption.m_Handle);
 			Ref<Scripting::Script> script;
-			if (m_KeyboardOnUpdateAddFunction.m_CurrentOption.m_Handle == Assets::k_EmptyHandle)
+			if (!m_KeyboardOnUpdateAddFunction.m_CurrentOption.m_Handle.IsValid())
 			{
 				script = nullptr;
 			}
@@ -575,7 +575,7 @@ namespace Kargono::Panels
 			KG_ASSERT(newBinding);
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnUpdateEditKeyCode.m_CurrentOption.m_Handle);
 			Ref<Scripting::Script> script;
-			if (m_KeyboardOnUpdateEditFunction.m_CurrentOption.m_Handle == Assets::k_EmptyHandle)
+			if (!m_KeyboardOnUpdateEditFunction.m_CurrentOption.m_Handle.IsValid())
 			{
 				script = nullptr;
 			}
@@ -686,7 +686,7 @@ namespace Kargono::Panels
 
 				EditorUI::ListEntry newEntry;
 				Assets::AssetHandle scriptHandle = keyboardBinding->GetScriptHandle();
-				if (scriptHandle == Assets::k_EmptyHandle)
+				if (!scriptHandle.IsValid())
 				{
 					newEntry = {
 						std::string("Key::") + Utility::KeyCodeToString(keyboardBinding->GetKeyBinding()),
@@ -737,7 +737,7 @@ namespace Kargono::Panels
 			Ref<Input::KeyboardActionBinding> newBinding = CreateRef<Input::KeyboardActionBinding>();
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnKeyPressedAddKeyCode.m_CurrentOption.m_Handle);
 			Ref<Scripting::Script> script;
-			if (m_KeyboardOnKeyPressedAddFunction.m_CurrentOption.m_Handle == Assets::k_EmptyHandle)
+			if (!m_KeyboardOnKeyPressedAddFunction.m_CurrentOption.m_Handle.IsValid())
 			{
 				script = nullptr;
 			}
@@ -860,7 +860,7 @@ namespace Kargono::Panels
 			KG_ASSERT(newBinding);
 			newBinding->SetKeyBinding((KeyCode)m_KeyboardOnKeyPressedEditKeyCode.m_CurrentOption.m_Handle);
 			Ref<Scripting::Script> script;
-			if (m_KeyboardOnKeyPressedEditFunction.m_CurrentOption.m_Handle == Assets::k_EmptyHandle)
+			if (!m_KeyboardOnKeyPressedEditFunction.m_CurrentOption.m_Handle.IsValid())
 			{
 				script = nullptr;
 			}

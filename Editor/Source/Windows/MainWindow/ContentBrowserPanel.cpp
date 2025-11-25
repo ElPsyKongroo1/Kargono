@@ -376,7 +376,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_GameStateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If game state in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Moving the indicated file without updating registry.");
 			}
@@ -399,7 +399,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_GlobalStateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If global state in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a global state, however, no global state could be found in registry. Moving the indicated file without updating registry.");
 			}
@@ -422,7 +422,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_StateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If StateMachines state in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a AI state, however, no AI state could be found in registry. Moving the indicated file without updating registry.");
 
@@ -446,7 +446,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_AudioBufferHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If audio buffer in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a audio buffer, however, no audio buffer could be found in registry. Moving the indicated file without updating registry.");
 
@@ -470,7 +470,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_EmitterConfigHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If EmitterConfig in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a EmitterConfig, however, no EmitterConfig could be found in registry. Moving the indicated file without updating registry.");
 			}
@@ -493,7 +493,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_ColorPaletteHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If ColorPalette in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a ColorPalette, however, no ColorPalette could be found in registry. Moving the indicated file without updating registry.");
 			}
@@ -516,7 +516,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_FontHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If font in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a font, however, no font could be found in registry. Moving the indicated file without updating registry.");
 
@@ -540,7 +540,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_InputMapHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If input map in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a input map, however, no input map could be found in registry. Moving the indicated file without updating registry.");
 
@@ -564,7 +564,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_CustomComponentHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If custom component in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a custom component, however, no custom component could be found in registry. Moving the indicated file without updating registry.");
 
@@ -588,7 +588,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_SceneHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If scene in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a scene, however, no scene could be found in registry. Moving the indicated file without updating registry.");
 
@@ -612,7 +612,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_ScriptHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If script in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a script, however, no script could be found in registry. Moving the indicated file without updating registry.");
 
@@ -636,7 +636,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_ProjectEnumHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If ProjectEnum in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a ProjectEnum, however, no ProjectEnum could be found in registry. Moving the indicated file without updating registry.");
 
@@ -660,7 +660,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::m_Texture2DHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If texture in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a texture, however, no texture could be found in registry. Moving the indicated file without updating registry.");
 
@@ -685,7 +685,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_UserInterfaceHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If user interface in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a user interface, however, no user interface could be found in registry. Moving the indicated file without updating registry.");
 
@@ -718,7 +718,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_GameStateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If game state in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a game state, however, no game state could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -732,7 +732,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_GlobalStateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If global state in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a global state, however, no global state could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -746,7 +746,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_StateHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If game state in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as an ai state, however, no ai state could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -760,7 +760,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_AudioBufferHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If audio in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as an audio asset, however, no audio asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -774,7 +774,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_EmitterConfigHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If EmitterConfig in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a EmitterConfig asset, however, no EmitterConfig asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -789,7 +789,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_ColorPaletteHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If ColorPalette in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a ColorPalette asset, however, no ColorPalette asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -804,7 +804,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_FontHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If font in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a font asset, however, no font asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -818,7 +818,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_ProjectEnumHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If ProjectEnum in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a ProjectEnum asset, however, no ProjectEnum asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -832,7 +832,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_InputMapHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If input map in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a input map asset, however, no input map asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -845,7 +845,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_CustomComponentHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If custom component in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a custom component asset, however, no custom component asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -858,7 +858,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_SceneHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If scene in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a scene asset, however, no scene asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -872,7 +872,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_ScriptHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If script in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a script asset, however, no script asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -885,7 +885,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::AssetService::m_Texture2DHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If texture in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a texture asset, however, no texture asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);
@@ -898,7 +898,7 @@ namespace Kargono::Panels
 			// Search registry for asset with identical file location
 			Assets::AssetHandle resultHandle = Assets::s_UserInterfaceHandleFromFileLocationManager.GetAssetByHandle(relativeToAssetsDirFilePath);
 			// If user interface in registry is not found, simply delete the file
-			if (resultHandle == Assets::k_EmptyHandle)
+			if (!resultHandle.IsValid())
 			{
 				KG_WARN("File extension recognized as a user interface asset, however, no user interface asset could be found in registry. Deleting the file provided.");
 				Utility::FileSystem::DeleteSelectedFile(m_CurrentFileToModifyCache);

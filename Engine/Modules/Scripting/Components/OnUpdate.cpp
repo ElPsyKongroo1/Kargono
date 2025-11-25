@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/Scripting/Components/OnUpdate.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
 
 namespace Kargono::Scripting
 {
@@ -16,7 +17,7 @@ namespace Kargono::Scripting
 		// Serialize component
 		out << YAML::Key << "OnUpdate";
 		out << YAML::BeginMap; // Component Map
-		out << YAML::Key << "OnUpdateHandle" << YAML::Value << static_cast<uint64_t>(m_OnUpdateScriptHandle);
+		out << YAML::Key << "OnUpdateHandle" << YAML::Value << static_cast<uint64_t>(m_OnUpdateScript.GetAssetHandle());
 		out << YAML::EndMap; // Component Map
 	}
 	void OnUpdate::Deserialize(void* context)
@@ -30,7 +31,7 @@ namespace Kargono::Scripting
 		YAML::Node& node = *deserializeContext->m_Node;
 
 		// Deserialize component
-		m_OnUpdateScriptHandle = node["OnUpdateHandle"].as<uint64_t>();
-		m_OnUpdateScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnUpdateScriptHandle);
+		Assets::AssetHandle onUpdateScriptHandle = node["OnUpdateHandle"].as<uint64_t>();
+		m_OnUpdateScript = Assets::s_ScriptManager.GetAssetByHandle(onUpdateScriptHandle);
 	} 
 }

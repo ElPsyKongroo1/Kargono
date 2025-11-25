@@ -2,6 +2,7 @@
 
 #include "Modules/RuntimeUI/Widgets/RuntimeUISliderWidget.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
 
 #include "Modules/Rendering/RenderingService.h"
 
@@ -12,7 +13,7 @@ namespace Kargono::RuntimeUI
 		UNREFERENCED_PARAMETER(viewportWidth);
 		KG_PROFILE_FUNCTION();
 
-		Ref<UserInterface> activeUI = uiContext->m_ActiveUI;
+		Assets::AssetRef<UserInterface> activeUI = uiContext->m_ActiveUI.GetAssetRef();
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
@@ -76,7 +77,7 @@ namespace Kargono::RuntimeUI
 				* glm::scale(Math::mat4(1.0f), sliderSize);
 			Rendering::Shader::SetDataAtInputLocation<Math::vec4>(color,
 				Utility::FileSystem::CRCFromString("a_Color"),
-				renderSpec.m_Buffer, renderSpec.m_Shader);
+				renderSpec.m_Buffer, renderSpec.m_Shader.GetAssetRef());
 
 			// Submit background data to GPU
 			Rendering::RenderingService::SubmitDataToRenderer(renderSpec);
@@ -95,7 +96,7 @@ namespace Kargono::RuntimeUI
 		// Save selection fields
 		m_SelectionData.Serialize(emitter);
 		// Save slider unique function pointers
-		emitter << YAML::Key << "OnMoveSlider" << YAML::Value << (uint64_t)m_OnMoveSliderHandle;
+		emitter << YAML::Key << "OnMoveSlider" << YAML::Value << (uint64_t)m_OnMoveSlider.GetAssetHandle();
 		// Save other slider options
 		emitter << YAML::Key << "Bounds" << YAML::Value << m_Bounds;
 		emitter << YAML::Key << "SliderColor" << YAML::Value << m_SliderColor;
@@ -121,14 +122,14 @@ namespace Kargono::RuntimeUI
 		m_LineColor = specificWidget["LineColor"].as<Math::vec4>();
 
 		// Get slider widget specific function pointers
-		m_OnMoveSliderHandle = specificWidget["OnMoveSlider"].as<uint64_t>();
-		if (m_OnMoveSliderHandle == Assets::k_EmptyHandle)
+		Assets::AssetHandle onMoveSliderHandle = specificWidget["OnMoveSlider"].as<uint64_t>();
+		if (!onMoveSliderHandle.IsValid())
 		{
-			m_OnMoveSlider = nullptr;
+			m_OnMoveSlider.Reset();
 		}
 		else
 		{
-		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnMoveSliderHandle);
+		    Assets::AssetRef<Scripting::Script> onPressScript = Assets::s_ScriptManager.GetAssetByHandle(onMoveSliderHandle);
 			if (!onPressScript)
 			{
 				KG_WARN("Unable to locate on move slider Script!");

@@ -80,7 +80,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle fontHandle = s_UIWindow->m_EditorUI->m_Config.m_FontHandle;
 			m_UISelectFont.m_CurrentOption =
 			{
-				fontHandle == Assets::k_EmptyHandle ? "None" : Assets::s_FontInfoManager.GetAssetByHandle(fontHandle).Data.FileLocation.stem().string().c_str(),
+				!fontHandle.IsValid() ? "None" : Assets::s_FontInfoManager.GetAssetByHandle(fontHandle).Data.FileLocation.stem().string().c_str(),
 				fontHandle
 			};
 			m_UISelectFont.RenderOptions();
@@ -89,7 +89,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onMoveHandle = s_UIWindow->m_EditorUI->m_Config.m_FunctionPointers.m_OnMoveHandle;
 			m_UIOnMove.m_CurrentOption =
 			{
-				onMoveHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptInfoManager.GetAssetByHandle(onMoveHandle).Data.FileLocation.stem().string().c_str(),
+				!onMoveHandle.IsValid() ? "None" : Assets::s_ScriptInfoManager.GetAssetByHandle(onMoveHandle).Data.FileLocation.stem().string().c_str(),
 				onMoveHandle
 			};
 			m_UIOnMove.RenderOptions();
@@ -98,7 +98,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onHoverHandle = s_UIWindow->m_EditorUI->m_Config.m_FunctionPointers.m_OnHoverHandle;
 			m_UIOnHover.m_CurrentOption =
 			{
-				onHoverHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptInfoManager.GetAssetByHandle(onHoverHandle).Data.FileLocation.stem().string().c_str(),
+				!onHoverHandle.IsValid() ? "None" : Assets::s_ScriptInfoManager.GetAssetByHandle(onHoverHandle).Data.FileLocation.stem().string().c_str(),
 				onHoverHandle
 			};
 			m_UIOnHover.RenderOptions();
@@ -304,7 +304,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeButtonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_ButtonWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				!onPressHandle.IsValid() ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_ButtonWidgetOnPress.RenderOptions();
@@ -324,7 +324,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle imageHandle = activeImageWidget.m_ImageData.m_ImageHandle;
 			m_ImageWidgetImage.m_CurrentOption =
 			{
-				imageHandle == Assets::k_EmptyHandle ? "None" : 
+				!imageHandle.IsValid() ? "None" : 
 				Assets::AssetService::m_Texture2DInfoManager.GetAssetByHandle(imageHandle).Data.FileLocation.stem().string().c_str(),
 				imageHandle
 			};
@@ -349,7 +349,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle imageHandle = activeImageButtonWidget.m_ImageData.m_ImageHandle;
 			m_ImageButtonWidgetImage.m_CurrentOption =
 			{
-				imageHandle == Assets::k_EmptyHandle ? "None" :
+				!imageHandle.IsValid() ? "None" :
 				Assets::AssetService::m_Texture2DInfoManager.GetAssetByHandle(imageHandle).Data.FileLocation.stem().string().c_str(),
 				imageHandle
 			};
@@ -371,7 +371,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeImageButtonWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_ImageButtonWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				!onPressHandle.IsValid() ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_ImageButtonWidgetOnPress.RenderOptions();
@@ -395,7 +395,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle checkedImage = activeCheckboxWidget.m_ImageChecked.m_ImageHandle;
 			m_CheckboxWidgetCheckedImage.m_CurrentOption =
 			{
-				checkedImage == Assets::k_EmptyHandle ? "None" :
+				!checkedImage.IsValid() ? "None" :
 				Assets::AssetService::m_Texture2DInfoManager.GetAssetByHandle(checkedImage).Data.FileLocation.stem().string().c_str(),
 				checkedImage
 			};
@@ -405,7 +405,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle unCheckedImage = activeCheckboxWidget.m_ImageUnChecked.m_ImageHandle;
 			m_CheckboxWidgetUnCheckedImage.m_CurrentOption =
 			{
-				unCheckedImage == Assets::k_EmptyHandle ? "None" :
+				!unCheckedImage.IsValid() ? "None" :
 				Assets::AssetService::m_Texture2DInfoManager.GetAssetByHandle(unCheckedImage).Data.FileLocation.stem().string().c_str(),
 				unCheckedImage
 			};
@@ -427,7 +427,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeCheckboxWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_CheckboxWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				!onPressHandle.IsValid() ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_CheckboxWidgetOnPress.RenderOptions();
@@ -532,7 +532,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeInputTextWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_InputTextWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				!onPressHandle.IsValid() ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_InputTextWidgetOnPress.RenderOptions();
@@ -541,7 +541,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onMoveCursorHandle = activeInputTextWidget.m_OnMoveCursorHandle;
 			m_InputTextWidgetOnMoveCursor.m_CurrentOption =
 			{
-				onMoveCursorHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onMoveCursorHandle)->m_ScriptName.c_str(),
+				!onMoveCursorHandle.IsValid() ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onMoveCursorHandle)->m_ScriptName.c_str(),
 				onMoveCursorHandle
 			};
 			m_InputTextWidgetOnMoveCursor.RenderOptions();
@@ -581,7 +581,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeSliderWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_SliderWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				!onPressHandle.IsValid() ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_SliderWidgetOnPress.RenderOptions();
@@ -590,7 +590,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onMoveSliderHandle = activeSliderWidget.m_OnMoveSliderHandle;
 			m_SliderWidgetOnMoveSlider.m_CurrentOption =
 			{
-				onMoveSliderHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onMoveSliderHandle)->m_ScriptName.c_str(),
+				!onMoveSliderHandle.IsValid() ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onMoveSliderHandle)->m_ScriptName.c_str(),
 				onMoveSliderHandle
 			};
 			m_SliderWidgetOnMoveSlider.RenderOptions();
@@ -657,7 +657,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle onPressHandle = activeDropDownWidget.m_SelectionData.m_FunctionPointers.m_OnPressHandle;
 			m_DropDownWidgetOnPress.m_CurrentOption =
 			{
-				onPressHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
+				!onPressHandle.IsValid() ? "None" : Assets::s_ScriptManager.GetAssetByHandle(onPressHandle)->m_ScriptName.c_str(),
 				onPressHandle
 			};
 			m_DropDownWidgetOnPress.RenderOptions();
@@ -666,7 +666,7 @@ namespace Kargono::Panels
 			Assets::AssetHandle OnSelectOptionHandle = activeDropDownWidget.m_OnSelectOptionHandle;
 			m_DropDownWidgetOnSelectOption.m_CurrentOption =
 			{
-				OnSelectOptionHandle == Assets::k_EmptyHandle ? "None" : Assets::s_ScriptManager.GetAssetByHandle(OnSelectOptionHandle)->m_ScriptName.c_str(),
+				!OnSelectOptionHandle.IsValid() ? "None" : Assets::s_ScriptManager.GetAssetByHandle(OnSelectOptionHandle)->m_ScriptName.c_str(),
 				OnSelectOptionHandle
 			};
 			m_DropDownWidgetOnSelectOption.RenderOptions();
@@ -752,7 +752,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::OnModifyUIFont(const EditorUI::OptionEntry& entry)
 	{
 		// Check for empty case
-		if (entry.m_Handle == Assets::k_EmptyHandle)
+		if (!entry.m_Handle.IsValid())
 		{
 			s_UIWindow->m_EditorUI->m_Config.m_FontHandle = Assets::k_EmptyHandle;
 			s_UIWindow->m_EditorUI->m_Config.m_Font = nullptr;
@@ -790,7 +790,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::OnModifyUIOnMove(const EditorUI::OptionEntry& entry)
 	{
 		// Clear the on move script if the provided handle is empty
-		if (entry.m_Handle == Assets::k_EmptyHandle)
+		if (!entry.m_Handle.IsValid())
 		{
 			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_Config.SetOnMove(Assets::k_EmptyHandle, nullptr);
 
@@ -887,7 +887,7 @@ namespace Kargono::Panels
 	void UIEditorPropertiesPanel::OnModifyUIOnHover(const EditorUI::OptionEntry& entry)
 	{
 		// Clear the on Hover script if the provided handle is empty
-		if (entry.m_Handle == Assets::k_EmptyHandle)
+		if (!entry.m_Handle.IsValid())
 		{
 			RuntimeUI::RuntimeUIService::GetActiveContext().m_ActiveUI->m_Config.SetOnHover(Assets::k_EmptyHandle, nullptr);
 
@@ -2156,7 +2156,7 @@ namespace Kargono::Panels
 		RuntimeUI::CheckboxWidget& activeCheckboxWidget = *(RuntimeUI::CheckboxWidget*)m_ActiveWidget;
 
 		// Clear the image reference if an empty entry is provided
-		if (entry.m_Handle == Assets::k_EmptyHandle)
+		if (!entry.m_Handle.IsValid())
 		{
 			activeCheckboxWidget.m_ImageChecked.m_ImageRef = nullptr;
 			activeCheckboxWidget.m_ImageChecked.m_ImageHandle = Assets::k_EmptyHandle;
@@ -2209,7 +2209,7 @@ namespace Kargono::Panels
 		RuntimeUI::CheckboxWidget& activeCheckboxWidget = *(RuntimeUI::CheckboxWidget*)m_ActiveWidget;
 
 		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::k_EmptyHandle)
+		if (!entry.m_Handle.IsValid())
 		{
 			activeCheckboxWidget.m_ImageUnChecked.m_ImageRef = nullptr;
 			activeCheckboxWidget.m_ImageUnChecked.m_ImageHandle = Assets::k_EmptyHandle;
@@ -2301,7 +2301,7 @@ namespace Kargono::Panels
 		RuntimeUI::InputTextWidget* activeInputTextWidget = (RuntimeUI::InputTextWidget*)m_ActiveWidget;
 
 		// Clear the widget's script if the provided handle is empty
-		if (entry.m_Handle == Assets::k_EmptyHandle)
+		if (!entry.m_Handle.IsValid())
 		{
 			activeInputTextWidget->m_OnMoveCursor = nullptr;
 			activeInputTextWidget->m_OnMoveCursorHandle = Assets::k_EmptyHandle;
@@ -2479,7 +2479,7 @@ namespace Kargono::Panels
 		RuntimeUI::SliderWidget* activeSliderWidget = (RuntimeUI::SliderWidget*)m_ActiveWidget;
 
 		// Clear the widget's script if the provided handle is empty
-		if (entry.m_Handle == Assets::k_EmptyHandle)
+		if (!entry.m_Handle.IsValid())
 		{
 			activeSliderWidget->m_OnMoveSlider = nullptr;
 			activeSliderWidget->m_OnMoveSliderHandle = Assets::k_EmptyHandle;
@@ -2694,7 +2694,7 @@ namespace Kargono::Panels
 		RuntimeUI::DropDownWidget* activeDropDownWidget = (RuntimeUI::DropDownWidget*)m_ActiveWidget;
 
 		// Clear the widget's script if the provided handle is empty
-		if (entry.m_Handle == Assets::k_EmptyHandle)
+		if (!entry.m_Handle.IsValid())
 		{
 			activeDropDownWidget->m_OnSelectOption = nullptr;
 			activeDropDownWidget->m_OnSelectOptionHandle = Assets::k_EmptyHandle;
@@ -3436,7 +3436,7 @@ namespace Kargono::Panels
 		}
 
 		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::k_EmptyHandle)
+		if (!entry.m_Handle.IsValid())
 		{
 			selectionData->m_FunctionPointers.m_OnPress = nullptr;
 			selectionData->m_FunctionPointers.m_OnPressHandle = Assets::k_EmptyHandle;
@@ -3594,7 +3594,7 @@ namespace Kargono::Panels
 		}
 
 		// Clear the on press script if the provided handle is empty
-		if (entry.m_Handle == Assets::k_EmptyHandle)
+		if (!entry.m_Handle.IsValid())
 		{
 			imageData->m_ImageRef = nullptr;
 			imageData->m_ImageHandle = Assets::k_EmptyHandle;

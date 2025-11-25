@@ -3,7 +3,7 @@
 #include "Modules/Scripting/ScriptModuleBinder.h"
 
 #include "Modules/Core/Engine.h"
-
+#include "Modules/Assets/AssetService.h"
 #include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/Scenes/SceneContext.h"
 #include "Modules/FileSystem/FileSystem.h"
@@ -18,7 +18,7 @@
 #include "Modules/GlobalState/Assets/GameState.h"
 #include "Modules/GlobalState/GameStateContext.h"
 #include "Kargono/Utility/Operations.h"
-#include "Modules/AI/StatesContext.h"
+#include "Modules/States/StatesContext.h"
 #include "Modules/Scripting/ScriptCompiler.h"
 #include "Modules/Events/EditorEvent.h"
 #include "Modules/Physics2D/Physics2DCommon.h"
@@ -548,21 +548,21 @@ namespace Kargono::Scripting
 		if (Assets::s_ScriptManager.GetAssetRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
-			Assets::AssetService::DeserializeScriptRegistry();
+			Assets::s_ScriptManager.DeserializeAssetRegistry();
 		}
 
 		// Load in custom components if not already loaded
 		if (Assets::s_CustomComponentManager.GetAssetRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
-			Assets::AssetService::DeserializeCustomComponentRegistry();
+			Assets::s_CustomComponentManager.DeserializeAssetRegistry();
 		}
 
 		// Load in ai states if not already loaded
 		if (Assets::s_StateManager.GetAssetRegistry().size() == 0)
 		{
 			KG_WARN("Loading script registry from disk since in-memory registry is empty");
-			Assets::AssetService::DeserializeStateRegistry();
+			Assets::s_StateManager.DeserializeAssetRegistry();
 		}
 
 		KG_INFO("Creating Script Module CPP Files...");
@@ -572,7 +572,7 @@ namespace Kargono::Scripting
 		{
 			KG_WARN("Failure to generate C++ scripts from kgscripts");
 			ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
-			Assets::AssetService::DeserializeScriptRegistry();
+			Assets::s_ScriptManager.DeserializeAssetRegistry();
 			return;
 		}
 		
@@ -588,7 +588,7 @@ namespace Kargono::Scripting
 		{
 			KG_WARN("Failure to compile script module");
 			ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
-			Assets::AssetService::DeserializeScriptRegistry();
+			Assets::s_ScriptManager.DeserializeAssetRegistry();
 			return;
 		}
 		KG_INFO("Clearing previous compilation logs...");
@@ -603,7 +603,7 @@ namespace Kargono::Scripting
 		{
 			KG_WARN("Failed to compile release script module");
 			ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
-			Assets::AssetService::DeserializeScriptRegistry();
+			Assets::s_ScriptManager.DeserializeAssetRegistry();
 			return;
 		}
 
@@ -611,10 +611,10 @@ namespace Kargono::Scripting
 		ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
 
 		// Revalidate in-memory script cache
-		Assets::AssetService::DeserializeScriptRegistry();
-		for (auto& [handle, scriptRef] : Assets::AssetService::GetScriptCache())
+		Assets::s_ScriptManager.DeserializeAssetRegistry();
+		for (auto& [handle, scriptRef] : Assets::s_ScriptManager.GetAssetCache())
 		{
-			ScriptBinderService::GetActiveContext().LoadScriptFunction(scriptRef, scriptRef->m_FuncType);
+			ScriptBinderService::GetActiveContext().LoadScriptFunction(scriptRef.GetAssetPtr(), scriptRef->m_FuncType);
 		}
 		KG_INFO("Successfully build and loaded new script module");
 	}
@@ -1084,20 +1084,20 @@ namespace Kargono::Scripting
 		AddEngineFunctionToCPPFileEnd(RuntimeUI_GetWidgetText)
 		outputStream << "}\n";
 
-		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
 		// Write scripts into a single cpp file
 		bool compilationSuccess{ true };
-		for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
+		for (auto& [handle, metadata] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
-			if (asset.Data.GetSpecificMetaData<Assets::ScriptMetaData>()->m_ScriptType == ScriptType::Engine)
+			ScriptMetaData* scriptMetaData = metadata.GetSpecificMetaData();
+			if (scriptMetaData->m_ScriptType == ScriptType::Engine)
 			{
 				continue;
 			}
-			std::string compiledScript = ScriptCompilerService::GetActiveContext().CompileScriptFile(projectPaths.GetAssetDirectory() / asset.Data.FileLocation);
+			std::string compiledScript = ScriptCompilerService::GetActiveContext().CompileScriptFile(metadata.GetAssetFullFilePath());
 			if (compiledScript.empty())
 			{
-				KG_WARN("Failed to compile the script at: {}", asset.Data.m_FileLocation.string());
+				KG_WARN("Failed to compile the script at: {}", metadata.GetAssetFullFilePath().string().c_str());
 				compilationSuccess = false;
 			}
 			outputStream << compiledScript;
@@ -1110,7 +1110,7 @@ namespace Kargono::Scripting
 			return false;
 		}
 
-		std::filesystem::path file = { projectPaths.GetIntermediateDirectory() / "Script/ExportBody.cpp" };
+		std::filesystem::path file = Assets::s_ScriptManager.GetIntermediateDirectory() / "ExportBody.cpp";
 
 		std::string outputString = outputStream.str();
 		Utility::Operations::RemoveCharacterFromString(outputString, '\r');

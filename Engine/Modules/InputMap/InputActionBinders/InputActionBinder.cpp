@@ -7,7 +7,7 @@ namespace Kargono::InputMap
 {
 	void InputActionBinding::SetScript(Assets::AssetHandle handle)
 	{
-		if (handle == Assets::k_EmptyHandle)
+		if (!handle.IsValid())
 		{
 			ClearScript();
 			return;

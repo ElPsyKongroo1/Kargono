@@ -57,7 +57,7 @@ namespace Kargono::RuntimeUI
 	void ButtonWidget::OnRender(RuntimeUIContext* uiContext, Math::vec3 windowTranslation, const Math::vec3& windowSize, float viewportWidth)
 	{
 		KG_PROFILE_FUNCTION();
-		Ref<UserInterface> activeUI = uiContext->m_ActiveUI;
+		Assets::AssetRef<UserInterface> activeUI = uiContext->m_ActiveUI.GetAssetRef();
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);

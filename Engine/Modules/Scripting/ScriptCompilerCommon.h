@@ -3,6 +3,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/BitField.h"
 #include "Kargono/Core/WrappedData.h"
+#include "Modules/Assets/AssetReference.h"
 
 #include <string>
 #include <vector>
@@ -101,7 +102,7 @@ namespace Kargono::Scripting
 		ScriptTokenType AcceptableLiteral{};
 		std::string EmittedDeclaration {};
 		std::string EmittedParameter {};
-		Ref<Rendering::Texture2D> Icon {};
+		Assets::TAssetRef<Rendering::Texture2D> Icon {};
 		std::unordered_map<std::string, Ref<MemberType>> Members{};
 		std::unordered_set<std::string> AcceptableArithmetic{};
 	};
@@ -563,7 +564,7 @@ namespace Kargono::Scripting
 		std::vector<ScriptToken> AllReturnTypes{};
 		std::vector<std::vector<StackVariable>> StackVariables {};
 		ScriptToken CurrentNamespace{};
-		std::vector<std::tuple<std::string, Ref<Rendering::Texture2D>>> LiteralMembers{};
+		std::vector<std::tuple<std::string, Assets::AssetRef<Rendering::Texture2D>>> LiteralMembers{};
 		std::unordered_map<std::string, Ref<MemberType>> DataMembers{};
 		BitField<uint8_t> m_Flags {};
 
@@ -608,7 +609,7 @@ namespace Kargono::Scripting
 	struct CustomLiteralInfo
 	{
 		CustomLiteralNameToIDMap m_CustomLiteralNameToID;
-		Ref<Rendering::Texture2D> m_LiteralIcon;
+		Assets::AssetRef<Rendering::Texture2D> m_LiteralIcon;
 	};
 
 	class TokenUtil

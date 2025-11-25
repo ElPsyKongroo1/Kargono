@@ -28,15 +28,15 @@ namespace Kargono::Scenes
 		// Set New Scene
 		//====================
 		void TransitionScene(Assets::AssetHandle newSceneHandle);
-		void TransitionScene(Ref<Scene> newScene);
+		void TransitionScene(Assets::AssetRef<Scene> newScene);
 		void TransitionSceneFromHandle(Assets::AssetHandle sceneID);
 	public:
 		//====================
 		// Getters/Setters
 		//====================
-		Ref<Scene> GetActiveScene();
+		Assets::AssetRef<Scene> GetActiveScene();
 		Assets::AssetHandle GetActiveSceneHandle();
-		void SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle);
+		void SetActiveScene(Assets::AssetRef<Scene> newScene);
 	public:
 		//====================
 		// Public Fields
@@ -47,8 +47,7 @@ namespace Kargono::Scenes
 		//====================
 		// Internal Fields
 		//====================
-		Ref<Scene> m_ActiveScene{ nullptr };
-		Assets::AssetHandle m_ActiveSceneHandle{ Assets::k_EmptyHandle };
+		Assets::TAssetRef<Scene> m_ActiveScene{};
 	};
 
 	class SceneService // TODO: EWWWWW UGHHHHHHH

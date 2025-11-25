@@ -559,13 +559,13 @@ namespace Kargono::RuntimeUI
 		SetWidgetBackgroundColorInternal(currentWidget, color);
 	}
 
-	void UserInterface::CreateFromName(Assets::Metadata& metadata)
+	void UserInterface::CreateFromName(Assets::Metadata<UserInterface>& metadata)
 	{
 		// Create default user interface
 		UserInterface tempUI {};
 
 		// Save into file
-		Assets::SerializeAssetContext serializeContext{ &metadata };
+		Assets::SerializeAssetContext<UserInterface> serializeContext{ &metadata };
 		tempUI.Serialize((void*)&serializeContext);
 	}
 
@@ -586,10 +586,9 @@ namespace Kargono::RuntimeUI
 		if (widgetRef->m_WidgetType == RuntimeUI::WidgetTypes::SliderWidget)
 		{
 			RuntimeUI::SliderWidget& sliderWidget = *(RuntimeUI::SliderWidget*)widgetRef.get();
-			if (sliderWidget.m_OnMoveSliderHandle == scriptHandle)
+			if (sliderWidget.m_OnMoveSlider.GetAssetHandle() == scriptHandle)
 			{
-				sliderWidget.m_OnMoveSliderHandle = Assets::k_EmptyHandle;
-				sliderWidget.m_OnMoveSlider = nullptr;
+				sliderWidget.m_OnMoveSlider.Reset();
 				uiModified = true;
 			}
 		}
@@ -756,7 +755,7 @@ namespace Kargono::RuntimeUI
 		m_InteractState.Init(&m_WindowsState, &m_Config);
 		KG_ASSERT(m_InteractState.m_Active);
 
-		m_Config.Init(&m_WindowsState, i_ParentContext->m_DefaultFont);
+		m_Config.Init(&m_WindowsState, i_ParentContext->m_DefaultFont.GetAssetRef());
 		KG_ASSERT(m_Config.m_Active);
 
 		m_Active = true;
@@ -784,9 +783,9 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(context, "Context cannot be null");
 
 		// Get asset context
-		Assets::DeserializeAssetContext* assetContext = (Assets::DeserializeAssetContext*)context;
+		Assets::DeserializeAssetContext<UserInterface>* assetContext = (Assets::DeserializeAssetContext<UserInterface>*)context;
 		KG_ASSERT(assetContext, "Asset context cannot be null");
-		Assets::Metadata* metadata = assetContext->m_AssetMetadata;
+		Assets::Metadata<UserInterface>* metadata = assetContext->m_AssetMetadata;
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path
@@ -810,7 +809,7 @@ namespace Kargono::RuntimeUI
 		m_Config.m_EditingColor = data["EditingColor"].as<Math::vec4>();
 		// Function Pointers
 		Assets::AssetHandle onMoveHandle = data["FunctionPointerOnMove"].as<uint64_t>();
-		if (onMoveHandle == Assets::k_EmptyHandle)
+		if (!onMoveHandle.IsValid())
 		{
 			m_Config.m_FunctionPointers.m_OnMove.Reset();
 		}
@@ -825,7 +824,7 @@ namespace Kargono::RuntimeUI
 			m_Config.m_FunctionPointers.m_OnMove = onMoveScript;
 		}
 		Assets::AssetHandle onHoverHandle = data["FunctionPointerOnHover"].as<uint64_t>();
-		if (onHoverHandle == Assets::k_EmptyHandle)
+		if (!onHoverHandle.IsValid())
 		{
 			m_Config.m_FunctionPointers.m_OnHover.Reset();
 		}
@@ -884,59 +883,58 @@ namespace Kargono::RuntimeUI
 		{
 			case RuntimeUI::WidgetTypes::TextWidget:
 			{
-				widget = CreateRef<TextWidget>();
+				widget = CreateRef<TextWidget>(this);
 				break;
 			}
 			case RuntimeUI::WidgetTypes::ButtonWidget:
 			{
-				widget = CreateRef<ButtonWidget>();
+				widget = CreateRef<ButtonWidget>(this);
 				break;
 			}
 			case RuntimeUI::WidgetTypes::ImageWidget:
 			{
-				widget = CreateRef<ImageWidget>();
+				widget = CreateRef<ImageWidget>(this);
 				break;
 			}
 			case RuntimeUI::WidgetTypes::ImageButtonWidget:
 			{
-				widget = CreateRef<ImageButtonWidget>();
+				widget = CreateRef<ImageButtonWidget>(this);
 				break;
 			}
 			case RuntimeUI::WidgetTypes::CheckboxWidget:
 			{
-				widget = CreateRef<CheckboxWidget>();
+				widget = CreateRef<CheckboxWidget>(this);
 				break;
 			}
 			case RuntimeUI::WidgetTypes::ContainerWidget:
 			{
-				widget = CreateRef<ContainerWidget>();
+				widget = CreateRef<ContainerWidget>(this);
 				break;
 			}
 			case RuntimeUI::WidgetTypes::HorizontalContainerWidget:
 			{
-				widget = CreateRef<HorizontalContainerWidget>();
+				widget = CreateRef<HorizontalContainerWidget>(this);
 				break;
 			}
 			case RuntimeUI::WidgetTypes::VerticalContainerWidget:
 			{
-				widget = CreateRef<VerticalContainerWidget>();
+				widget = CreateRef<VerticalContainerWidget>(this);
 				break;
 			}
 			case RuntimeUI::WidgetTypes::InputTextWidget:
 			{
-				widget = CreateRef<InputTextWidget>();
+				widget = CreateRef<InputTextWidget>(this);
 				break;
 			}
-
 			case RuntimeUI::WidgetTypes::SliderWidget:
 			{
-				widget = CreateRef<SliderWidget>();
+				widget = CreateRef<SliderWidget>(this);
 				break;
 			}
 
 			case RuntimeUI::WidgetTypes::DropDownWidget:
 			{
-				widget = CreateRef<DropDownWidget>();
+				widget = CreateRef<DropDownWidget>(this);
 				break;
 			}
 			default:
@@ -953,9 +951,9 @@ namespace Kargono::RuntimeUI
 	void UserInterface::Serialize(void* context)
 	{
 		// Get asset context
-		Assets::SerializeAssetContext* assetContext = (Assets::SerializeAssetContext*)context;
+		Assets::SerializeAssetContext<UserInterface>* assetContext = (Assets::SerializeAssetContext<UserInterface>*)context;
 		KG_ASSERT(assetContext, "Asset context cannot be null");
-		Assets::Metadata* metadata = assetContext->m_AssetMetadata;
+		Assets::Metadata<UserInterface>* metadata = assetContext->m_AssetMetadata;
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get asset path

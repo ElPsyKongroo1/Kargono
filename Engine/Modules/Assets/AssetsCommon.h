@@ -21,9 +21,48 @@ namespace Kargono::Assets
 		std::numeric_limits<AssetIdentifier>::max()
 	};
 
-	// An AssetHandle is a unique identifier for a particular asset instance
-	using AssetHandle = UUID;
-	constexpr uint64_t k_EmptyHandle{ 0 };
+	constexpr UUID k_EmptyHandle{ 0 };
+
+	class AssetHandle
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		constexpr AssetHandle() : m_Handle(k_EmptyHandle) {}
+		constexpr AssetHandle(uint64_t handle) : m_Handle(handle) {}
+		constexpr AssetHandle(UUID handle) : m_Handle(handle) {}
+		constexpr AssetHandle(const AssetHandle&) = default;
+	public:
+		//==============================
+		// Handle State
+		//==============================
+		bool IsValid() const
+		{
+			return m_Handle != k_EmptyHandle;
+		}
+	public:
+		//==============================
+		// Operator Overloads
+		//==============================
+		operator uint64_t() const 
+		{ 
+			return m_Handle; 
+		}
+		operator UUID() const 
+		{ 
+			return m_Handle; 
+		}
+		operator std::string() const 
+		{ 
+			return std::to_string((uint64_t)m_Handle); 
+		}
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		UUID m_Handle{ k_EmptyHandle };
+	};
 
 	enum AssetFlag : uint8_t
 	{
@@ -47,5 +86,17 @@ namespace Kargono::Assets
 		std::string_view m_AssetName{};
 		std::filesystem::path m_CreationDirectory{};
 		bool m_IsHidden{ false };
+	};
+}
+
+namespace std
+{
+	template<>
+	struct hash<Kargono::Assets::AssetHandle>
+	{
+		std::size_t operator()(const Kargono::Assets::AssetHandle& handle) const
+		{
+			return (uint64_t)handle;
+		}
 	};
 }

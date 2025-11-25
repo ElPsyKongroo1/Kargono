@@ -1,6 +1,7 @@
 #include "kgpch.h"
 
 #include "Modules/Scripting/Components/OnCreate.h"
+#include "Modules/Assets/Managers/ScriptManager.h"
 
 namespace Kargono::Scripting
 {
@@ -16,7 +17,7 @@ namespace Kargono::Scripting
 		// Serialize component
 		out << YAML::Key << "OnCreate";
 		out << YAML::BeginMap; // Component Map
-		out << YAML::Key << "OnCreateHandle" << YAML::Value << static_cast<uint64_t>(m_OnCreateScriptHandle);
+		out << YAML::Key << "OnCreateHandle" << YAML::Value << static_cast<uint64_t>(m_OnCreateScript.GetAssetHandle());
 		out << YAML::EndMap; // Component Map
 	}
 	void OnCreate::Deserialize(void* context)
@@ -29,7 +30,7 @@ namespace Kargono::Scripting
 		// Get node
 		YAML::Node& node = *deserializeContext->m_Node;
 
-		m_OnCreateScriptHandle = node["OnCreateHandle"].as<uint64_t>();
-		m_OnCreateScript = Assets::s_ScriptManager.GetAssetByHandle(m_OnCreateScriptHandle);
+		Assets::AssetHandle onCreateScriptHandle = node["OnCreateHandle"].as<uint64_t>();
+		m_OnCreateScript = Assets::s_ScriptManager.GetAssetByHandle(onCreateScriptHandle);
 	} 
 }

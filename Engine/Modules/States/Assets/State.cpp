@@ -35,7 +35,7 @@ namespace Kargono::States
 
 		// Deserialize OnUpdateScript
 		Assets::AssetHandle onUpdateHandle = data["OnUpdateScript"].as<uint64_t>();
-		if (onUpdateHandle == Assets::k_EmptyHandle)
+		if (!onUpdateHandle.IsValid())
 		{
 			m_OnUpdate.Reset();
 		}
@@ -50,7 +50,7 @@ namespace Kargono::States
 
 		// Deserialize OnEnterStateScript
 		Assets::AssetHandle onEnterStateHandle = data["OnEnterStateScript"].as<uint64_t>();
-		if (onEnterStateHandle == Assets::k_EmptyHandle)
+		if (!onEnterStateHandle.IsValid())
 		{
 			m_OnEnterState.Reset();
 		}
@@ -65,7 +65,7 @@ namespace Kargono::States
 
 		// Deserialize OnExitStateScript
 		Assets::AssetHandle onExitStateHandle = data["OnExitStateScript"].as<uint64_t>();
-		if (onExitStateHandle == Assets::k_EmptyHandle)
+		if (!onExitStateHandle.IsValid())
 		{
 			m_OnExitState.Reset();
 		}
@@ -80,7 +80,7 @@ namespace Kargono::States
 
 		// Deserialize OnAIMessageScript
 		Assets::AssetHandle onMessageHandle = data["OnAIMessageScript"].as<uint64_t>();
-		if (onMessageHandle == Assets::k_EmptyHandle)
+		if (!onMessageHandle.IsValid())
 		{
 			m_OnMessage.Reset();
 		}

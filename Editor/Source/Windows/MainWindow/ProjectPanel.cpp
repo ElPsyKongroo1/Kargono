@@ -22,7 +22,7 @@ namespace Kargono::Panels
 
 		// Check if an active scene handle is valid
 		Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveContext().GetStartSceneHandle();
-		if (startSceneHandle == Assets::k_EmptyHandle || !Assets::AssetService::HasScene(startSceneHandle))
+		if (!startSceneHandle.IsValid() || !Assets::AssetService::HasScene(startSceneHandle))
 		{
 			// Ensure some scenes are available
 			KG_ASSERT(Assets::AssetService::GetSceneRegistrySize() != 0);
@@ -150,7 +150,7 @@ namespace Kargono::Panels
 
 		m_SelectStartGameStateSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (!Assets::s_GameStateManager.GetAssetByHandle(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+			if (!Assets::s_GameStateManager.GetAssetByHandle(selection.m_Handle) && selection.m_Handle.IsValid())
 			{
 				KG_WARN("Could not locate starting game state in ProjectPanel");
 				return;
@@ -173,7 +173,7 @@ namespace Kargono::Panels
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 			{
-				KG_ASSERT(handle != Assets::k_EmptyHandle);
+				KG_ASSERT(handle.IsValid());
 			    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_None)
 				{
@@ -189,7 +189,7 @@ namespace Kargono::Panels
 		};
 		m_SelectRuntimeStartSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+			if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle.IsValid())
 			{
 				KG_WARN("Could not find runtime start function in Project Panel");
 				return;
@@ -690,7 +690,7 @@ namespace Kargono::Panels
 			spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 			for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 			{
-				KG_ASSERT(handle != Assets::k_EmptyHandle);
+				KG_ASSERT(handle.IsValid());
 			    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 				if (script->m_FuncType != WrappedFuncType::Void_UInt32)
 				{
@@ -707,7 +707,7 @@ namespace Kargono::Panels
 		{
 			Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
-			if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+			if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle.IsValid())
 			{
 				KG_WARN("Could not find Update User Count function in Project Panel");
 				return;
@@ -779,7 +779,7 @@ namespace Kargono::Panels
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 				for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 				{
-					KG_ASSERT(handle != Assets::k_EmptyHandle);
+					KG_ASSERT(handle.IsValid());
 				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 					{
@@ -796,7 +796,7 @@ namespace Kargono::Panels
 			};
 		m_SelectApproveJoinSessionSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle.IsValid())
 				{
 					KG_WARN("Could not find Approve Join Session function in Project Panel");
 					return;
@@ -868,7 +868,7 @@ namespace Kargono::Panels
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 				for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 				{
-					KG_ASSERT(handle != Assets::k_EmptyHandle);
+					KG_ASSERT(handle.IsValid());
 				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 					{
@@ -885,7 +885,7 @@ namespace Kargono::Panels
 			};
 		m_SelectUserLeftSessionSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle.IsValid())
 				{
 					KG_WARN("Could not find User Left Session function in Project Panel");
 					return;
@@ -956,7 +956,7 @@ namespace Kargono::Panels
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 				for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 				{
-					KG_ASSERT(handle != Assets::k_EmptyHandle);
+					KG_ASSERT(handle.IsValid());
 				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
@@ -973,7 +973,7 @@ namespace Kargono::Panels
 			};
 		m_SelectSessionInitSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle.IsValid())
 				{
 					KG_WARN("Could not find Session Initialization function in Project Panel");
 					return;
@@ -1045,7 +1045,7 @@ namespace Kargono::Panels
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 				for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 				{
-					KG_ASSERT(handle != Assets::k_EmptyHandle);
+					KG_ASSERT(handle.IsValid());
 				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
@@ -1062,7 +1062,7 @@ namespace Kargono::Panels
 			};
 		m_SelectConnectionTerminatedSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle.IsValid())
 				{
 					KG_WARN("Could not find Connection Terminated function in Project Panel");
 					return;
@@ -1130,7 +1130,7 @@ namespace Kargono::Panels
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 				for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 				{
-					KG_ASSERT(handle != Assets::k_EmptyHandle);
+					KG_ASSERT(handle.IsValid());
 				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 					{
@@ -1147,7 +1147,7 @@ namespace Kargono::Panels
 			};
 		m_SelectUpdateSessionSlotSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle.IsValid())
 				{
 					KG_WARN("Could not find Update Session User Slot function in Project Panel");
 					return;
@@ -1218,7 +1218,7 @@ namespace Kargono::Panels
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 				for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 				{
-					KG_ASSERT(handle != Assets::k_EmptyHandle);
+					KG_ASSERT(handle.IsValid());
 				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
@@ -1234,7 +1234,7 @@ namespace Kargono::Panels
 			};
 		m_SelectStartSessionSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle.IsValid())
 				{
 					KG_WARN("Could not find Start Session function in Project Panel");
 					return;
@@ -1303,7 +1303,7 @@ namespace Kargono::Panels
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 				for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 				{
-					KG_ASSERT(handle != Assets::k_EmptyHandle);
+					KG_ASSERT(handle.IsValid());
 				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_None)
 					{
@@ -1320,7 +1320,7 @@ namespace Kargono::Panels
 			};
 		m_SelectSessionReadyCheckSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle.IsValid())
 				{
 					KG_WARN("Could not find Session Ready Check function in Project Panel");
 					return;
@@ -1390,7 +1390,7 @@ namespace Kargono::Panels
 				spec.AddToOptions("Clear", "None", Assets::k_EmptyHandle);
 				for (auto& [handle, asset] : Assets::s_ScriptManager.GetAssetRegistry())
 				{
-					KG_ASSERT(handle != Assets::k_EmptyHandle);
+					KG_ASSERT(handle.IsValid());
 				    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(handle);
 					if (script->m_FuncType != WrappedFuncType::Void_UInt16)
 					{
@@ -1407,7 +1407,7 @@ namespace Kargono::Panels
 			};
 		m_SelectReceiveSignalSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle != Assets::k_EmptyHandle)
+				if (!Assets::s_ScriptManager.GetAssetRegistry().contains(selection.m_Handle) && selection.m_Handle.IsValid())
 				{
 					KG_WARN("Could not find On Receive Signal function in Project Panel");
 					return;

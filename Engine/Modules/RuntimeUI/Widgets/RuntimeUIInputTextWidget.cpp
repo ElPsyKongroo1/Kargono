@@ -27,7 +27,7 @@ namespace Kargono::RuntimeUI
 	{
 		KG_PROFILE_FUNCTION();
 
-		Ref<UserInterface> activeUI = uiContext->m_ActiveUI;
+		Assets::AssetRef<UserInterface> activeUI = uiContext->m_ActiveUI.GetAssetRef();
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);
@@ -103,7 +103,7 @@ namespace Kargono::RuntimeUI
 		m_SelectionData.Deserialize(specificWidget);
 		// Get input map specific function pointers
 		Assets::AssetHandle onMoveCursorHandle = specificWidget["OnMoveCursor"].as<uint64_t>();
-		if (onMoveCursorHandle == Assets::k_EmptyHandle)
+		if (!onMoveCursorHandle.IsValid())
 		{
 			m_OnMoveCursor.Reset();
 		}

@@ -339,7 +339,7 @@ namespace Kargono
 			Physics2D::RigidBody2D& component = entityOne.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle = component.m_OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionStartScript.get();
-			if (scriptHandle != Assets::k_EmptyHandle)
+			if (scriptHandle.IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
@@ -350,7 +350,7 @@ namespace Kargono
 			Physics2D::RigidBody2D& component = entityTwo.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle = component.m_OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionStartScript.get();
-			if (scriptHandle != Assets::k_EmptyHandle)
+			if (scriptHandle.IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
@@ -375,7 +375,7 @@ namespace Kargono
 			Physics2D::RigidBody2D& component = entityOne.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle = component.m_OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionEndScript.get();
-			if (scriptHandle != Assets::k_EmptyHandle)
+			if (scriptHandle.IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
@@ -386,7 +386,7 @@ namespace Kargono
 			Physics2D::RigidBody2D& component = entityTwo.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle = component.m_OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionEndScript.get();
-			if (scriptHandle != Assets::k_EmptyHandle)
+			if (scriptHandle.IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
@@ -501,7 +501,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts()};
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnUpdateUserCount;
-		if (scriptHandle != Assets::k_EmptyHandle)
+		if (scriptHandle.IsValid())
 		{
 			Utility::CallWrapped<WrappedVoidUInt32>(Assets::s_ScriptManager.GetAssetByHandle(scriptHandle)->m_Function, event.GetUserCount());
 		}
@@ -513,7 +513,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle{ clientScripts.m_OnApproveJoinSession };
-		if (scriptHandle != Assets::k_EmptyHandle)
+		if (scriptHandle.IsValid())
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::s_ScriptManager.GetAssetByHandle(scriptHandle)->m_Function, event.GetUserSlot());
 		}
@@ -525,7 +525,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnUpdateSessionUserSlot;
-		if (scriptHandle != Assets::k_EmptyHandle)
+		if (scriptHandle.IsValid())
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::s_ScriptManager.GetAssetByHandle(scriptHandle)->m_Function, event.GetUserSlot());
 		}
@@ -537,7 +537,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnUserLeftSession;
-		if (scriptHandle != Assets::k_EmptyHandle)
+		if (scriptHandle.IsValid())
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::s_ScriptManager.GetAssetByHandle(scriptHandle)->m_Function, event.GetUserSlot());
 		}
@@ -573,7 +573,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnStartSession;
-		if (scriptHandle != Assets::k_EmptyHandle)
+		if (scriptHandle.IsValid())
 		{
 			Utility::CallWrapped<WrappedVoidNone>(Assets::s_ScriptManager.GetAssetByHandle(scriptHandle)->m_Function);
 		}
@@ -585,7 +585,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnSessionReadyCheckConfirm;
-		if (scriptHandle != Assets::k_EmptyHandle)
+		if (scriptHandle.IsValid())
 		{
 			Utility::CallWrapped<WrappedVoidNone>(Assets::s_ScriptManager.GetAssetByHandle(scriptHandle)->m_Function);
 		}
@@ -597,7 +597,7 @@ namespace Kargono
 		Network::ClientScripts& clientScripts{ Projects::ProjectService::GetActiveContext().GetClientScripts() };
 
 		Assets::AssetHandle scriptHandle = clientScripts.m_OnReceiveSignal;
-		if (scriptHandle != Assets::k_EmptyHandle)
+		if (scriptHandle.IsValid())
 		{
 			Utility::CallWrapped<WrappedVoidUInt16>(Assets::s_ScriptManager.GetAssetByHandle(scriptHandle)->m_Function, event.GetSignal());
 		}

@@ -4,13 +4,12 @@
 #include "Modules/Scripting/ScriptOutputGenerator.h"
 
 #include "Modules/EditorUI/EditorUIInclude.h"
-
-#include "Modules/ECSInternal/CustomComponent.h"
+#include "Modules/Assets/AssetService.h"
+#include "Modules/ECSInternal/Assets/CustomComponent.h"
 #include "Modules/ECS/Entity.h"
-#include "Kargono/ProjectData/ProjectEnum.h"
+#include "Modules/Scripting/Assets/CustomEnum.h"
 #include "Modules/RuntimeUI/RuntimeUIContext.h"
 #include "Kargono/Utility/Operations.h"
-#include "Kargono/ProjectData/ProjectEnum.h"
 #include "Modules/Scenes/Assets/Scene.h"
 #include "Modules/ECS/Entity.h"
 
@@ -503,10 +502,10 @@ namespace Kargono::Scripting
 					// Output custom component ID
 					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&member.ChildMemberNode->CurrentNodeExpression->Value);
 					KG_ASSERT(projectComponentExpression);
-					Ref<ECSInternal::CustomComponent> component = nullptr;
-					for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
+					Assets::AssetRef<ECSInternal::CustomComponent> component;
+					for (auto& [handle, metadata] : Assets::s_CustomComponentManager.GetAssetRegistry())
 					{
-						if (asset.Data.GetSpecificMetaData<Assets::CustomComponentMetaData>()->Name == projectComponentExpression->Value.Value)
+						if (metadata.m_Name.CString() == projectComponentExpression->Value.Value.c_str())
 						{
 							component = Assets::s_CustomComponentManager.GetAssetByHandle(handle);
 							generator.m_OutputText << std::to_string(handle);
@@ -547,10 +546,10 @@ namespace Kargono::Scripting
 					// Output custom component ID
 					TokenExpressionNode* projectComponentExpression = std::get_if<TokenExpressionNode>(&memberNode->ChildMemberNode->CurrentNodeExpression->Value);
 					KG_ASSERT(projectComponentExpression);
-					Ref<ECSInternal::CustomComponent> component = nullptr;
-					for (auto& [handle, asset] : Assets::s_CustomComponentManager.GetAssetRegistry())
+					Assets::AssetRef<ECSInternal::CustomComponent> component;
+					for (auto& [handle, metadata] : Assets::s_CustomComponentManager.GetAssetRegistry())
 					{
-						if (asset.Data.GetSpecificMetaData<Assets::CustomComponentMetaData>()->Name == projectComponentExpression->Value.Value)
+						if (metadata.m_Name.CString() == projectComponentExpression->Value.Value.c_str())
 						{
 							component = Assets::s_CustomComponentManager.GetAssetByHandle(handle);
 							generator.m_OutputText << std::to_string(handle);
@@ -1112,124 +1111,124 @@ namespace Kargono::Scripting
 		m_AllLiteralTypes.clear();
 		m_AllLiteralTypes =
 		{
-			{"States", {{}, EditorUI::EditorUIContext::m_GenIcons.m_AI}},
-			{"AudioBuffers", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Audio}},
-			{"EmitterConfigs", {{}, EditorUI::EditorUIContext::m_SceneIcons.m_Particles}},
-			{"Fonts", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Font}},
-			{"GameStates", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GlobalState}},
-			{"InputMaps", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input}},
-			{"CustomComponents", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_CustomComponent}},
-			{"Enums", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Enum}},
-			{"Scenes", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Scene}},
-			{"Textures", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture}},
-			{"UserInterfaces", {{}, EditorUI::EditorUIContext::m_RuntimeUIIcons.m_UserInterface2}},
-			{"ScreenResolution", {{}, EditorUI::EditorUIContext::m_ViewportIcons.m_Grid}},
-			{"Key", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input}}
+			{"States", {{}, EditorUI::EditorUIContext::m_GenIcons.m_AI.GetAssetRef()}},
+			{"AudioBuffers", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Audio.GetAssetRef()}},
+			{"EmitterConfigs", {{}, EditorUI::EditorUIContext::m_SceneIcons.m_Particles.GetAssetRef()}},
+			{"Fonts", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Font.GetAssetRef()}},
+			{"GameStates", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_GlobalState.GetAssetRef()}},
+			{"InputMaps", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input.GetAssetRef()}},
+			{"CustomComponents", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_CustomComponent.GetAssetRef()}},
+			{"Enums", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Enum.GetAssetRef()}},
+			{"Scenes", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Scene.GetAssetRef()}},
+			{"Textures", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Texture.GetAssetRef()}},
+			{"UserInterfaces", {{}, EditorUI::EditorUIContext::m_RuntimeUIIcons.m_UserInterface2.GetAssetRef()}},
+			{"ScreenResolution", {{}, EditorUI::EditorUIContext::m_ViewportIcons.m_Grid.GetAssetRef()}},
+			{"Key", {{}, EditorUI::EditorUIContext::m_ContentBrowserIcons.m_Input.GetAssetRef()}}
 		};
 
 		// Load in names of all StateMachines States
 		CustomLiteralNameToIDMap& aiMap = m_AllLiteralTypes.at("States").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::s_StateManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_StateManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "ai_state" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			aiMap.insert_or_assign(fileName, newMember);
 		}
 
 		// Load in names of all audio buffers
 		CustomLiteralNameToIDMap& audioMap = m_AllLiteralTypes.at("AudioBuffers").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::s_AudioBufferManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_AudioBufferManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "audio_buffer" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			audioMap.insert_or_assign(fileName, newMember);
 		}
 
 		// Load in names of all emitter configs
 		CustomLiteralNameToIDMap& emitterConfigMap = m_AllLiteralTypes.at("EmitterConfigs").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::s_EmitterConfigManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_EmitterConfigManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "emitter_config" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			emitterConfigMap.insert_or_assign(fileName, newMember);
 		}
 
 		// Load in names of all fonts
 		CustomLiteralNameToIDMap& fontMap = m_AllLiteralTypes.at("Fonts").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::s_FontManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_FontManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "font" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			fontMap.insert_or_assign(fileName, newMember);
 		}
 
 		// Load in names of all game states
 		CustomLiteralNameToIDMap& gameStateMap = m_AllLiteralTypes.at("GameStates").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::s_GameStateManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_GameStateManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "game_state" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			gameStateMap.insert_or_assign(fileName, newMember);
 		}
 
 		// Load in names of all input map
 		CustomLiteralNameToIDMap& inputMapMap = m_AllLiteralTypes.at("InputMaps").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::s_InputMapManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_InputMapManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "input_map" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			inputMapMap.insert_or_assign(fileName, newMember);
 		}
 
 		// Load in names of all custom component
 		CustomLiteralNameToIDMap& projectComponentMap = m_AllLiteralTypes.at("CustomComponents").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::s_CustomComponentManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_CustomComponentManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "project_component" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			projectComponentMap.insert_or_assign(fileName, newMember);
 		}
 
 		// Load in names of all project enums
 		CustomLiteralNameToIDMap& projectEnumMap = m_AllLiteralTypes.at("Enums").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::s_ProjectEnumManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_CustomEnumManager.GetAssetRegistry())
 		{
 			m_EnumTypes.clear();
-			Ref<ProjectData::ProjectEnum> currentEnum{ Assets::s_ProjectEnumManager.GetAssetByHandle(configHandle) };
+			Assets::AssetRef<Scripting::CustomEnum> currentEnum{ Assets::s_CustomEnumManager.GetAssetByHandle(configHandle) };
 
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "project_enum" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 
 			size_t iteration{ 0 };
@@ -1250,10 +1249,10 @@ namespace Kargono::Scripting
 
 		// Load in names of all scene
 		CustomLiteralNameToIDMap& sceneMap = m_AllLiteralTypes.at("Scenes").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::s_SceneManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_SceneManager.GetAssetRegistry())
 		{
 			// Get the active scene
-			Ref<Scenes::Scene> currentScene{ Assets::s_SceneManager.GetAssetByHandle(configHandle) };
+			Assets::AssetRef<Scenes::Scene> currentScene{ Assets::s_SceneManager.GetAssetByHandle(configHandle) };
 			KG_ASSERT(currentScene);
 
 			CustomLiteralMember newMember;
@@ -1277,30 +1276,30 @@ namespace Kargono::Scripting
 				newMember.m_Members.insert_or_assign(currentTag, newEntityLiteral);
 			}
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			sceneMap.insert_or_assign(fileName, newMember);
 		}
 
 		// Load in names of all texture 2D's
 		CustomLiteralNameToIDMap& texture2DMap = m_AllLiteralTypes.at("Textures").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::AssetService::m_Texture2DManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_Texture2DManager.GetAssetRegistry())
 		{
 			CustomLiteralMember newMember;
 			newMember.m_PrimitiveType = { ScriptTokenType::PrimitiveType, "texture_2d" };
 			newMember.m_OutputText = std::string(configHandle);
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			texture2DMap.insert_or_assign(fileName, newMember);
 		}
 
 		// Load in names of all UserInterface
 		CustomLiteralNameToIDMap& userInterfaceMap = m_AllLiteralTypes.at("UserInterfaces").m_CustomLiteralNameToID;
-		for (auto& [configHandle, configInfo] : Assets::s_UserInterfaceManager.GetAssetRegistry())
+		for (auto& [configHandle, metadata] : Assets::s_UserInterfaceManager.GetAssetRegistry())
 		{
 			// Get the active user interface
-			Ref<RuntimeUI::UserInterface> currentUI{ Assets::s_UserInterfaceManager.GetAssetByHandle(configHandle) };
+			Assets::AssetRef<RuntimeUI::UserInterface> currentUI{ Assets::s_UserInterfaceManager.GetAssetByHandle(configHandle) };
 			KG_ASSERT(currentUI);
 
 			CustomLiteralMember newMember;
@@ -1329,7 +1328,7 @@ namespace Kargono::Scripting
 				newMember.m_Members.insert_or_assign(currentWindowLabel, newWindowLiteral);
 			}
 
-			std::string fileName = configInfo.Data.FileLocation.stem().string();
+			std::string fileName = metadata.m_Name.String();
 			Utility::Operations::RemoveWhitespaceFromString(fileName);
 			userInterfaceMap.insert_or_assign(fileName, newMember);
 		}
@@ -2345,14 +2344,14 @@ namespace Kargono::Scripting
 		newFunctionNode = {};
 		newParameter = {};
 
-		for (auto& [handle, script] : Assets::AssetService::GetScriptCache())
+		for (auto& [handle, script] : Assets::s_ScriptManager.GetAssetCache())
 		{
 			if (script->m_ScriptType == ScriptType::Engine)
 			{
 				continue;
 			}
 			newFunctionNode.Namespace = { ScriptTokenType::Identifier, "Scripts" };
-			newFunctionNode.Name = { ScriptTokenType::Identifier, script->m_ScriptName };
+			newFunctionNode.Name = { ScriptTokenType::Identifier, script->m_ScriptName.String()};
 
 			// Load in return type and parameters differently if using an arbitrary function
 			if (script->m_FuncType == WrappedFuncType::ArbitraryFunction)

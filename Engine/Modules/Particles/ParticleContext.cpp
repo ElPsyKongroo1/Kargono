@@ -316,7 +316,7 @@ namespace Kargono::Particles
 
 	void ParticleContext::AddEmitterByHandle(Assets::AssetHandle emitterHandle, const Math::vec3& position)
 	{
-		KG_ASSERT(emitterHandle != Assets::k_EmptyHandle);
+		KG_ASSERT(emitterHandle.IsValid());
 
 		// Get emitter from asset service
 		Assets::AssetRef<Particles::EmitterConfig> emitter = Assets::s_EmitterConfigManager.GetAssetByHandle(emitterHandle);
@@ -393,7 +393,7 @@ namespace Kargono::Particles
 	{
 		return m_AllEmitters;
 	}
-	void ParticleContext::LoadSceneEmitters(Ref<Scenes::Scene> scene)
+	void ParticleContext::LoadSceneEmitters(Assets::AssetRef<Scenes::Scene> scene)
 	{
 		for (ECSInternal::EntityID id : scene->m_EntityRegistry.GetView<Particles::ParticleEmitter>())
 		{
@@ -405,7 +405,7 @@ namespace Kargono::Particles
 				continue;
 			}
 
-			AddEmitter(particleComp.m_EmitterConfigRef.GetAssetRef(), scene.get(), entity.GetUUID());
+			AddEmitter(particleComp.m_EmitterConfigRef.GetAssetRef(), scene.GetAssetPtr(), entity.GetUUID());
 		}
 	}
 }

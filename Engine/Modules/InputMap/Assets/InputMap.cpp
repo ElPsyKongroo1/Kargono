@@ -179,7 +179,7 @@ namespace Kargono::InputMap
 					}
 					}
 					Assets::AssetHandle handle = binding["ScriptHandle"].as<uint64_t>();
-					if (handle == Assets::k_EmptyHandle)
+					if (!handle.IsValid())
 					{
 						newActionBinding->ClearScript();
 					}

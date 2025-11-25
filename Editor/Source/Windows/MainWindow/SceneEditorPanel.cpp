@@ -55,7 +55,7 @@ namespace Kargono::Panels
 				Ref<Scenes::Scene> activeScene{ Scenes::SceneService::GetActiveContext().GetActiveScene() };
 				Assets::AssetHandle activeSceneHandle{ Scenes::SceneService::GetActiveContext().GetActiveSceneHandle() };
 				KG_ASSERT(activeScene);
-				KG_ASSERT(activeSceneHandle != Assets::k_EmptyHandle);
+				KG_ASSERT(activeSceneHandle.IsValid());
 
 				m_SceneHierarchyTree.ClearTree();
 
@@ -196,7 +196,7 @@ namespace Kargono::Panels
 			componentEntry.m_Handle = (uint64_t)entity;
 			
 			// Check for a project component
-			if (option.m_Handle != Assets::k_EmptyHandle)
+			if (option.m_Handle.IsValid())
 			{
 				// Add component to entity & update tree
 			    Assets::AssetRef<ECSInternal::CustomComponent> component = Assets::s_CustomComponentManager.GetAssetByHandle(option.m_Handle);
@@ -628,7 +628,7 @@ namespace Kargono::Panels
 			Physics2D::RigidBody2D& component = entity.GetComponent<Physics2D::RigidBody2D>();
 
 			// Check for empty entry
-			if (entry.m_Handle == Assets::k_EmptyHandle)
+			if (!entry.m_Handle.IsValid())
 			{
 				component.m_OnCollisionStartScriptHandle = Assets::k_EmptyHandle;
 				component.m_OnCollisionStartScript = nullptr;
@@ -724,7 +724,7 @@ namespace Kargono::Panels
 			Physics2D::RigidBody2D& component = entity.GetComponent<Physics2D::RigidBody2D>();
 
 			// Check for empty entry
-			if (entry.m_Handle == Assets::k_EmptyHandle)
+			if (!entry.m_Handle.IsValid())
 			{
 				component.m_OnCollisionEndScriptHandle = Assets::k_EmptyHandle;
 				component.m_OnCollisionEndScript = nullptr;
@@ -1327,7 +1327,7 @@ namespace Kargono::Panels
 			Particles::ParticleEmitter& component = entity.GetComponent<Particles::ParticleEmitter>();
 
 			// Check for empty entry
-			if (entry.m_Handle == Assets::k_EmptyHandle)
+			if (!entry.m_Handle.IsValid())
 			{
 				component.m_EmitterConfigHandle = Assets::k_EmptyHandle;
 				component.m_EmitterConfigRef = nullptr;
@@ -1416,7 +1416,7 @@ namespace Kargono::Panels
 			Scripting::OnUpdate& component = entity.GetComponent<Scripting::OnUpdate>();
 
 			// Check for empty entry
-			if (entry.m_Handle == Assets::k_EmptyHandle)
+			if (!entry.m_Handle.IsValid())
 			{
 				component.m_OnUpdateScriptHandle = Assets::k_EmptyHandle;
 				component.m_OnUpdateScript = nullptr;
@@ -1556,7 +1556,7 @@ namespace Kargono::Panels
 			Scripting::OnCreate& component = entity.GetComponent<Scripting::OnCreate>();
 
 			// Check for empty entry
-			if (entry.m_Handle == Assets::k_EmptyHandle)
+			if (!entry.m_Handle.IsValid())
 			{
 				component.m_OnCreateScriptHandle = Assets::k_EmptyHandle;
 				component.m_OnCreateScript = nullptr;
@@ -1694,7 +1694,7 @@ namespace Kargono::Panels
 			States::StateMachine& component = entity.GetComponent<States::StateMachine>();
 
 			// Check for empty entry
-			if (entry.m_Handle == Assets::k_EmptyHandle)
+			if (!entry.m_Handle.IsValid())
 			{
 				component.m_GlobalStateHandle = Assets::k_EmptyHandle;
 				component.m_GlobalStateReference = nullptr;
@@ -1732,7 +1732,7 @@ namespace Kargono::Panels
 			States::StateMachine& component = entity.GetComponent<States::StateMachine>();
 
 			// Check for empty entry
-			if (entry.m_Handle == Assets::k_EmptyHandle)
+			if (!entry.m_Handle.IsValid())
 			{
 				component.m_CurrentStateHandle = Assets::k_EmptyHandle;
 				component.m_CurrentStateReference = nullptr;
@@ -1770,7 +1770,7 @@ namespace Kargono::Panels
 			States::StateMachine& component = entity.GetComponent<States::StateMachine>();
 
 			// Check for empty entry
-			if (entry.m_Handle == Assets::k_EmptyHandle)
+			if (!entry.m_Handle.IsValid())
 			{
 				component.m_PreviousStateHandle = Assets::k_EmptyHandle;
 				component.m_PreviousStateReference = nullptr;
@@ -2004,7 +2004,7 @@ namespace Kargono::Panels
 		{
 			ECS::Entity entity = Scenes::SceneService::GetActiveContext().GetActiveScene()->GetSelectedEntity();
 			Rendering::ShapeComponent& component = entity.GetComponent<Rendering::ShapeComponent>();
-			if (entry.m_Handle == Assets::k_EmptyHandle)
+			if (!entry.m_Handle.IsValid())
 			{
 				Buffer textureBuffer{ 4 };
 				textureBuffer.SetDataToByte(0xff);
@@ -2806,13 +2806,13 @@ namespace Kargono::Panels
 
 			// Display collision script functions
 		    Assets::AssetRef<Scripting::Script> collisionStartScript = Assets::s_ScriptManager.GetAssetByHandle(component.m_OnCollisionStartScriptHandle);
-			m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = component.m_OnCollisionStartScriptHandle == Assets::k_EmptyHandle ?
+			m_SelectRigidBody2DCollisionStartScript.m_CurrentOption = !component.m_OnCollisionStartScriptHandle.IsValid() ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(collisionStartScript).c_str(), component.m_OnCollisionStartScriptHandle);
 			m_SelectRigidBody2DCollisionStartScript.RenderOptions();
 
 		    Assets::AssetRef<Scripting::Script> collisionEndScript = Assets::s_ScriptManager.GetAssetByHandle(component.m_OnCollisionEndScriptHandle);
-			m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = component.m_OnCollisionEndScriptHandle == Assets::k_EmptyHandle ?
+			m_SelectRigidBody2DCollisionEndScript.m_CurrentOption = !component.m_OnCollisionEndScriptHandle.IsValid() ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(collisionEndScript).c_str(), component.m_OnCollisionEndScriptHandle);
 			m_SelectRigidBody2DCollisionEndScript.RenderOptions();
@@ -2925,7 +2925,7 @@ namespace Kargono::Panels
 		{
 		    Assets::AssetRef<Particles::EmitterConfig> emitterConfig = Assets::s_EmitterConfigManager.GetAssetByHandle(component.m_EmitterConfigHandle);
 			Assets::AssetInfo emitterInfo = Assets::s_EmitterConfigInfoManager.GetAssetByHandle(component.m_EmitterConfigHandle);
-			m_SelectParticleEmitter.m_CurrentOption = component.m_EmitterConfigHandle == Assets::k_EmptyHandle ?
+			m_SelectParticleEmitter.m_CurrentOption = !component.m_EmitterConfigHandle.IsValid() ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(emitterInfo.Data.FileLocation.filename().string().c_str(), component.m_EmitterConfigHandle);
 			m_SelectParticleEmitter.RenderOptions();
@@ -2942,7 +2942,7 @@ namespace Kargono::Panels
 		if (m_OnUpdateHeader.m_Expanded)
 		{
 		    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(component.m_OnUpdateScriptHandle);
-			m_SelectOnUpdateScript.m_CurrentOption = component.m_OnUpdateScriptHandle == Assets::k_EmptyHandle ? 
+			m_SelectOnUpdateScript.m_CurrentOption = !component.m_OnUpdateScriptHandle.IsValid() ? 
 				EditorUI::OptionEntry( "None", Assets::k_EmptyHandle ) :
 				EditorUI::OptionEntry(Utility::ScriptToString(script).c_str(), component.m_OnUpdateScriptHandle);
 			m_SelectOnUpdateScript.RenderOptions();
@@ -2959,7 +2959,7 @@ namespace Kargono::Panels
 		if (m_StateHeader.m_Expanded)
 		{
 			// Select global state
-			bool optionValid = component.m_GlobalStateHandle != Assets::k_EmptyHandle;
+			bool optionValid = component.m_GlobalStateHandle.IsValid();
 			if (optionValid)
 			{
 				Assets::AssetInfo& globalAsset = Assets::s_StateManager.GetAssetRegistry().at(component.m_GlobalStateHandle);
@@ -2973,7 +2973,7 @@ namespace Kargono::Panels
 			m_SelectGlobalState.RenderOptions();
 
 			// Select current state
-			optionValid = component.m_CurrentStateHandle != Assets::k_EmptyHandle;
+			optionValid = component.m_CurrentStateHandle.IsValid();
 			if (optionValid)
 			{
 				Assets::AssetInfo& currentAsset = Assets::s_StateManager.GetAssetRegistry().at(component.m_CurrentStateHandle);
@@ -2987,7 +2987,7 @@ namespace Kargono::Panels
 			m_SelectCurrentState.RenderOptions();
 
 			// Select previous state
-			optionValid = component.m_PreviousStateHandle != Assets::k_EmptyHandle;
+			optionValid = component.m_PreviousStateHandle.IsValid();
 			if (optionValid)
 			{
 				Assets::AssetInfo& previousAsset = Assets::s_StateManager.GetAssetRegistry().at(component.m_PreviousStateHandle);
@@ -3012,7 +3012,7 @@ namespace Kargono::Panels
 		if (m_OnCreateHeader.m_Expanded)
 		{
 		    Assets::AssetRef<Scripting::Script> script = Assets::s_ScriptManager.GetAssetByHandle(component.m_OnCreateScriptHandle);
-			m_SelectOnCreateScript.m_CurrentOption = component.m_OnCreateScriptHandle == Assets::k_EmptyHandle ?
+			m_SelectOnCreateScript.m_CurrentOption = !component.m_OnCreateScriptHandle.IsValid() ?
 				EditorUI::OptionEntry("None", Assets::k_EmptyHandle) :
 				EditorUI::OptionEntry(Utility::ScriptToString(script).c_str(), component.m_OnCreateScriptHandle);
 			m_SelectOnCreateScript.RenderOptions();
@@ -3288,7 +3288,7 @@ namespace Kargono::Panels
 		m_ShapeAddTexture.RenderCheckbox();
 		if (m_ShapeAddTexture.m_CurrentBoolean)
 		{
-			if (component.m_TextureHandle == Assets::k_EmptyHandle)
+			if (!component.m_TextureHandle.IsValid())
 			{
 				m_ShapeSetTexture.m_CurrentOption = { "None", Assets::k_EmptyHandle };
 			}

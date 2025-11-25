@@ -123,7 +123,7 @@ namespace Kargono::Windows
 		};
 		m_OpenEmitterConfigPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 		{
-			if (selection.m_Handle == Assets::k_EmptyHandle)
+			if (!selection.m_Handle.IsValid())
 			{
 				KG_WARN("No Emitter Config Selected");
 				return;
@@ -147,7 +147,7 @@ namespace Kargono::Windows
 			}
 
 			m_EditorEmitterConfigHandle = Assets::AssetService::CreateEmitterConfig(m_SelectEmitterConfigNameSpec.m_CurrentOption.c_str(), m_SelectEmitterConfigLocationSpec.m_CurrentOption);
-			if (m_EditorEmitterConfigHandle == Assets::k_EmptyHandle)
+			if (!m_EditorEmitterConfigHandle.IsValid())
 			{
 				KG_WARN("Emitter Config was not created");
 				return;

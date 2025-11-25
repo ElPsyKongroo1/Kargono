@@ -9,7 +9,6 @@
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/Scripting/Assets/Script.h"
 #include "Modules/Assets/Managers/StateManager.h"
-
 #include "Kargono/Utility/Time.h"
 #include "Modules/States/Components/StateMachine.h"
 
@@ -27,7 +26,7 @@ namespace Kargono::States
 	void StatesContext::OnUpdate(Timestep timeStep)
 	{
 		// Ensure a valid scene is active
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference when calling AIService's OnUpdate()");
 
 		// Run on update for all active StateMachines with AIComponents including the global, then the current state
@@ -58,7 +57,7 @@ namespace Kargono::States
 	bool StatesContext::IsGlobalState(UUID entityID, Assets::AssetHandle queryStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
@@ -72,7 +71,7 @@ namespace Kargono::States
 	bool StatesContext::IsCurrentState(UUID entityID, Assets::AssetHandle queryStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
@@ -86,7 +85,7 @@ namespace Kargono::States
 	bool StatesContext::IsPreviousState(UUID entityID, Assets::AssetHandle queryStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
@@ -100,7 +99,7 @@ namespace Kargono::States
 	void StatesContext::ChangeGlobalState(UUID entityID, Assets::AssetHandle newStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
@@ -131,7 +130,7 @@ namespace Kargono::States
 	void StatesContext::ChangeCurrentState(UUID entityID, Assets::AssetHandle newStateHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
@@ -164,7 +163,7 @@ namespace Kargono::States
 	void StatesContext::RevertPreviousState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
@@ -202,7 +201,7 @@ namespace Kargono::States
 	void StatesContext::ClearGlobalState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
@@ -216,7 +215,7 @@ namespace Kargono::States
 	void StatesContext::ClearCurrentState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
@@ -230,7 +229,7 @@ namespace Kargono::States
 	void StatesContext::ClearPreviousState(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
@@ -244,7 +243,7 @@ namespace Kargono::States
 	void StatesContext::ClearAllStates(UUID entityID)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity entity = activeScene->m_EntityRegistry.GetEntityByUUID(entityID);
 		KG_ASSERT(entity, "Invalid entity obtained inside AIService");
@@ -282,7 +281,7 @@ namespace Kargono::States
 	void StatesContext::HandleAIMessage(const AIMessage& messageToHandle)
 	{
 		// Ensure a valid scene is active and a valid entity is provided
-		Ref<Scenes::Scene> activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
+		Assets::AssetRef<Scenes::Scene>activeScene = Scenes::SceneService::GetActiveContext().GetActiveScene();
 		KG_ASSERT(activeScene, "Invalid scene reference inside AIService");
 		ECS::Entity receiverEntity = activeScene->m_EntityRegistry.GetEntityByUUID(messageToHandle.m_ReceiverEntity);
 		KG_ASSERT(receiverEntity, "Invalid entity obtained inside AIService");

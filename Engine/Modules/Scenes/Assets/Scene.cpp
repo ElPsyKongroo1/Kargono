@@ -165,10 +165,9 @@ namespace Kargono::Scenes
 		{
 			ECS::Entity currentEntity{ m_EntityRegistry.GetEntityByECSID(enttEntity) };
 			Scripting::OnUpdate& component = currentEntity.GetComponent<Scripting::OnUpdate>();
-			if (component.m_OnUpdateScriptHandle == scriptHandle)
+			if (component.m_OnUpdateScript.GetAssetHandle() == scriptHandle)
 			{
-				component.m_OnUpdateScriptHandle = Assets::k_EmptyHandle;
-				component.m_OnUpdateScript = nullptr;
+				component.m_OnUpdateScript.Reset();
 				sceneModified = true;
 			}
 		}
@@ -179,10 +178,9 @@ namespace Kargono::Scenes
 		{
 			ECS::Entity currentEntity{ m_EntityRegistry.GetEntityByECSID(enttEntity) };
 			Scripting::OnCreate& component = currentEntity.GetComponent<Scripting::OnCreate>();
-			if (component.m_OnCreateScriptHandle == scriptHandle)
+			if (component.m_OnCreateScript.GetAssetHandle() == scriptHandle)
 			{
-				component.m_OnCreateScriptHandle = Assets::k_EmptyHandle;
-				component.m_OnCreateScript = nullptr;
+				component.m_OnCreateScript.Reset();
 				sceneModified = true;
 			}
 		}
@@ -347,8 +345,8 @@ namespace Kargono::Scenes
 		{
 			ECS::Entity entity = { id, &m_EntityRegistry };
 			Scripting::OnCreate& component = entity.GetComponent<Scripting::OnCreate>();
-			Assets::AssetHandle scriptHandle = component.m_OnCreateScriptHandle;
-			if (scriptHandle != Assets::k_EmptyHandle)
+			Assets::AssetHandle scriptHandle = component.m_OnCreateScript.GetAssetHandle();
+			if (scriptHandle.IsValid())
 			{
 				Utility::CallWrapped<WrappedVoidEntity>(component.m_OnCreateScript->m_Function, entity.GetUUID());
 			}
@@ -409,8 +407,8 @@ namespace Kargono::Scenes
 		{
 			ECS::Entity entity = { enttEntityID, &m_EntityRegistry };
 			Scripting::OnUpdate& component = entity.GetComponent<Scripting::OnUpdate>();
-			Assets::AssetHandle scriptHandle = component.m_OnUpdateScriptHandle;
-			if (scriptHandle != Assets::k_EmptyHandle)
+			Assets::AssetHandle scriptHandle = component.m_OnUpdateScript.GetAssetHandle();
+			if (scriptHandle.IsValid())
 			{
 				Utility::CallWrapped<WrappedVoidEntityFloat>(component.m_OnUpdateScript->m_Function, entity.GetUUID(), ts);
 			}

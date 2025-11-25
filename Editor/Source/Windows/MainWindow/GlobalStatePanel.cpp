@@ -26,7 +26,7 @@ namespace Kargono::Panels
 
 		m_OpenGlobalStatePopup.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (selection.m_Handle == Assets::k_EmptyHandle)
+				if (!selection.m_Handle.IsValid())
 				{
 					KG_WARN("No global state Selected");
 					return;

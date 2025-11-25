@@ -128,7 +128,7 @@ namespace Kargono::Rendering
 		KG_ASSERT(inputSpec.m_ShapeComponent->m_Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
 		std::vector<Assets::AssetRef<Texture2D>>& m_Textures = inputSpec.m_CurrentDrawBuffer->m_Textures;
 		m_Textures.clear();
-		m_Textures.emplace_back(inputSpec.m_ShapeComponent->m_Texture);
+		m_Textures.emplace_back(inputSpec.m_ShapeComponent->m_Texture.GetAssetRef());
 	}
 
 	void RenderingService::FillTextureCoordinate(RendererInputSpec& inputSpec, uint32_t iteration)

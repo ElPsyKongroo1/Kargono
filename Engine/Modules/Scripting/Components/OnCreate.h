@@ -2,6 +2,7 @@
 
 #include "Modules/ECSInternal/Module/ComponentTag.h"
 #include "Modules/Scripting/Module/ScriptingModule.h"
+#include "Modules/Assets/AssetReference.h"
 
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
@@ -25,7 +26,6 @@ namespace Kargono::Scripting
 			// Create the component in place
 			std::construct_at<OnCreate>(dst);
 
-			dst->m_OnCreateScriptHandle = m_OnCreateScriptHandle;
 			dst->m_OnCreateScript = m_OnCreateScript;
 		}
 	public:
@@ -38,8 +38,7 @@ namespace Kargono::Scripting
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::AssetHandle m_OnCreateScriptHandle{ Assets::k_EmptyHandle };
-		Ref<Scripting::Script> m_OnCreateScript{ nullptr };
+		Assets::TAssetRef<Scripting::Script> m_OnCreateScript{};
 	};
 
 	Register_Module_Type(OnCreate, ECSInternal::ComponentTag)

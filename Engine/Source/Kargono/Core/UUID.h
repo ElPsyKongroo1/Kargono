@@ -13,9 +13,9 @@ namespace Kargono
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		UUID() : m_UUID(0) {}
-		UUID(uint64_t uuid) : m_UUID(uuid) {}
-		UUID(const UUID&) = default;
+		constexpr UUID() : m_UUID(0) {}
+		constexpr UUID(uint64_t uuid) : m_UUID(uuid) {}
+		constexpr UUID(const UUID&) = default;
 	public:
 		//==============================
 		// Operator Overloads

@@ -188,7 +188,7 @@ namespace Kargono::Panels
 		};
 		m_OpenUIPopupSpec.m_ConfirmAction = [&](const EditorUI::OptionEntry& selection)
 			{
-				if (selection.m_Handle == Assets::k_EmptyHandle)
+				if (!selection.m_Handle.IsValid())
 				{
 					KG_WARN("No User Interface Selected");
 					return;
@@ -212,7 +212,7 @@ namespace Kargono::Panels
 				}
 
 				s_UIWindow->m_EditorUIHandle = Assets::AssetService::CreateUserInterface(m_SelectUINameSpec.m_CurrentOption.c_str(), m_SelectUILocationSpec.m_CurrentOption);
-				if (s_UIWindow->m_EditorUIHandle == Assets::k_EmptyHandle)
+				if (!s_UIWindow->m_EditorUIHandle.IsValid())
 				{
 					KG_WARN("User Interface was not created");
 					return;

@@ -271,7 +271,7 @@ namespace Kargono
 			Physics2D::RigidBody2D& component = entityOne.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle = component.m_OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionStartScript.get();
-			if (scriptHandle != Assets::k_EmptyHandle)
+			if (scriptHandle.IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
@@ -282,7 +282,7 @@ namespace Kargono
 			Physics2D::RigidBody2D& component = entityTwo.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle = component. m_OnCollisionStartScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionStartScript.get();
-			if (scriptHandle != Assets::k_EmptyHandle)
+			if (scriptHandle.IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
@@ -307,7 +307,7 @@ namespace Kargono
 			Physics2D::RigidBody2D& component = entityOne.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle = component.m_OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionEndScript.get();
-			if (scriptHandle != Assets::k_EmptyHandle)
+			if (scriptHandle.IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityOneID, entityTwoID);
 			}
@@ -318,7 +318,7 @@ namespace Kargono
 			Physics2D::RigidBody2D& component = entityTwo.GetComponent<Physics2D::RigidBody2D>();
 			Assets::AssetHandle scriptHandle =  component.m_OnCollisionEndScriptHandle;
 			Scripting::Script* script = component.m_OnCollisionEndScript.get();
-			if (scriptHandle != Assets::k_EmptyHandle)
+			if (scriptHandle.IsValid())
 			{
 				collisionHandled = Utility::CallWrapped<WrappedBoolEntityEntity>(script->m_Function, entityTwoID, entityOneID);
 			}
@@ -423,7 +423,7 @@ namespace Kargono
 			// Ensure all script assets are properly loaded in
 			Assets::AssetService::LoadAllScriptIntoCache();
 
-			if (startSceneHandle == Assets::k_EmptyHandle)
+			if (!startSceneHandle.IsValid())
 			{
 				m_MainWindow->NewScene("NewScene");
 				Projects::ProjectService::GetActiveContext().SetStartingSceneHandle(m_MainWindow->m_EditorSceneHandle);

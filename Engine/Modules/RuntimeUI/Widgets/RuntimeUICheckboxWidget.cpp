@@ -50,7 +50,7 @@ namespace Kargono::RuntimeUI
 		UNREFERENCED_PARAMETER(viewportWidth);
 		KG_PROFILE_FUNCTION();
 
-		Ref<UserInterface> activeUI = uiContext->m_ActiveUI;
+		Assets::AssetRef<UserInterface> activeUI = uiContext->m_ActiveUI.GetAssetRef();
 
 		// Calculate the widget's rendering data
 		Math::vec3 widgetSize = CalculateWidgetSize(windowSize);

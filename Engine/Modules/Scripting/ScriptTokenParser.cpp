@@ -1324,16 +1324,16 @@ namespace Kargono::Scripting
 				{
 					KG_ASSERT(member);
 
-					Ref<Rendering::Texture2D> primitiveTypeIcon{ nullptr };
+					Assets::AssetRef<Rendering::Texture2D> primitiveTypeIcon{};
 					if (scriptLang.m_PrimitiveTypes.contains(member->m_PrimitiveType.Value))
 					{
 						// Get primitive type's icon
-						primitiveTypeIcon = scriptLang.m_PrimitiveTypes.at(member->m_PrimitiveType.Value).Icon;
+						primitiveTypeIcon = scriptLang.m_PrimitiveTypes.at(member->m_PrimitiveType.Value).Icon.GetAssetRef();
 					}
 					else
 					{
 						// Default icon
-						primitiveTypeIcon = EditorUI::EditorUIContext::m_SceneIcons.m_Entity;
+						primitiveTypeIcon = EditorUI::EditorUIContext::m_SceneIcons.m_Entity.GetAssetRef();
 					}
 					// Get the icon texture from the primitive type
 					

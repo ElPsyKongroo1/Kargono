@@ -87,7 +87,8 @@ namespace Kargono::Assets
 			s_SceneManager.ClearAssetRegistry();
 		}
 
-		static Metadata GetAssetFromAllRegistries(AssetHandle handle, AssetIdentifier identifier)
+		template<AssetConcept t_AssetType>
+		static Metadata<t_AssetType> GetAssetFromAllRegistries(AssetHandle handle, AssetIdentifier identifier)
 		{
 			switch (identifier)
 			{
@@ -112,7 +113,8 @@ namespace Kargono::Assets
 			}
 		}
 
-		static AssetRegistry* GetAssetRegistry(AssetIdentifier identifier)
+		template<AssetConcept t_AssetType>
+		static AssetRegistry<t_AssetType>* GetAssetRegistry(AssetIdentifier identifier)
 		{
 			switch (identifier)
 			{

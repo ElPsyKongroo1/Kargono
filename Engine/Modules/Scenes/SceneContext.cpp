@@ -3,6 +3,7 @@
 #include "Modules/Scenes/SceneContext.h"
 #include "Modules/Events/SceneEvent.h"
 #include "Modules/Particles/ParticleContext.h"
+#include "Modules/Assets/Managers/SceneManager.h"
 
 namespace Kargono::Scenes
 {
@@ -14,20 +15,21 @@ namespace Kargono::Scenes
 	void SceneContext::Terminate()
 	{
 		// Custom closing of input spec
-		m_RenderSceneSpec.m_Shader = nullptr;
-		m_RenderSceneSpec.m_Texture = nullptr;
+		m_RenderSceneSpec.m_Shader.Reset();
+		m_RenderSceneSpec.m_Texture.Reset();
 		m_RenderSceneSpec.m_ShapeComponent = nullptr;
 		m_RenderSceneSpec.m_CurrentDrawBuffer = nullptr;
 
-		m_ActiveScene.reset();
-		m_ActiveSceneHandle = Assets::k_EmptyHandle;
+		m_ActiveScene.Reset();
 	}
 
 	bool SceneContext::IsSceneActive(UUID sceneID)
 	{
-		KG_ASSERT(m_ActiveScene);
-		KG_ASSERT(m_ActiveSceneHandle != Assets::k_EmptyHandle);
-		return sceneID == m_ActiveSceneHandle;
+		if (!m_ActiveScene)
+		{
+			return false;
+		}
+		return m_ActiveScene.GetAssetHandle() == sceneID;
 	}
 	void SceneContext::TransitionScene(Assets::AssetHandle newSceneHandle)
 	{
@@ -38,13 +40,12 @@ namespace Kargono::Scenes
 			return;
 		}
 		TransitionScene(newScene);
-		m_ActiveSceneHandle = newSceneHandle;
 		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(newSceneHandle, Events::ManageSceneAction::Open);
 		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 
 	}
 
-	void SceneContext::TransitionScene(Ref<Scene> newScene)
+	void SceneContext::TransitionScene(Assets::AssetRef<Scene> newScene)
 	{
 		if (!newScene) { return; }
 
@@ -52,7 +53,7 @@ namespace Kargono::Scenes
 		Physics::Physics2DService().RemovePhysics2DWorld();
 		m_ActiveScene->OnRuntimeStop();
 		m_ActiveScene->m_EntityRegistry.ClearEntities();
-		m_ActiveScene.reset();
+		m_ActiveScene.Reset();
 
 		m_ActiveScene = newScene;
 
@@ -62,7 +63,7 @@ namespace Kargono::Scenes
 		Physics::Physics2DService::CreatePhysics2DWorld();
 		Physics::Physics2DService::GetActiveContext().Init
 		(
-			m_ActiveScene.get(),
+			m_ActiveScene.GetAssetPtr(),
 			m_ActiveScene->m_PhysicsSpecification
 		);
 
@@ -77,7 +78,6 @@ namespace Kargono::Scenes
 			Particles::ParticleService::GetActiveContext().ClearEmitters();
 			TransitionScene(sceneReference);
 
-			m_ActiveSceneHandle = sceneID;
 			Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(sceneID, Events::ManageSceneAction::Open);
 			EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 
@@ -89,22 +89,23 @@ namespace Kargono::Scenes
 		}
 	}
 
-	Ref<Scene> SceneContext::GetActiveScene()
+	Assets::AssetRef<Scene> SceneContext::GetActiveScene()
 	{
-		return m_ActiveScene;
+		return m_ActiveScene.GetAssetRef();
 	}
 
 	Assets::AssetHandle SceneContext::GetActiveSceneHandle()
 	{
-		return m_ActiveSceneHandle;
+		return m_ActiveScene.GetAssetHandle();
 	}
 
-	void SceneContext::SetActiveScene(Ref<Scene> newScene, Assets::AssetHandle newHandle)
+	void SceneContext::SetActiveScene(Assets::AssetRef<Scene> newScene)
 	{
-		m_ActiveScene = newScene;
-		m_ActiveSceneHandle = newHandle;
+		KG_ASSERT(newScene.IsUsable());
 
-		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(newHandle, Events::ManageSceneAction::Open);
+		m_ActiveScene = newScene;
+
+		Ref<Events::ManageScene> event = CreateRef<Events::ManageScene>(newScene.GetHandle(), Events::ManageSceneAction::Open);
 		EngineService::GetActiveEngine().GetThread().SubmitEvent(event);
 	}
 }
