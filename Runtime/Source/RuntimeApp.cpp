@@ -8,7 +8,7 @@
 #include "Modules/RuntimeUI/FontContext.h"
 #include "Modules/InputMap/InputMapContext.h"
 #include "Modules/GlobalState/GameStateContext.h"
-
+#include "Modules/Modules/Concepts/IsModuleType.h"
 
 #include <filesystem>
 
@@ -28,7 +28,24 @@ namespace Kargono
 
 	bool RuntimeApp::Init()
 	{
-		Assets::AssetService::Init(&m_HeapAllocator);
+		/*KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Rendering::Shader>(), Modules::GetTypeIdentifier<Rendering::Shader>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Rendering::Texture2D>(), Modules::GetTypeIdentifier<Rendering::Texture2D>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Audio::AudioBuffer>(), Modules::GetTypeIdentifier<Audio::AudioBuffer>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<RuntimeUI::Font>(), Modules::GetTypeIdentifier<RuntimeUI::Font>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Scripting::Script>(), Modules::GetTypeIdentifier<Scripting::Script>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<ECSInternal::CustomComponent>(), Modules::GetTypeIdentifier<ECSInternal::CustomComponent>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Scripting::CustomEnum>(), Modules::GetTypeIdentifier<Scripting::CustomEnum>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<EditorUI::ColorPalette>(), Modules::GetTypeIdentifier<EditorUI::ColorPalette>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<InputMap::InputMap>(), Modules::GetTypeIdentifier<InputMap::InputMap>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Particles::EmitterConfig>(), Modules::GetTypeIdentifier<Particles::EmitterConfig>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<GlobalState::GameState>(), Modules::GetTypeIdentifier<GlobalState::GameState>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<GlobalState::GlobalState>(), Modules::GetTypeIdentifier<GlobalState::GlobalState>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<RuntimeUI::UserInterface>(), Modules::GetTypeIdentifier<RuntimeUI::UserInterface>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<States::State>(), Modules::GetTypeIdentifier<States::State>());
+		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Scenes::Scene>(), Modules::GetTypeIdentifier<Scenes::Scene>());
+
+		KG_WARN("The state asset is a module type? {}", Modules::IsModuleType<States::State>);
+		KG_WARN("The script binder service asset is a module type? {}", Modules::IsModuleType<Scripting::ScriptBinderService>);*/
 
 		Scripting::ScriptBinderService::GetActiveContext().Init();
 		
@@ -139,7 +156,6 @@ namespace Kargono
 		RuntimeUI::FontService::GetActiveContext().Terminate();
 		Scenes::SceneService::GetActiveContext().Terminate();
 		Rendering::RenderingService::Shutdown();
-		Assets::AssetService::Terminate();
 
 		return true;
 	}

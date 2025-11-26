@@ -73,13 +73,13 @@ namespace Kargono::Rendering
 		// Asset Config
 		//==============================
 		// Metaprogramming info
-		using Metadata = TextureMetaData;
+		using MetadataExtension = TextureMetaData;
 		using Spec = TextureSpecification;
 		constexpr static std::array<FixedBufStr16, 1> k_ImportExtensions{ ".png" };
 		constexpr static std::array<FixedBufStr16, 1> k_IntermediateExtensions{ ".kgbinary" };
 
 		// Base asset info
-		constexpr static FixedBufStr32 GetAssetName()
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "Texture";
 		}

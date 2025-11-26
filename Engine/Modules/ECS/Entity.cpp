@@ -36,7 +36,7 @@ namespace Kargono::ECS
 		if (HasComponent<Tag>())
 		{
 			Tag& tag = GetComponent<Tag>();
-			out << YAML::Key << GetTypeName<Tag>();
+			out << YAML::Key << Modules::GetTypeName<Tag>();
 			tag.Serialize((void*)&componentContext);
 		}
 		if (HasComponent<Scripting::OnUpdate>())
@@ -48,21 +48,21 @@ namespace Kargono::ECS
 		{
 			Scripting::OnCreate& comp =
 				GetComponent<Scripting::OnCreate>();
-			out << YAML::Key << GetTypeName<Scripting::OnCreate>();
+			out << YAML::Key << Modules::GetTypeName<Scripting::OnCreate>();
 			comp.Serialize((void*)&componentContext);
 		}
 		if (HasComponent<Transform>())
 		{
 			Kargono::Transform& transform =
 				GetComponent<Kargono::Transform>();
-			out << YAML::Key << GetTypeName<Kargono::Transform>();
+			out << YAML::Key << Modules::GetTypeName<Kargono::Transform>();
 			transform.Serialize((void*)&componentContext);
 		}
 
 		if (HasComponent<States::StateMachine>())
 		{
 			States::StateMachine& aiStateComp = GetComponent<States::StateMachine>();
-			out << YAML::Key << GetTypeName<States::State>();
+			out << YAML::Key << Modules::GetTypeName<States::State>();
 			aiStateComp.Serialize((void*)&componentContext);
 		}
 
@@ -70,7 +70,7 @@ namespace Kargono::ECS
 		{
 			Particles::ParticleEmitter& particleEmitterComp =
 				GetComponent<Particles::ParticleEmitter>();
-			out << YAML::Key << GetTypeName<Particles::ParticleEmitter>();
+			out << YAML::Key << Modules::GetTypeName<Particles::ParticleEmitter>();
 			particleEmitterComp.Serialize((void*)&componentContext);
 		}
 
@@ -78,7 +78,7 @@ namespace Kargono::ECS
 		{
 			Cameras::CameraComponent& cameraComponent =
 				GetComponent<Cameras::CameraComponent>();
-			out << YAML::Key << GetTypeName<Cameras::CameraComponent>();
+			out << YAML::Key << Modules::GetTypeName<Cameras::CameraComponent>();
 			cameraComponent.Serialize((void*)&componentContext);
 		}
 
@@ -86,7 +86,7 @@ namespace Kargono::ECS
 		{
 			Rendering::ShapeComponent& shapeComponent =
 				GetComponent<Rendering::ShapeComponent>();
-			out << YAML::Key << GetTypeName<Rendering::ShapeComponent>();
+			out << YAML::Key << Modules::GetTypeName<Rendering::ShapeComponent>();
 			shapeComponent.Serialize((void*)&componentContext);
 		}
 
@@ -94,7 +94,7 @@ namespace Kargono::ECS
 		{
 			Physics2D::RigidBody2D& rb2dComponent =
 				GetComponent<Physics2D::RigidBody2D>();
-			out << YAML::Key << GetTypeName<Physics2D::RigidBody2D>();
+			out << YAML::Key << Modules::GetTypeName<Physics2D::RigidBody2D>();
 			rb2dComponent.Serialize((void*)&componentContext);
 		}
 
@@ -102,7 +102,7 @@ namespace Kargono::ECS
 		{
 			Physics2D::BoxCollider2D& bc2dComponent =
 				GetComponent<Physics2D::BoxCollider2D>();
-			out << YAML::Key << GetTypeName<Physics2D::BoxCollider2D>();
+			out << YAML::Key << Modules::GetTypeName<Physics2D::BoxCollider2D>();
 			bc2dComponent.Serialize((void*)&componentContext);
 		}
 
@@ -110,7 +110,7 @@ namespace Kargono::ECS
 		{
 			Physics2D::CircleCollider2D& cc2dComponent =
 				GetComponent<Physics2D::CircleCollider2D>();
-			out << YAML::Key << GetTypeName<Physics2D::CircleCollider2D>();
+			out << YAML::Key << Modules::GetTypeName<Physics2D::CircleCollider2D>();
 			cc2dComponent.Serialize((void*)&componentContext);
 		}
 
@@ -155,77 +155,77 @@ namespace Kargono::ECS
 		m_UniqueID = entityNode["UUID"].as<uint64_t>();
 
 		// Create deserialization componentContext
-		YAML::Node tagNode = entityNode[GetTypeName<Tag>()];
+		YAML::Node tagNode = entityNode[Modules::GetTypeName<Tag>()];
 		if (tagNode)
 		{
 			Tag& tagComp = GetComponent<Tag>();
 			tagComp.Deserialize((void*)&tagNode);
 		}
 
-		YAML::Node transformComponent = entityNode[GetTypeName<Kargono::Transform>()];
+		YAML::Node transformComponent = entityNode[Modules::GetTypeName<Kargono::Transform>()];
 		if (transformComponent)
 		{
 			Kargono::Transform& tc = GetComponent<Kargono::Transform>();
 			tc.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node onUpdateNode = entityNode[GetTypeName<Scripting::OnUpdate>()];
+		YAML::Node onUpdateNode = entityNode[Modules::GetTypeName<Scripting::OnUpdate>()];
 		if (onUpdateNode)
 		{
 			Scripting::OnUpdate& component = AddComponent<Scripting::OnUpdate>();
 			component.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node aiStateNode = entityNode[GetTypeName<States::State>()];
+		YAML::Node aiStateNode = entityNode[Modules::GetTypeName<States::State>()];
 		if (aiStateNode)
 		{
 			States::StateMachine& component = AddComponent<States::StateMachine>();
 			component.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node onCreateNode = entityNode[GetTypeName<Scripting::OnCreate>()];
+		YAML::Node onCreateNode = entityNode[Modules::GetTypeName<Scripting::OnCreate>()];
 		if (onCreateNode)
 		{
 			Scripting::OnCreate& component = AddComponent<Scripting::OnCreate>();
 			component.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node particleEmitterNode = entityNode[GetTypeName<Particles::ParticleEmitter>()];
+		YAML::Node particleEmitterNode = entityNode[Modules::GetTypeName<Particles::ParticleEmitter>()];
 		if (particleEmitterNode)
 		{
 			Particles::ParticleEmitter& component = AddComponent<Particles::ParticleEmitter>();
 			component.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node cameraComponent = entityNode[GetTypeName<Cameras::CameraComponent>()];
+		YAML::Node cameraComponent = entityNode[Modules::GetTypeName<Cameras::CameraComponent>()];
 		if (cameraComponent)
 		{
 			Cameras::CameraComponent& cc = AddComponent<Cameras::CameraComponent>();
 			cc.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node shapeComponent = entityNode[GetTypeName<Rendering::Shape>()];
+		YAML::Node shapeComponent = entityNode[Modules::GetTypeName<Rendering::Shape>()];
 		if (shapeComponent)
 		{
 			Rendering::ShapeComponent& sc = AddComponent<Rendering::ShapeComponent>();
 			sc.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node rigidbody2DComponent = entityNode[GetTypeName<Physics2D::RigidBody2D>()];
+		YAML::Node rigidbody2DComponent = entityNode[Modules::GetTypeName<Physics2D::RigidBody2D>()];
 		if (rigidbody2DComponent)
 		{
 			Physics2D::RigidBody2D& rb2d = AddComponent<Physics2D::RigidBody2D>();
 			rb2d.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node boxCollider2DComponent = entityNode[GetTypeName<Physics2D::BoxCollider2D>()];
+		YAML::Node boxCollider2DComponent = entityNode[Modules::GetTypeName<Physics2D::BoxCollider2D>()];
 		if (boxCollider2DComponent)
 		{
 			Physics2D::BoxCollider2D& bc2d = AddComponent<Physics2D::BoxCollider2D>();
 			bc2d.Deserialize((void*)&componentContext);
 		}
 
-		YAML::Node circleCollider2DComponent = entityNode[GetTypeName<Physics2D::CircleCollider2D>()];
+		YAML::Node circleCollider2DComponent = entityNode[Modules::GetTypeName<Physics2D::CircleCollider2D>()];
 		if (circleCollider2DComponent)
 		{
 			Physics2D::CircleCollider2D& cc2d = AddComponent<Physics2D::CircleCollider2D>();

@@ -380,7 +380,7 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Asset Config Info
 		//==============================
-		constexpr static FixedBufStr32 GetAssetName()
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "User Interface";
 		}
@@ -485,4 +485,6 @@ namespace Kargono::RuntimeUI
 		//============================
 		RuntimeUIContext* i_ParentContext{ nullptr };
 	};
+
+	Register_Module_Type(UserInterface, Assets::AssetTag)
 }

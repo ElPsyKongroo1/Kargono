@@ -226,11 +226,11 @@ namespace Kargono::RuntimeUI
 		// Get the aspect ratio from the image value as a vec2
 		Optional<Assets::Metadata<Rendering::Texture2D>> metadata = Assets::s_Texture2DManager.GetMetadata(currentImageData->m_ImageRef.GetAssetHandle());
 		KG_ASSERT(metadata);
-		Rendering::TextureMetaData* textureMetadata = metadata->GetSpecificMetaData();
-		Math::vec2 textureAspectRatio = Math::vec2((float)textureMetadata->m_Width, (float)textureMetadata->m_Height);
+		Rendering::TextureMetaData& textureMetadata = metadata->GetMetadataExtension();
+		Math::vec2 textureAspectRatio = Math::vec2((float)textureMetadata.m_Width, (float)textureMetadata.m_Height);
 
 		// Ensure we avoid division by 0
-		if (textureMetadata->m_Width == 0 || textureMetadata->m_Height == 0)
+		if (textureMetadata.m_Width == 0 || textureMetadata.m_Height == 0)
 		{
 			KG_WARN("Unable to enforce fixed aspect ratio because the indicated texture's dimensions are invalid");
 			return;

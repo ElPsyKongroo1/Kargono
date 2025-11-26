@@ -180,9 +180,9 @@ namespace Kargono::Rendering
 		}
 	public:
 		//==============================
-		// Metaprogramming Info
+		// Asset Config Info
 		//==============================
-		using Metadata = ShaderMetaData;
+		using MetadataExtension = ShaderMetaData;
 		using Spec = ShaderSpecification;
 
 		constexpr static std::array<FixedBufStr16, 3> k_IntermediateExtensions
@@ -191,11 +191,8 @@ namespace Kargono::Rendering
 			".kgshaderfrag", 
 			".kgshadervert"
 		};
-	public:
-		//==============================
-		// Asset Config Info
-		//==============================
-		constexpr static FixedBufStr32 GetAssetName()
+
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "Shader";
 		}

@@ -39,7 +39,7 @@ namespace Kargono::ECSInternal
 		//==============================
 		// Asset Info
 		//==============================
-		constexpr static FixedBufStr32 GetAssetName()
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "Custom Component";
 		}

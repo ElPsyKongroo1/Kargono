@@ -7,7 +7,7 @@
 
 namespace Kargono::Scripting
 {
-	void ScriptRegistryData::Deserialize(void* context)
+	void ScriptRegistryExtension::Deserialize(void* context)
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
@@ -36,7 +36,7 @@ namespace Kargono::Scripting
 			scriptMetaData.m_FunctionType = script->m_FuncType;
 			scriptMetaData.m_ExplicitFuncType = script->m_ExplicitFuncType;
 
-			newMetadata.SetSpecificMetaData(&scriptMetaData);
+			newMetadata.SetMetadataExtension(scriptMetaData);
 		}
 
 		// Get Section Labels
@@ -53,7 +53,7 @@ namespace Kargono::Scripting
 		}
 	}
 
-	void ScriptRegistryData::Serialize(void* context)
+	void ScriptRegistryExtension::Serialize(void* context)
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
@@ -74,7 +74,7 @@ namespace Kargono::Scripting
 		serializer << YAML::EndSeq; // Start SectionLabels
 	}
 
-	bool ScriptRegistryData::AddScriptSectionLabel(std::string_view newLabel)
+	bool ScriptRegistryExtension::AddScriptSectionLabel(std::string_view newLabel)
 	{
 		if (newLabel == "None")
 		{
@@ -92,7 +92,7 @@ namespace Kargono::Scripting
 		return true;
 	}
 
-	bool ScriptRegistryData::EditScriptSectionLabel(std::string_view oldLabel, std::string_view newLabel)
+	bool ScriptRegistryExtension::EditScriptSectionLabel(std::string_view oldLabel, std::string_view newLabel)
 	{
 		if (!m_ScriptSectionLabels.contains(oldLabel))
 		{
@@ -120,11 +120,11 @@ namespace Kargono::Scripting
 
 		for (auto& [handle, metadata] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
-			ScriptMetaData* scriptMetaData = metadata.GetSpecificMetaData();
+			ScriptMetaData& scriptMetaData = metadata.GetMetadataExtension();
 
-			if (scriptMetaData->m_SectionLabel.StringView() == oldLabel)
+			if (scriptMetaData.m_SectionLabel.StringView() == oldLabel)
 			{
-				scriptMetaData->m_SectionLabel = newLabel;
+				scriptMetaData.m_SectionLabel = newLabel;
 			}
 		}
 
@@ -140,7 +140,7 @@ namespace Kargono::Scripting
 		return true;
 	}
 
-	bool ScriptRegistryData::DeleteScriptSectionLabel(std::string_view label)
+	bool ScriptRegistryExtension::DeleteScriptSectionLabel(std::string_view label)
 	{
 		if (!m_ScriptSectionLabels.contains(label))
 		{
@@ -161,10 +161,10 @@ namespace Kargono::Scripting
 
 		for (auto& [handle, metadata] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
-			ScriptMetaData* scriptMetaData = metadata.GetSpecificMetaData();
-			if (scriptMetaData->m_SectionLabel.StringView() == label)
+			ScriptMetaData& scriptMetaData = metadata.GetMetadataExtension();
+			if (scriptMetaData.m_SectionLabel.StringView() == label)
 			{
-				scriptMetaData->m_SectionLabel = "None";
+				scriptMetaData.m_SectionLabel = "None";
 			}
 		}
 
@@ -298,7 +298,7 @@ namespace Kargono::Scripting
 		// Get asset path
 		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
-		ScriptMetaData& scriptMetadata = *metadata->GetSpecificMetaData();
+		ScriptMetaData& scriptMetadata = metadata->GetMetadataExtension();
 
 		m_ID = metadata->m_Handle;
 		m_ScriptName = metadata->m_Name;
@@ -318,12 +318,11 @@ namespace Kargono::Scripting
 			metadata.m_Name.StringView(), spec.m_ExplicitFuncType));
 
 		// Load data into in-memory metadata object
-		ScriptMetaData* scriptMetadata = metadata.GetSpecificMetaData();
-		KG_ASSERT(scriptMetadata);
-		scriptMetadata->m_ScriptType = spec.m_Type;
-		scriptMetadata->m_SectionLabel = spec.m_SectionLabel;
-		scriptMetadata->m_FunctionType = spec.m_FunctionType;
-		scriptMetadata->m_ExplicitFuncType = spec.m_ExplicitFuncType;
+		ScriptMetaData& scriptMetadata = metadata.GetMetadataExtension();
+		scriptMetadata.m_ScriptType = spec.m_Type;
+		scriptMetadata.m_SectionLabel = spec.m_SectionLabel;
+		scriptMetadata.m_FunctionType = spec.m_FunctionType;
+		scriptMetadata.m_ExplicitFuncType = spec.m_ExplicitFuncType;
 	}
 
 	bool Script::ValidateCreateFromSpec(const Assets::AssetCreationData& creationData, const ScriptSpec& spec)
@@ -403,12 +402,11 @@ namespace Kargono::Scripting
 
 	void Script::UpdateFromSpec(Assets::Metadata<Script>& metadata, const ScriptSpec& spec)
 	{
-		ScriptMetaData* scriptMetadata = metadata.GetSpecificMetaData();
-		KG_ASSERT(scriptMetadata);
+		ScriptMetaData& scriptMetadata = metadata.GetMetadataExtension();
 
 		// Update script metadata
-		scriptMetadata->m_ScriptType = spec.m_Type;
-		scriptMetadata->m_SectionLabel = spec.m_SectionLabel;
+		scriptMetadata.m_ScriptType = spec.m_Type;
+		scriptMetadata.m_SectionLabel = spec.m_SectionLabel;
 
 		// Update fields
 		m_ScriptType = spec.m_Type;

@@ -25,7 +25,7 @@ namespace Kargono::EditorUI
 		//==============================
 		// Asset Info
 		//==============================
-		constexpr static FixedBufStr32 GetAssetName()
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "Color Palette";
 		}

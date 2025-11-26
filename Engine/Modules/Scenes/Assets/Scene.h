@@ -33,7 +33,7 @@ namespace Kargono::Scenes
 		//==============================
 		// Asset Config Info
 		//==============================
-		constexpr static FixedBufStr32 GetAssetName()
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "Scene";
 		}

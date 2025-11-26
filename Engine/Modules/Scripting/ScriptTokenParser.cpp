@@ -2654,7 +2654,7 @@ namespace Kargono::Scripting
 	{
 		if (location >= (int32_t)m_Tokens.size())
 		{
-			return { ScriptTokenType::None, "End of File", InvalidLine, InvalidColumn };
+			return { ScriptTokenType::None, "End of File", k_InvalidLine, k_InvalidColumn };
 		}
 		
 		return m_Tokens.at(location);
@@ -2664,12 +2664,12 @@ namespace Kargono::Scripting
 		// Return empty token if end of file reached or attempt to access token below 0
 		if ((int32_t)m_TokenLocation + offset >= (int32_t)m_Tokens.size())
 		{
-			return { ScriptTokenType::None, "End of File", InvalidLine, InvalidColumn };
+			return { ScriptTokenType::None, "End of File", k_InvalidLine, k_InvalidColumn };
 		}
 
 		if ((int32_t)m_TokenLocation + offset < 0)
 		{
-			return { ScriptTokenType::None, "Index below 0", InvalidLine, InvalidColumn };
+			return { ScriptTokenType::None, "Index below 0", k_InvalidLine, k_InvalidColumn };
 		}
 		return m_Tokens.at(m_TokenLocation + offset);
 	}

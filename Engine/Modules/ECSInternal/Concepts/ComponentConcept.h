@@ -1,13 +1,13 @@
 #pragma once
-#include "Modules/Core/Concepts/Copyable.h"
-#include "Modules/Core/Concepts/Serializable.h"
+#include "Modules/Core/Concepts/IsCopyable.h"
+#include "Modules/Core/Concepts/HasSerialization.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 
 namespace Kargono::ECSInternal
 {
 	template <typename t_Type>
-	concept ComponentConcept = Copyable<t_Type> && HasSerialization<t_Type>;
+	concept ComponentConcept = IsCopyable<t_Type> && HasSerialization<t_Type>;
 
 	struct DeserializeComponentContext
 	{

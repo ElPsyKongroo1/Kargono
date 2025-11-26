@@ -1,7 +1,7 @@
 #pragma once
 #include "Modules/ECSInternal/Module/ECSInternalModule.h"
 #include "Modules/FileSystem/FileSystem.h"
-#include "Modules/Core/Module.h"
+#include "Modules/Modules/InspectModuleType.h"
 #include "Modules/ECSInternal/Concepts/ComponentConcept.h"
 
 #include <cstdint>
@@ -10,10 +10,10 @@
 namespace Kargono::ECSInternal
 {
 	// Component Tag
-    Register_Module_Tag(Component, ComponentConcept<t_Type>)
+    Register_Module_Tag(Component, ComponentConcept<t_ModuleType>)
 
 	// Component Identifier
-	using ComponentIdentifier = ModuleTypeIdentifier;
+	using ComponentIdentifier = Modules::TypeIdentifier;
 	constexpr ComponentIdentifier k_InvalidComponentIdentifier
 	{
 		std::numeric_limits<ComponentIdentifier>::max()
@@ -25,6 +25,6 @@ namespace Kargono::ECSInternal
 	template<ComponentConcept t_ComponentType>
 	consteval ComponentIdentifier GetComponentIdentifier()
 	{
-		return GetModuleTypeIdentifier<t_ComponentType>();
+		return Modules::GetTypeIdentifier<t_ComponentType>();
 	}
 }

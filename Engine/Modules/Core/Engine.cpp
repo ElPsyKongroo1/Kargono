@@ -15,6 +15,7 @@
 #include "Modules/Network/Client.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/Scenes/SceneContext.h"
+#include "Modules/Assets/AssetService.h"
 
 
 namespace Kargono
@@ -341,6 +342,7 @@ namespace Kargono
 	bool Engine::Init(const EngineConfig& config, Application* app)
 	{
 		KG_ASSERT(!m_Active);
+		Assets::AssetService::Init(&m_EngineAllocator);
 
 		// Initialize data
 		m_Config = config;
@@ -376,6 +378,8 @@ namespace Kargono
 	}
 	bool Engine::Terminate()
 	{
+		Assets::AssetService::Terminate();
+
 		if (!m_Active)
 		{
 			KG_WARN("Attempt to terminate engine service when s_ActiveEngine is already closed");

@@ -39,16 +39,12 @@ namespace Kargono::Audio
 	{
 	public:
 		//==============================
-		// Metaprogramming Info
-		//==============================
-		using Metadata = AudioBufferMetaData;
-		constexpr static std::array<FixedBufStr16, 1> k_ImportExtensions{ ".wav" };
-		constexpr static std::array<FixedBufStr16, 1> k_IntermediateExtensions{ ".kgbinary" };
-	public:
-		//==============================
 		// Asset Config Info
 		//==============================
-		constexpr static FixedBufStr32 GetAssetName()
+		using MetadataExtension = AudioBufferMetaData;
+		constexpr static std::array<FixedBufStr16, 1> k_ImportExtensions{ ".wav" };
+		constexpr static std::array<FixedBufStr16, 1> k_IntermediateExtensions{ ".kgbinary" };
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "Audio Buffer";
 		}

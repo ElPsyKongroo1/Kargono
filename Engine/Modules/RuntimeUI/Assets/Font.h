@@ -81,14 +81,14 @@ namespace Kargono::RuntimeUI
 		//==============================
 		// Metaprogramming Info
 		//==============================
-		using Metadata = FontMetaData;
+		using MetadataExtension = FontMetaData;
 		constexpr static std::array<FixedBufStr16, 1> k_ImportExtensions{ ".ttf" };
 		constexpr static std::array<FixedBufStr16, 1> k_IntermediateExtensions{ ".kgbinary" };
 	public:
 		//==============================
 		// Asset Config Info
 		//==============================
-		constexpr static FixedBufStr32 GetAssetName()
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "Font";
 		}

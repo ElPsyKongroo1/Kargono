@@ -222,7 +222,7 @@ namespace Kargono::Rendering
 			metadata->GetAssetFullIntermediatePath(intermediateExtension);
 
 		// Load the texture
-		TextureMetaData& specificMetadata = *metadata->GetSpecificMetaData();
+		TextureMetaData& specificMetadata = metadata->GetMetadataExtension();
 		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
 		LoadBuffer(currentResource, specificMetadata);
 		currentResource.Release();
@@ -275,7 +275,7 @@ namespace Kargono::Rendering
 		}
 
 		// Load data into In-Memory Metadata object
-		TextureMetaData& specificMetadata{ *metadata.GetSpecificMetaData()};
+		TextureMetaData& specificMetadata{ metadata.GetMetadataExtension()};
 		specificMetadata.m_Width = width;
 		specificMetadata.m_Height = height;
 		specificMetadata.m_Channels = channels;
@@ -294,7 +294,7 @@ namespace Kargono::Rendering
 		Utility::FileSystem::WriteFileBinary(intermediatePath, spec.m_Buffer);
 
 		// Load data into texture metadata
-		TextureMetaData& textureMetadata{ *metadata.GetSpecificMetaData() };
+		TextureMetaData& textureMetadata{ metadata.GetMetadataExtension() };
 		textureMetadata.m_Width = spec.m_Width;
 		textureMetadata.m_Height = spec.m_Height;
 		textureMetadata.m_Channels = static_cast<uint32_t>(Utility::ImageFormatToBytes(spec.m_Format));

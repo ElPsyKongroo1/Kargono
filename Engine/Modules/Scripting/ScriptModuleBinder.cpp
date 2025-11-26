@@ -1089,8 +1089,8 @@ namespace Kargono::Scripting
 		bool compilationSuccess{ true };
 		for (auto& [handle, metadata] : Assets::s_ScriptManager.GetAssetRegistry())
 		{
-			ScriptMetaData* scriptMetaData = metadata.GetSpecificMetaData();
-			if (scriptMetaData->m_ScriptType == ScriptType::Engine)
+			ScriptMetaData& scriptMetaData = metadata.GetMetadataExtension();
+			if (scriptMetaData.m_ScriptType == ScriptType::Engine)
 			{
 				continue;
 			}

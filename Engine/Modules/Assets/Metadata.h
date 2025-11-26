@@ -1,15 +1,16 @@
 #pragma once
 
 #include "Kargono/Core/WrappedData.h"
-#include "Modules/Core/Module.h"
 #include "Kargono/Core/FixedBufferString.h"
 #include "Modules/Assets/AssetsCommon.h"
-#include "Modules/Assets/Concepts/MetadataConcept.h"
+#include "Modules/Assets/Concepts/MetadataExtensionConcept.h"
 #include "Modules/Assets/Concepts/AssetConcept.h"
 #include "Modules/Assets/Concepts/AssetFileConcepts.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Kargono/Projects/Project.h"
 #include "Modules/Core/MetaProgramming/MetaProgrammingTools.h"
+#include "Modules/Modules/InspectModuleType.h"
+#include "Modules/Modules/Concepts/IsModuleType.h"
 
 #include <filesystem>
 #include <vector>
@@ -35,8 +36,7 @@ namespace Kargono::Assets
 		//==============================
 		bool IsValid()
 		{
-			return m_Handle.IsValid() &&
-				m_TypeIdentifier != k_InvalidAssetIdentifier;
+			return m_Handle.IsValid();
 		}
 	public:
 		//=============================
@@ -66,7 +66,7 @@ namespace Kargono::Assets
 			KG_ASSERT(!m_Name.IsEmpty());
 			KG_ASSERT(ValidateExtension(extension));
 
-			return std::filesystem::path(GetModuleName<t_AssetType>()) / GetTypeName<t_AssetType>() / (m_Name.String() + std::string(extension));
+			return std::filesystem::path(Modules::GetModuleName<t_AssetType>()) / Modules::GetTypeName<t_AssetType>() / (m_Name.String() + std::string(extension));
 		}
 		std::filesystem::path GetAssetFullHiddenFolder() requires HasIntermediates<t_AssetType>
 		{
@@ -77,7 +77,7 @@ namespace Kargono::Assets
 		}
 		std::filesystem::path GetAssetRelativeHiddenFolder()
 		{
-			return std::filesystem::path(GetModuleName<t_AssetType>()) / GetTypeName<t_AssetType>();
+			return std::filesystem::path(Modules::GetModuleName<t_AssetType>()) / Modules::GetTypeName<t_AssetType>();
 		}
 	private:
 		// Helper(s)
@@ -97,19 +97,13 @@ namespace Kargono::Assets
 		//==============================
 		// Getters/Setters
 		//==============================
-		auto* GetSpecificMetaData() requires HasMetadata<t_AssetType>
+		MetadataExtension_t<t_AssetType>& GetMetadataExtension() requires HasMetadataExtension<t_AssetType>
 		{
-			KG_ASSERT(m_SpecificMetaData);
-			return static_cast<typename t_AssetType::Metadata*>(m_SpecificMetaData);
+			return m_MetadataExtension;
 		}
-
-		void SetSpecificMetaData(auto* newMetaData) requires HasMetadata<t_AssetType>
+		void SetMetadataExtension(MetadataExtension_t<t_AssetType>& newMetaData) requires HasMetadataExtension<t_AssetType>
 		{
-			// Ensure provided type matches expected metadata type
-			EnforceTypesMatch<typename t_AssetType::Metadata*, decltype(newMetaData)>();
-
-			KG_ASSERT(newMetaData);
-			m_SpecificMetaData = static_cast<void*>(newMetaData);
+			m_MetadataExtension = newMetaData;
 		}
 	public:
 		//==============================
@@ -118,13 +112,12 @@ namespace Kargono::Assets
 		FixedBufStr16 m_Name{};
 		std::filesystem::path m_FileDirectory{};
 		AssetHandle m_Handle{ Assets::k_EmptyHandle };
-		AssetIdentifier m_TypeIdentifier{ k_InvalidAssetIdentifier };
 		Utility::SHA256Hash m_Hash{};
 		bool m_IsHidden{ false };
 	private:
 		//==============================
 		// Internal Field(s)
 		//==============================
-		void* m_SpecificMetaData{ nullptr };
+		MetadataExtension_t<t_AssetType> m_MetadataExtension{};
 	};
 }

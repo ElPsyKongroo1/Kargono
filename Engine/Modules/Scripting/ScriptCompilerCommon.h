@@ -90,8 +90,8 @@ namespace Kargono::Scripting
 		Program
 	};
 
-	static inline uint32_t InvalidLine { std::numeric_limits<uint32_t>::max() };
-	static inline uint32_t InvalidColumn { std::numeric_limits<uint32_t>::max() };
+	constexpr uint32_t k_InvalidLine { std::numeric_limits<uint32_t>::max() };
+	constexpr uint32_t k_InvalidColumn { std::numeric_limits<uint32_t>::max() };
 
 	struct MemberType;
 
@@ -196,8 +196,8 @@ namespace Kargono::Scripting
 	public:
 		ScriptTokenType Type{ ScriptTokenType::None };
 		std::string Value{};
-		uint32_t Line{ InvalidLine };
-		uint32_t Column{ InvalidColumn };
+		uint32_t Line{ k_InvalidLine };
+		uint32_t Column{ k_InvalidColumn };
 	public:
 		operator bool() const
 		{

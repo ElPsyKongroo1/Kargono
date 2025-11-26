@@ -16,12 +16,12 @@
 
 namespace Kargono::Assets
 {
-	Register_Module_Tag(Asset, AssetConcept<t_Type>)
+	Register_Module_Tag(Asset, AssetConcept<t_ModuleType>)
 
 	template<AssetConcept t_AssetType>
 	consteval AssetIdentifier GetAssetIdentifier()
 	{
-		return GetModuleTypeIdentifier<t_AssetType>();
+		return Modules::GetTypeIdentifier<t_AssetType>();
 	}
 	template<AssetConcept t_AssetType>
 	struct DeserializeAssetContext

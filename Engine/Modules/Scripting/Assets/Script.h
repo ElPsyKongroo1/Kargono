@@ -21,14 +21,14 @@ namespace Kargono::Scripting
 		Scripting::ExplicitFuncType m_ExplicitFuncType{};
 	};
 
-	struct ScriptRegistryData
+	struct ScriptRegistryExtension
 	{
 	public:
 		//==============================
 		// Constructors/Destructors
 		//==============================
-		ScriptRegistryData() = default;
-		~ScriptRegistryData() = default;
+		ScriptRegistryExtension() = default;
+		~ScriptRegistryExtension() = default;
 	public:
 		//==============================
 		// Manage Section Labels
@@ -80,13 +80,13 @@ namespace Kargono::Scripting
 		// Metaprogramming Info
 		//==============================
 		using Spec = ScriptSpec;
-		using RegistryData = ScriptRegistryData;
-		using Metadata = ScriptMetaData;
+		using RegistryExtension = ScriptRegistryExtension;
+		using MetadataExtension = ScriptMetaData;
 	public:
 		//==============================
 		// Asset Config Info
 		//==============================
-		constexpr static FixedBufStr32 GetAssetName()
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "Kargono Script";
 		}

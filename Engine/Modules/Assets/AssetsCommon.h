@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Modules/Core/Module.h"
-
+#include "Modules/Modules/ModulesCommon.h"
 #include "Kargono/Core/UUID.h"
 #include "Kargono/Core/FixedBufferString.h"
 #include "Kargono/Core/BitField.h"
@@ -15,7 +14,7 @@
 namespace Kargono::Assets
 {
 	// Unique identifier for each type of asset
-	using AssetIdentifier = ModuleTypeIdentifier;
+	using AssetIdentifier = Modules::TypeIdentifier;
 	constexpr AssetIdentifier k_InvalidAssetIdentifier
 	{
 		std::numeric_limits<AssetIdentifier>::max()

@@ -88,12 +88,11 @@ namespace Kargono::Audio
 		}
 
 		// Load data into in-memory metadata object
-		AudioBufferMetaData* audioMetadata{ metadata.GetSpecificMetaData() };
-		KG_ASSERT(audioMetadata);
-		audioMetadata->m_Channels = channels;
-		audioMetadata->m_SampleRate = sampleRate;
-		audioMetadata->m_TotalPcmFrameCount = totalPcmFrameCount;
-		audioMetadata->m_TotalSize = totalSize;
+		AudioBufferMetaData& audioMetadata{ metadata.GetMetadataExtension() };
+		audioMetadata.m_Channels = channels;
+		audioMetadata.m_SampleRate = sampleRate;
+		audioMetadata.m_TotalPcmFrameCount = totalPcmFrameCount;
+		audioMetadata.m_TotalSize = totalSize;
 		pcmData.Release();
 	}
 
@@ -130,7 +129,7 @@ namespace Kargono::Audio
 		};
 
 		// Get specific metadata
-		AudioBufferMetaData audioBufferMetadata = *metadata.GetSpecificMetaData();
+		AudioBufferMetaData& audioBufferMetadata = metadata.GetMetadataExtension();
 
 		// Load audio data from file
 		Buffer currentResource{};

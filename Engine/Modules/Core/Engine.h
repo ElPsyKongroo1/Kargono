@@ -12,6 +12,7 @@
 #include "Kargono/Core/FunctionQueue.h"
 #include "Kargono/Utility/Timers.h"
 #include "Kargono/Core/FixedBufferString.h"
+#include "Modules/Memory/HeapAlloc.h"
 
 #include <functional>
 #include <mutex>
@@ -176,6 +177,8 @@ namespace Kargono
 		// Engine Data
 		Scope<Window> m_Window{ nullptr };
 		Application* m_CurrentApp{ nullptr };
+		// Memory allocator
+		Memory::HeapAllocator m_EngineAllocator;
 	private:
 		friend EngineService;
 	};

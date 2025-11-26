@@ -8,8 +8,9 @@
 #include "Modules/Assets/AssetReference.h"
 #include "Modules/Memory/IAllocator.h"
 #include "Modules/Assets/Concepts/ManageAssetConcepts.h"
-#include "Modules/Assets/Concepts/RegistryConcept.h"
+#include "Modules/Assets/Concepts/RegistryExtensionConcept.h"
 #include "Modules/Core/MetaProgramming/MetaProgrammingTools.h"
+#include "Modules/Modules/Concepts/IsModuleType.h"
 
 #include "API/Serialization/yamlcppAPI.h"
 
@@ -23,10 +24,16 @@ namespace Kargono::Assets
 	template<AssetConcept t_AssetType>
 	using AssetRegistry = std::unordered_map<AssetHandle, Metadata<t_AssetType>>;
 
+	// Optional asset cache
 	template<AssetConcept t_AssetType>
-	using AssetCache = std::unordered_map<AssetHandle, AssetReference<t_AssetType>>;
+	using AssetCache_t = std::conditional_t
+		<
+		HasAssetCacheFlag<t_AssetType>, // Condition
+		std::unordered_map<AssetHandle, AssetReference<t_AssetType>>, // True type
+		std::monostate // False type
+		>;
 
-	template<AssetConcept t_AssetType>
+	template<AssetConcept t_AssetType> requires Modules::IsModuleType<t_AssetType>
 	class AssetManager
 	{
 	public:
@@ -126,12 +133,9 @@ namespace Kargono::Assets
 			return GetAssetByHandle(handle);
 		}
 
-		AssetReference<t_AssetType> GetAssetBySpec(const auto& spec)
+		AssetReference<t_AssetType> GetAssetBySpec(const Specification_t<t_AssetType>& spec)
 			requires HasGetAssetFromSpec<t_AssetType>
 		{
-			// Ensure spec type matches expected type
-			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
-
 			// Check each asset for matching spec
 			for (auto& [handle, metadata] : m_AssetRegistry)
 			{
@@ -266,7 +270,7 @@ namespace Kargono::Assets
 			return true;
 		}
 
-		void UpdateAsset(AssetHandle handle, const auto& spec)
+		void UpdateAsset(AssetHandle handle, const Specification_t<t_AssetType>& spec)
 			requires HasUpdateFromSpec<t_AssetType>
 		{
 			// Ensure asset exists and is cached
@@ -467,8 +471,7 @@ namespace Kargono::Assets
 			// Create metadata
 			Metadata<t_AssetType> newMetadata
 			{ 
-				CreateAssetMetadata(GetAssetIdentifier<t_AssetType>(),
-				creationData.m_AssetName, 
+				CreateAssetMetadata(creationData.m_AssetName, 
 				metadataFileDirectory, 
 				creationData.m_IsHidden) 
 			};
@@ -477,7 +480,7 @@ namespace Kargono::Assets
 			if (!newMetadata.IsValid())
 			{
 				KG_WARN("Failed to create valid metadata for new {} asset with name {}", 
-					t_AssetType::GetAssetName(), creationData.m_AssetName);
+					t_AssetType::GetDisplayName(), creationData.m_AssetName);
 				return {};
 			}
 
@@ -574,14 +577,14 @@ namespace Kargono::Assets
 			}
 
 			// Create metadata
-			Metadata<t_AssetType> newMetadata{ CreateAssetMetadata(GetAssetIdentifier<t_AssetType>(), creationData.m_AssetName,
+			Metadata<t_AssetType> newMetadata{ CreateAssetMetadata(creationData.m_AssetName,
 				metadataFileDirectory, creationData.m_IsHidden) };
 
 			// Validate metadata
 			if (!newMetadata.IsValid())
 			{
 				KG_WARN("Failed to create valid metadata for new {} asset with name {}",
-					t_AssetType::GetAssetName(), creationData.m_AssetName);
+					t_AssetType::GetDisplayName(), creationData.m_AssetName);
 				return {};
 			}
 
@@ -621,12 +624,9 @@ namespace Kargono::Assets
 		}
 		
 		AssetRef<t_AssetType> CreateAssetFromSpec(const AssetCreationData& creationData, 
-			const auto& spec)
+			const Specification_t<t_AssetType>& spec)
 			requires HasCreateFromSpec<t_AssetType>
 		{
-			// Ensure spec type matches expected type
-			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
-
 			// Handle validation
 			if constexpr (HasValidateCreateFromSpec<t_AssetType>)
 			{
@@ -667,14 +667,14 @@ namespace Kargono::Assets
 			}
 
 			// Create metadata
-			Metadata<t_AssetType> newMetadata{ CreateAssetMetadata(GetAssetIdentifier<t_AssetType>(),
-				creationData.m_AssetName, metadataFileDirectory, creationData.m_IsHidden) };
+			Metadata<t_AssetType> newMetadata{ CreateAssetMetadata(creationData.m_AssetName, 
+				metadataFileDirectory, creationData.m_IsHidden) };
 
 			// Validate metadata
 			if (!newMetadata.IsValid())
 			{
 				KG_WARN("Failed to create valid metadata for new {} asset with name {}",
-					t_AssetType::GetAssetName(), creationData.m_AssetName);
+					t_AssetType::GetDisplayName(), creationData.m_AssetName);
 				return {};
 			}
 
@@ -734,12 +734,13 @@ namespace Kargono::Assets
 			// Set up serializer
 			YAML::Emitter serializer;
 			serializer << YAML::BeginMap;
-			serializer << YAML::Key << "Registry" << YAML::Value << t_AssetType::GetAssetName().CString();
+			serializer << YAML::Key << "TypeName" << YAML::Value << Modules::GetTypeName<t_AssetType>();
+			serializer << YAML::Key << "TypeID" << YAML::Value << GetAssetIdentifier<t_AssetType>();
 
 			// Serialize other registry specific data
-			if constexpr (HasRegistryData<t_AssetType>)
+			if constexpr (HasRegistryExtension<t_AssetType>)
 			{
-				SerializeRegistrySpecificData(serializer);
+				SerializeRegistryExtension(serializer);
 			}
 
 			// Serialize all assets
@@ -762,11 +763,9 @@ namespace Kargono::Assets
 				{
 					serializer << YAML::Key << "IntermediateDirectory" << YAML::Value << metadata.GetAssetRelativeIntermediatePath({}).string();
 				}
-				serializer << YAML::Key << "AssetIdentifier" << YAML::Value << metadata.m_TypeIdentifier;
-
-				if constexpr (HasMetadata<t_AssetType>)
+				if constexpr (HasMetadataExtension<t_AssetType>)
 				{
-					SerializeAssetSpecificMetadata(serializer, metadata);
+					SerializeMetadataExtension(serializer, metadata);
 				}
 				
 				serializer << YAML::EndMap; // Close metadata map
@@ -812,21 +811,24 @@ namespace Kargono::Assets
 				return;
 			}
 
-			// Opening registry node 
-			if (!data["Registry"]) 
-			{ 
-				KG_WARN("Could not validate initial registry node for the file: {}", registryPath.string());
-				return; 
+			// Validate registry name and identifier
+			const std::string registryName = data["TypeName"].as<std::string>();
+			if (registryName.c_str() != t_AssetType::GetDisplayName().CString())
+			{
+				KG_WARN("Asset type name from on-disk registry does not match asset's type name");
+				return;
+			}
+			AssetIdentifier identifier = data["TypeID"].as<AssetIdentifier>();
+			if (identifier != GetAssetIdentifier<t_AssetType>())
+			{
+				KG_WARN("Asset identifier from on-disk registry does not match asset's identifier");
+				return;
 			}
 
-			// Validate registry name
-			const std::string registryName = data["Registry"].as<std::string>();
-			KG_INFO("Deserializing {} Registry", registryName);
-
 			// Open registry specific data
-			if constexpr (HasRegistryData<t_AssetType>)
+			if constexpr (HasRegistryExtension<t_AssetType>)
 			{
-				DeserializeRegistrySpecificData(data);
+				DeserializeRegistryExtension(data);
 			}
 
 			// Opening all assets 
@@ -843,18 +845,22 @@ namespace Kargono::Assets
 					newMetadata.m_Name = metadataNode["Name"].as<std::string>();
 					newMetadata.m_Hash = metadataNode["Hash"].as<std::string>();
 					newMetadata.m_IsHidden = metadataNode["IsHidden"].as<bool>();
-					newMetadata.m_TypeIdentifier = metadataNode["AssetIdentifier"].as<AssetIdentifier>();
 
-					// Get file location
+					// Get file directory
 					if constexpr (HasFileLocation<t_AssetType>)
 					{
 						newMetadata.m_FileDirectory = metadataNode["FileDirectory"].as<std::string>();
 					}
+					else
+					{
+						KG_ASSERT(!metadataNode["FileDirectory"],
+							"Attempt to provide a file location for an asset type that does not support it");
+					}
 
 					// Open asset specific metadata
-					if constexpr (HasMetadata<t_AssetType>)
+					if constexpr (HasMetadataExtension<t_AssetType>)
 					{
-						DeserializeAssetSpecificMetadata(metadataNode, newMetadata);
+						DeserializeMetadataExtension(metadataNode, newMetadata);
 					}
 
 					// Add asset to in memory registry 
@@ -928,7 +934,7 @@ namespace Kargono::Assets
 			return m_AssetRegistry;
 		}
 
-		AssetCache<t_AssetType>& GetAssetCache() requires HasAssetCacheFlag<t_AssetType>
+		AssetCache_t<t_AssetType>& GetAssetCache() requires HasAssetCacheFlag<t_AssetType>
 		{
 			return m_AssetCache;
 		}
@@ -942,12 +948,12 @@ namespace Kargono::Assets
 		{
 			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
-			return projectPaths.GetIntermediateDirectory() / GetModuleName<t_AssetType>() / GetTypeName<t_AssetType>();
+			return projectPaths.GetIntermediateDirectory() / Modules::GetModuleName<t_AssetType>() / Modules::GetTypeName<t_AssetType>();
 		}
 
 		std::filesystem::path GetAssetRegistryPath()
 		{
-			return GetIntermediateDirectory() / (std::string(GetTypeName<t_AssetType>()) + "Registry.kgreg");
+			return GetIntermediateDirectory() / (std::string(Modules::GetTypeName<t_AssetType>()) + "Registry.kgreg");
 		}
 
 	private:
@@ -1026,61 +1032,42 @@ namespace Kargono::Assets
 			asset.Serialize((void*)(&serializeContext));
 		}
 
-		void DeserializeRegistrySpecificData(YAML::Node& registryNode)
-			requires HasRegistryData<t_AssetType>
+		void DeserializeRegistryExtension(YAML::Node& registryNode)
+			requires HasRegistryExtension<t_AssetType>
 		{
-			// Check if the registry data already exists
-			if (!m_RegistrySpecificData)
-			{
-				m_RegistrySpecificData = i_BackingAllocator->Alloc<typename t_AssetType::RegistryData>();
-			}
-
-			// Get registry specific data
-			typename t_AssetType::RegistryData* registryData = (typename t_AssetType::RegistryData*)m_RegistrySpecificData;
-
 			// Deserialize registry
 			DeserializeRegistryContext context{ &registryNode };
-			registryData->Deserialize((void*)&context);
+			m_RegistryExtension.Deserialize((void*)&context);
 		}
 
-		void SerializeRegistrySpecificData(YAML::Emitter& serializer)
-			requires HasRegistryData<t_AssetType>
+		void SerializeRegistryExtension(YAML::Emitter& serializer)
+			requires HasRegistryExtension<t_AssetType>
 		{
-			// Get registry specific data reference
-			typename t_AssetType::RegistryData* registryData = (typename t_AssetType::RegistryData*)m_RegistrySpecificData;
-			KG_ASSERT(registryData);
-
 			// Serialize registry
 			SerializeRegistryContext context{ &serializer };
-			registryData->Serialize((void*)&context);
+			m_RegistryExtension.Serialize((void*)&context);
 		}
 
-		void DeserializeAssetSpecificMetadata(YAML::Node& node, Metadata<t_AssetType>& metadata)
-			requires HasMetadata<t_AssetType>
+		void DeserializeMetadataExtension(YAML::Node& node, Metadata<t_AssetType>& metadata)
+			requires HasMetadataExtension<t_AssetType>
 		{
 			// Get specific metadata
-			typename t_AssetType::Metadata* specificMetadata = metadata.GetSpecificMetaData();
-			if (!specificMetadata)
-			{
-				specificMetadata = i_BackingAllocator->Alloc<typename t_AssetType::Metadata>();
-				metadata.SetSpecificMetaData(specificMetadata);
-			}
+			MetadataExtension_t<t_AssetType>& specificMetadata = metadata.GetMetadataExtension();
 
 			// Deserialize specific metadata
 			DeserializeMetaDataContext context{ &node, &metadata };
-			specificMetadata->Deserialize((void*)&context);
+			specificMetadata.Deserialize((void*)&context);
 		}
  
-		void SerializeAssetSpecificMetadata(YAML::Emitter& serializer, Metadata<t_AssetType>& metadata)
-			requires HasMetadata<t_AssetType>
+		void SerializeMetadataExtension(YAML::Emitter& serializer, Metadata<t_AssetType>& metadata)
+			requires HasMetadataExtension<t_AssetType>
 		{
 			// Get specific metadata
-			typename t_AssetType::Metadata* specificMetadata = metadata.GetSpecificMetaData();
-			KG_ASSERT(specificMetadata);
+			MetadataExtension_t<t_AssetType>& specificMetadata = metadata.GetMetadataExtension();
 
 			// Serialize specific metadata
 			SerializeMetaDataContext context{ &serializer, &metadata };
-			specificMetadata->Serialize((void*)&context);
+			specificMetadata.Serialize((void*)&context);
 		}
 
 		std::filesystem::path NormalizeAssetDirectory(const std::filesystem::path& creationDirectory)
@@ -1236,12 +1223,9 @@ namespace Kargono::Assets
 		};
 
 		void UpdateFromSpecImpl(Metadata<t_AssetType>& metadata,
-			AssetReference<t_AssetType> currentRef, const auto& spec)
+			AssetReference<t_AssetType> currentRef, const Specification_t<t_AssetType>& spec)
 			requires HasUpdateFromSpec<t_AssetType>
 		{
-			// Ensure spec type matches expected type
-			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
-
 			// Ensure asset type supports serialization
 			KG_ASSERT(metadata.IsValid());
 			KG_ASSERT(currentRef.IsUsable());
@@ -1253,12 +1237,9 @@ namespace Kargono::Assets
 			currentAsset.UpdateFromSpec(metadata, spec);
 		}
 
-		Ref<void> ValidateUpdateFromSpecImpl(Metadata<t_AssetType>& metadata, const auto& spec)
+		Ref<void> ValidateUpdateFromSpecImpl(Metadata<t_AssetType>& metadata, const Specification_t<t_AssetType>& spec)
 			requires HasValidateUpdateFromSpec<t_AssetType>
 		{
-			// Ensure spec type matches expected type
-			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
-
 			KG_ASSERT(metadata.IsValid());
 
 			// Call user-defined validate function
@@ -1293,45 +1274,33 @@ namespace Kargono::Assets
 			t_AssetType::CreateFromFile(metadata, sourcePath);
 		};
 
-		void CreateFromSpecImpl(Metadata<t_AssetType>& metadata, const auto& spec)
+		void CreateFromSpecImpl(Metadata<t_AssetType>& metadata, const Specification_t<t_AssetType>& spec)
 			requires HasCreateFromSpec<t_AssetType>
 		{
-			// Ensure spec type matches expected type
-			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
-
 			KG_ASSERT(metadata.IsValid());
 
-			// Call user-defined create-from-file function
+			// Call user-defined create-from-spec function
 			t_AssetType::CreateFromSpec(metadata, spec);
 		};
 
 		void ValidateCreateFromSpecImpl(const AssetCreationData& creationData, 
-			const auto& spec)
+			const Specification_t<t_AssetType>& spec)
 			requires HasValidateCreateFromSpec<t_AssetType>
 		{
-			// Ensure spec type matches expected type
-			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
-
-			// Call user-defined create-from-file function
+			// Call user-defined validate-from-spec function
 			t_AssetType::ValidateCreateFromSpec(creationData, spec);
 		};
 
-		bool GetAssetFromSpecImpl(Metadata<t_AssetType>& metadata, const auto& spec)
+		bool GetAssetFromSpecImpl(Metadata<t_AssetType>& metadata, const Specification_t<t_AssetType>& spec)
 			requires HasGetAssetFromSpec<t_AssetType>
 		{
-			// Ensure spec type matches expected type
-			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
-
 			// Call user-defined function to check if an asset meets the provided specification requirements
 			return t_AssetType::GetAssetFromSpec(metadata, spec);
 		};
 
-		bool GetHashFromSpecImpl(const auto& spec)
+		bool GetHashFromSpecImpl(const Specification_t<t_AssetType>& spec)
 			requires HasHashFromSpec<t_AssetType>
 		{
-			// Ensure spec type matches expected type
-			EnforceTypesMatch<typename t_AssetType::Spec, decltype(spec)>();
-
 			// Call user-defined function to get hash from spec
 			return t_AssetType::GetHashFromSpec(spec);
 		};
@@ -1494,14 +1463,14 @@ namespace Kargono::Assets
 			if (fileLocation.extension().string().c_str() != t_AssetType::GetFileExtension().CString())
 			{
 				KG_WARN("Provided query file location does not have the correct file extension for asset type {}, {}",
-					t_AssetType::GetAssetName().CString(), fileLocation.c_str());
+					t_AssetType::GetDisplayName().CString(), fileLocation.c_str());
 				return false;
 			}
 
 			return true;
 		}
 
-		Metadata<t_AssetType> CreateAssetMetadata(AssetIdentifier identifier, std::string_view assetName,
+		Metadata<t_AssetType> CreateAssetMetadata(std::string_view assetName,
 			const std::filesystem::path& assetDirectory, bool isHidden)
 		{
 			// Generate new ID
@@ -1526,9 +1495,8 @@ namespace Kargono::Assets
 
 			// Create basic metadata
 			Metadata<t_AssetType> newMetadata{};
-			newMetadata.m_Handle = newHandle;
 			newMetadata.m_Name = assetName;
-			newMetadata.m_TypeIdentifier = identifier;
+			newMetadata.m_Handle = newHandle;
 			newMetadata.m_IsHidden = isHidden;
 
 			// Set file directory
@@ -1596,8 +1564,8 @@ namespace Kargono::Assets
 		//==============================
 		bool m_Active{ false };
 		AssetRegistry<t_AssetType> m_AssetRegistry{};
-		AssetCache<t_AssetType> m_AssetCache{};
-		void* m_RegistrySpecificData{ nullptr };
+		AssetCache_t<t_AssetType> m_AssetCache;
+		RegistryExtension_t<t_AssetType> m_RegistryExtension;
 	private:
 		//==============================
 		// Injected Dependencies

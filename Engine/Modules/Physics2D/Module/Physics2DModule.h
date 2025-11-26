@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Modules/Core/Module.h"
+#include "Modules/Modules/RegisterModule.h"
 
 namespace Kargono::Physics2D
 {

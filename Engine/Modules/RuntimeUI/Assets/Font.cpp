@@ -98,7 +98,7 @@ namespace Kargono::RuntimeUI
 		// Get context fields
 		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
 
-		FontMetaData fontMetadata = *metadata->GetSpecificMetaData();
+		FontMetaData& fontMetadata = metadata->GetMetadataExtension();
 		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
 
 		// Create Texture
@@ -270,7 +270,7 @@ namespace Kargono::RuntimeUI
 		Utility::FileSystem::WriteFileBinary(intermediatePath, buffer);
 
 		// Load data into In-Memory Metadata object
-		FontMetaData& fontMetadata = *metadata.GetSpecificMetaData();
+		FontMetaData& fontMetadata = metadata.GetMetadataExtension();
 		fontMetadata.m_AtlasWidth = static_cast<float>(textureSpec.m_Width);
 		fontMetadata.m_AtlasHeight = static_cast<float>(textureSpec.m_Height);
 		fontMetadata.m_LineHeight = lineHeight;

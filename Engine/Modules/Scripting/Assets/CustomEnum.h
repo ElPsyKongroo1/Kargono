@@ -14,7 +14,7 @@ namespace Kargono::Scripting
 		//==============================
 		// Asset Config Info
 		//==============================
-		constexpr static FixedBufStr32 GetAssetName()
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "Custom Enum";
 		}

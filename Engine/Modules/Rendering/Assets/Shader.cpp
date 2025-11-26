@@ -273,8 +273,7 @@ namespace Kargono::Rendering
 		Assets::Metadata<Shader>* metadata{ assetContext.m_AssetMetadata };
 		KG_ASSERT(metadata);
 
-		ShaderMetaData* shaderMetadata = metadata->GetSpecificMetaData();
-		KG_ASSERT(shaderMetadata);
+		ShaderMetaData& shaderMetadata = metadata->GetMetadataExtension();
 
 		std::unordered_map<GLenum, std::vector<uint32_t>> openGLSPIRV;
 		std::array<FixedBufStr16, 2> shaderStageExtensions { k_IntermediateExtensions[1], k_IntermediateExtensions[2] };
@@ -297,9 +296,9 @@ namespace Kargono::Rendering
 		}
 		RegisterShader(openGLSPIRV);
 		m_Name = static_cast<std::string>(metadata->m_Handle);
-		SetSpecification(shaderMetadata->m_ShaderSpec);
-		SetInputLayout(shaderMetadata->m_InputLayout);
-		SetUniformList(shaderMetadata->m_UniformList);
+		SetSpecification(shaderMetadata.m_ShaderSpec);
+		SetInputLayout(shaderMetadata.m_InputLayout);
+		SetUniformList(shaderMetadata.m_UniformList);
 		openGLSPIRV.clear();
 	}
 
@@ -321,8 +320,8 @@ namespace Kargono::Rendering
 
 		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
-		ShaderMetaData* shaderMetadata = metadata.GetSpecificMetaData();
-		if (shaderMetadata->m_ShaderSpec == querySpec)
+		ShaderMetaData& shaderMetadata = metadata.GetMetadataExtension();
+		if (shaderMetadata.m_ShaderSpec == querySpec)
 		{
 			return true;
 		}
@@ -372,10 +371,10 @@ namespace Kargono::Rendering
 		Utility::FileSystem::WriteFileString(shaderSourcePath, debugString);
 
 		// Load in-memory metadata object
-		ShaderMetaData* shaderMetadata = metadata.GetSpecificMetaData();
-		shaderMetadata->m_ShaderSpec = spec;
-		shaderMetadata->m_InputLayout = bufferLayout;
-		shaderMetadata->m_UniformList = uniformList;
+		ShaderMetaData& shaderMetadata = metadata.GetMetadataExtension();
+		shaderMetadata.m_ShaderSpec = spec;
+		shaderMetadata.m_InputLayout = bufferLayout;
+		shaderMetadata.m_UniformList = uniformList;
 	}
 
 	void Shader::RegisterShader(const std::unordered_map<GLenum, std::vector<uint32_t>>& openGLSPIRV)

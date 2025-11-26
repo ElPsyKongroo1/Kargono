@@ -20,7 +20,7 @@ namespace Kargono::GlobalState
 		//==============================
 		// Asset Config Info
 		//==============================
-		constexpr static FixedBufStr32 GetAssetName()
+		constexpr static FixedBufStr32 GetDisplayName()
 		{
 			return "Global State";
 		}

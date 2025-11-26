@@ -3,7 +3,7 @@
 #include "Kargono/Core/BitField.h"
 #include "Modules/FileSystem/FileSystem.h"
 #include "Modules/ECSInternal/Module/ECSInternalModule.h"
-#include "Modules/Core/Concepts/Copyable.h"
+#include "Modules/Core/Concepts/IsCopyable.h"
 #include "Modules/Assets/AssetsCommon.h"
 
 #include <cstdint>

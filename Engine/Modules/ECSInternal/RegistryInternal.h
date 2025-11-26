@@ -458,7 +458,7 @@ namespace Kargono::ECSInternal
 				// Fill array w/ templated type identifiers
 				constexpr ComponentIDList<k_NumComponents> identifiers
 				{
-					Utility::FileSystem::CRCFromString(GetUniqueIdentifier<t_ComponentTypes>().CString())...
+					Utility::FileSystem::CRCFromString(Modules::GetUniqueTypeName<t_ComponentTypes>().CString())...
 				};
 
 				// Get the multi flat view
