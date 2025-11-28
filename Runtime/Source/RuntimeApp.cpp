@@ -28,24 +28,24 @@ namespace Kargono
 
 	bool RuntimeApp::Init()
 	{
-		/*KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Rendering::Shader>(), Modules::GetTypeIdentifier<Rendering::Shader>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Rendering::Texture2D>(), Modules::GetTypeIdentifier<Rendering::Texture2D>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Audio::AudioBuffer>(), Modules::GetTypeIdentifier<Audio::AudioBuffer>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<RuntimeUI::Font>(), Modules::GetTypeIdentifier<RuntimeUI::Font>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Scripting::Script>(), Modules::GetTypeIdentifier<Scripting::Script>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<ECSInternal::CustomComponent>(), Modules::GetTypeIdentifier<ECSInternal::CustomComponent>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Scripting::CustomEnum>(), Modules::GetTypeIdentifier<Scripting::CustomEnum>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<EditorUI::ColorPalette>(), Modules::GetTypeIdentifier<EditorUI::ColorPalette>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<InputMap::InputMap>(), Modules::GetTypeIdentifier<InputMap::InputMap>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Particles::EmitterConfig>(), Modules::GetTypeIdentifier<Particles::EmitterConfig>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<GlobalState::GameState>(), Modules::GetTypeIdentifier<GlobalState::GameState>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<GlobalState::GlobalState>(), Modules::GetTypeIdentifier<GlobalState::GlobalState>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<RuntimeUI::UserInterface>(), Modules::GetTypeIdentifier<RuntimeUI::UserInterface>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<States::State>(), Modules::GetTypeIdentifier<States::State>());
-		KG_WARN("The {} asset has an ID of {}", Modules::GetTypeName<Scenes::Scene>(), Modules::GetTypeIdentifier<Scenes::Scene>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<Rendering::Shader>(), Modules::GetTypeName<Rendering::Shader>(), Modules::GetTypeIdentifier<Rendering::Shader>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<Rendering::Texture2D>(), Modules::GetTypeName<Rendering::Texture2D>(), Modules::GetTypeIdentifier<Rendering::Texture2D>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<Audio::AudioBuffer>(), Modules::GetTypeName<Audio::AudioBuffer>(), Modules::GetTypeIdentifier<Audio::AudioBuffer>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<RuntimeUI::Font>(), Modules::GetTypeName<RuntimeUI::Font>(), Modules::GetTypeIdentifier<RuntimeUI::Font>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<Scripting::Script>(), Modules::GetTypeName<Scripting::Script>(), Modules::GetTypeIdentifier<Scripting::Script>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<ECSInternal::CustomComponent>(), Modules::GetTypeName<ECSInternal::CustomComponent>(), Modules::GetTypeIdentifier<ECSInternal::CustomComponent>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<Scripting::CustomEnum>(), Modules::GetTypeName<Scripting::CustomEnum>(), Modules::GetTypeIdentifier<Scripting::CustomEnum>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<EditorUI::ColorPalette>(), Modules::GetTypeName<EditorUI::ColorPalette>(), Modules::GetTypeIdentifier<EditorUI::ColorPalette>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<InputMap::InputMap>(), Modules::GetTypeName<InputMap::InputMap>(), Modules::GetTypeIdentifier<InputMap::InputMap>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<Particles::EmitterConfig>(), Modules::GetTypeName<Particles::EmitterConfig>(), Modules::GetTypeIdentifier<Particles::EmitterConfig>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<GlobalState::GameState>(), Modules::GetTypeName<GlobalState::GameState>(), Modules::GetTypeIdentifier<GlobalState::GameState>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<GlobalState::GlobalState>(), Modules::GetTypeName<GlobalState::GlobalState>(), Modules::GetTypeIdentifier<GlobalState::GlobalState>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<RuntimeUI::UserInterface>(), Modules::GetTypeName<RuntimeUI::UserInterface>(), Modules::GetTypeIdentifier<RuntimeUI::UserInterface>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<States::State>(), Modules::GetTypeName<States::State>(), Modules::GetTypeIdentifier<States::State>());
+		KG_WARN("The {}::{} asset has an ID of {}", Modules::GetModuleName<Scenes::Scene>(), Modules::GetTypeName<Scenes::Scene>(), Modules::GetTypeIdentifier<Scenes::Scene>());
 
 		KG_WARN("The state asset is a module type? {}", Modules::IsModuleType<States::State>);
-		KG_WARN("The script binder service asset is a module type? {}", Modules::IsModuleType<Scripting::ScriptBinderService>);*/
+		KG_WARN("The script binder service asset is a module type? {}", Modules::IsModuleType<Scripting::ScriptBinderService>);
 
 		Scripting::ScriptBinderService::GetActiveContext().Init();
 		

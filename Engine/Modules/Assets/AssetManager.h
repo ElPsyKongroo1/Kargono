@@ -270,7 +270,7 @@ namespace Kargono::Assets
 			return true;
 		}
 
-		void UpdateAsset(AssetHandle handle, const Specification_t<t_AssetType>& spec)
+		bool UpdateAsset(AssetHandle handle, const Specification_t<t_AssetType>& spec)
 			requires HasUpdateFromSpec<t_AssetType>
 		{
 			// Ensure asset exists and is cached
@@ -327,11 +327,13 @@ namespace Kargono::Assets
 			{
 				KG_WARN("Invalid asset hash generated from updated asset");
 				// TODO: Need to do something here yeah?
-				return;
+				return false;
 			}
 
 			// Send update event
 			SendManageAssetEvent(metadata, Events::ManageAssetAction::UpdateAsset, providedData);
+
+			return true;
 		}
 
 		bool DeleteAsset(AssetHandle handle)
@@ -724,9 +726,6 @@ namespace Kargono::Assets
 
 		void SerializeAssetRegistry()
 		{
-			// Get registry path
-			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
-
 			std::filesystem::path registryPath{ GetAssetRegistryPath() };
 			KG_ASSERT(!registryPath.empty(),
 				"Generated empty registry path for asset type" );
@@ -734,6 +733,7 @@ namespace Kargono::Assets
 			// Set up serializer
 			YAML::Emitter serializer;
 			serializer << YAML::BeginMap;
+			serializer << YAML::Key << "ModuleName" << YAML::Value << Modules::GetModuleName<t_AssetType>();
 			serializer << YAML::Key << "TypeName" << YAML::Value << Modules::GetTypeName<t_AssetType>();
 			serializer << YAML::Key << "TypeID" << YAML::Value << GetAssetIdentifier<t_AssetType>();
 
@@ -748,10 +748,10 @@ namespace Kargono::Assets
 			for (auto& [handle, metadata] : m_AssetRegistry)
 			{
 				serializer << YAML::BeginMap; // Asset Map
-				serializer << YAML::Key << "AssetHandle" << YAML::Value << static_cast<uint64_t>(handle);
 
-				serializer << YAML::Key << "MetaData" << YAML::Value;
+				serializer << YAML::Key << "Metadata" << YAML::Value;
 				serializer << YAML::BeginMap; // MetaData Map
+				serializer << YAML::Key << "Handle" << YAML::Value << static_cast<uint64_t>(handle);
 				serializer << YAML::Key << "Name" << YAML::Value << metadata.m_Name;
 				serializer << YAML::Key << "Hash" << YAML::Value << metadata.m_Hash;
 				serializer << YAML::Key << "IsHidden" << YAML::Value << metadata.m_IsHidden;
@@ -782,8 +782,6 @@ namespace Kargono::Assets
 
 		void DeserializeAssetRegistry()
 		{
-			Projects::ProjectPaths& paths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
-
 			// Clear current registry
 			m_AssetRegistry.clear();
 
@@ -811,15 +809,21 @@ namespace Kargono::Assets
 				return;
 			}
 
-			// Validate registry name and identifier
-			const std::string registryName = data["TypeName"].as<std::string>();
-			if (registryName.c_str() != t_AssetType::GetDisplayName().CString())
+			// Validate type name and identifier
+			const std::string moduleName = data["ModuleName"].as<std::string>();
+			if (moduleName != Modules::GetTypeName<t_AssetType>())
+			{
+				KG_WARN("Asset module name from on-disk registry does not match asset's type module.");
+				return;
+			}
+			const std::string typeName = data["TypeName"].as<std::string>();
+			if (typeName != Modules::GetTypeName<t_AssetType>())
 			{
 				KG_WARN("Asset type name from on-disk registry does not match asset's type name");
 				return;
 			}
-			AssetIdentifier identifier = data["TypeID"].as<AssetIdentifier>();
-			if (identifier != GetAssetIdentifier<t_AssetType>())
+			AssetIdentifier typeID = data["TypeID"].as<AssetIdentifier>();
+			if (typeID != GetAssetIdentifier<t_AssetType>())
 			{
 				KG_WARN("Asset identifier from on-disk registry does not match asset's identifier");
 				return;
@@ -828,7 +832,8 @@ namespace Kargono::Assets
 			// Open registry specific data
 			if constexpr (HasRegistryExtension<t_AssetType>)
 			{
-				DeserializeRegistryExtension(data);
+				YAML::Node registryExtensionNode = data["RegistryExtension"];
+				DeserializeRegistryExtension(registryExtensionNode);
 			}
 
 			// Opening all assets 
@@ -838,23 +843,21 @@ namespace Kargono::Assets
 				for (const YAML::Node& asset : assets)
 				{
 					Metadata<t_AssetType> newMetadata{};
-					newMetadata.m_Handle = asset["AssetHandle"].as<uint64_t>();
 
 					// Get generic metadata
-					YAML::Node metadataNode = asset["MetaData"];
+					YAML::Node metadataNode = asset["Metadata"];
+					newMetadata.m_Handle = metadataNode["Handle"].as<uint64_t>();
 					newMetadata.m_Name = metadataNode["Name"].as<std::string>();
 					newMetadata.m_Hash = metadataNode["Hash"].as<std::string>();
 					newMetadata.m_IsHidden = metadataNode["IsHidden"].as<bool>();
 
-					// Get file directory
+					// Get file directory if applicable and not hidden
 					if constexpr (HasFileLocation<t_AssetType>)
 					{
-						newMetadata.m_FileDirectory = metadataNode["FileDirectory"].as<std::string>();
-					}
-					else
-					{
-						KG_ASSERT(!metadataNode["FileDirectory"],
-							"Attempt to provide a file location for an asset type that does not support it");
+						if (!newMetadata.m_IsHidden)
+						{
+							newMetadata.m_FileDirectory = metadataNode["FileDirectory"].as<std::string>();
+						}
 					}
 
 					// Open asset specific metadata

@@ -580,9 +580,9 @@ namespace Kargono::Scripting
 		Utility::FileSystem::DeleteSelectedFile("Log/BuildScriptLibraryDebug.log");
 		KG_INFO("Compiling debug script module...");
 #if defined(KG_PLATFORM_WINDOWS)
-		bool buildSuccessful = CompileModuleCodeMSVC(true);
+		bool buildSuccessful = CompileModuleCodeMSVC(Assets::s_ScriptManager.GetIntermediateDirectory(), true);
 #elif defined(KG_PLATFORM_LINUX)
-		bool buildSuccessful = CompileModuleCodeGCC(true);
+		bool buildSuccessful = CompileModuleCodeGCC(Assets::s_ScriptManager.GetIntermediateDirectory(), true);
 #endif
 		if (!buildSuccessful)
 		{
@@ -595,9 +595,9 @@ namespace Kargono::Scripting
 		Utility::FileSystem::DeleteSelectedFile("Log/BuildScriptLibrary.log");
 		KG_INFO("Compiling release script module...");
 #if defined(KG_PLATFORM_WINDOWS)
-		buildSuccessful = CompileModuleCodeMSVC(false);
+		buildSuccessful = CompileModuleCodeMSVC(Assets::s_ScriptManager.GetIntermediateDirectory(), false);
 #elif defined(KG_PLATFORM_LINUX)
-		buildSuccessful = CompileModuleCodeGCC(false);
+		buildSuccessful = CompileModuleCodeGCC(Assets::s_ScriptManager.GetIntermediateDirectory(), false);
 #endif
 		if (!buildSuccessful)
 		{
@@ -1119,12 +1119,10 @@ namespace Kargono::Scripting
 		return true;
 	}
 
-	bool ScriptModuleBuilder::CompileModuleCodeMSVC(bool createDebug)
+	bool ScriptModuleBuilder::CompileModuleCodeMSVC(const std::filesystem::path& destPath, bool createDebug)
 	{
-		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
-
-		Utility::FileSystem::CreateNewDirectory(projectPaths.GetIntermediateDirectory() / "Script/");
-		std::filesystem::path binaryPath { projectPaths.GetIntermediateDirectory() / "Script/" };
+		Utility::FileSystem::CreateNewDirectory(destPath);
+		std::filesystem::path binaryPath { destPath };
 		std::filesystem::path binaryFile;
 		std::filesystem::path objectPath;
 		if (createDebug)
@@ -1141,7 +1139,7 @@ namespace Kargono::Scripting
 		UUID pdbID{ RandomUUIDService::GetRandomUUID() };
 		std::string pdbFileName = std::string(pdbID) + ".pdb";
 		std::filesystem::path debugSymbolsPath { binaryPath / pdbFileName };
-		std::filesystem::path sourcePath { projectPaths.GetIntermediateDirectory() / "Script/ExportBody.cpp" };
+		std::filesystem::path sourcePath { destPath / "ExportBody.cpp" };
 
 		std::stringstream outputStream {};
 		outputStream << "("; // Parentheses to group all function calls together
@@ -1209,13 +1207,11 @@ namespace Kargono::Scripting
 		return system(outputStream.str().c_str()) == 0;
 	}
 
-	bool ScriptModuleBuilder::CompileModuleCodeGCC(bool createDebug)
+	bool ScriptModuleBuilder::CompileModuleCodeGCC(const std::filesystem::path& destPath, bool createDebug)
 	{
-		Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
-
 		// Set up paths and files
-		Utility::FileSystem::CreateNewDirectory(projectPaths.GetIntermediateDirectory() / "Script/");
-		std::filesystem::path binaryPath = projectPaths.GetIntermediateDirectory() / "Script/";
+		Utility::FileSystem::CreateNewDirectory(destPath);
+		std::filesystem::path binaryPath = destPath;
 		std::filesystem::path binaryFile;
 		std::filesystem::path objectPath;
 		
@@ -1230,7 +1226,7 @@ namespace Kargono::Scripting
 			objectPath = binaryPath / "ExportBody.o";
 		}
 
-		std::filesystem::path sourcePath = projectPaths.GetIntermediateDirectory() / "Script/ExportBody.cpp";
+		std::filesystem::path sourcePath = destPath / "ExportBody.cpp";
 
 		// Set up the output stream for the commands
 		std::stringstream outputStream;

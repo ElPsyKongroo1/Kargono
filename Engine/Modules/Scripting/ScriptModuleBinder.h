@@ -48,8 +48,8 @@ namespace Kargono::Scripting
 		//==============================
 		// Compile Module
 		//==============================
-		bool CompileModuleCodeMSVC(bool createDebug);
-		bool CompileModuleCodeGCC(bool createDebug);
+		bool CompileModuleCodeMSVC(const std::filesystem::path& destPath, bool createDebug);
+		bool CompileModuleCodeGCC(const std::filesystem::path& destPath, bool createDebug);
 	private:
 		//==============================
 		// Connect Engine To Module
