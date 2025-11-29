@@ -49,39 +49,12 @@ namespace Kargono::RuntimeUI
 		std::vector<Math::ivec2> m_LineBreaks;
 	};
 
-	struct FontMetaData
-	{
-	public:
-		//==============================
-		// Constructors/Destructors
-		//==============================
-		FontMetaData() = default;
-		~FontMetaData() = default;
-	public:
-		//==============================
-		// Serialization
-		//==============================
-		void Deserialize(void* context);
-		void Serialize(void* context);
-	public:
-		//==============================
-		// Public Fields
-		//==============================
-		float m_AtlasWidth{ 0.0f };
-		float m_AtlasHeight{ 0.0f };
-		float m_LineHeight{ 0.0f };
-		float m_Ascender{ 0.0f };
-		float m_Descender{ 0.0f };
-		std::vector<std::pair<unsigned char, RuntimeUI::Character>> m_Characters{};
-	};
-
 	class Font
 	{
 	public:
 		//==============================
 		// Metaprogramming Info
 		//==============================
-		using MetadataExtension = FontMetaData;
 		constexpr static std::array<FixedBufStr16, 1> k_ImportExtensions{ ".ttf" };
 		constexpr static std::array<FixedBufStr16, 1> k_IntermediateExtensions{ ".kgbinary" };
 	public:
@@ -111,7 +84,6 @@ namespace Kargono::RuntimeUI
 		{
 			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
 		}
-		static void CreateFromName(Assets::Metadata<Font>& metadata);
 		static void CreateFromFile(Assets::Metadata<Font>& metadata, const std::filesystem::path& sourcePath);
 	public:
 		//==============================

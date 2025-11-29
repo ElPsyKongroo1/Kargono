@@ -17,17 +17,26 @@
 
 namespace Kargono::RuntimeUI
 {
-	void FontMetaData::Serialize(void* context)
+	void Font::Serialize(void* context)
 	{
 		// Get asset context
 		KG_ASSERT(context, "Context cannot be null");
-		Assets::SerializeMetaDataContext<Font>& metadataContext = *(Assets::SerializeMetaDataContext<Font>*)context;
+		Assets::SerializeAssetContext<Font>& metadataContext = *(Assets::SerializeAssetContext<Font>*)context;
 
 		// Get context fields
-		YAML::Emitter& emitter = *metadataContext.m_Serializer;
+		Assets::Metadata<Font>& metadata = *metadataContext.m_AssetMetadata;
 
-		emitter << YAML::Key << "AtlasWidth" << YAML::Value << m_AtlasWidth;
-		emitter << YAML::Key << "AtlasHeight" << YAML::Value << m_AtlasHeight;
+		// Get context fields
+		const std::filesystem::path& assetPath{ metadata.GetAssetFullFilePath() };
+		const std::filesystem::path intermediatePath
+		{
+			metadata.GetAssetFullIntermediatePath(GetIntermediateExtensions().front().StringView())
+		};
+
+		YAML::Emitter emitter;
+		
+		emitter << YAML::Key << "AtlasWidth" << YAML::Value << m_AtlasTexture->GetWidth();
+		emitter << YAML::Key << "AtlasHeight" << YAML::Value << m_AtlasTexture->GetHeight();
 		emitter << YAML::Key << "LineHeight" << YAML::Value << m_LineHeight;
 		emitter << YAML::Key << "Ascender" << YAML::Value << m_Ascender;
 		emitter << YAML::Key << "Descender" << YAML::Value << m_Descender;
@@ -46,43 +55,16 @@ namespace Kargono::RuntimeUI
 			emitter << YAML::EndMap;
 		}
 		emitter << YAML::EndSeq;
-	}
 
-	void FontMetaData::Deserialize(void* context)
-	{
-		// Get asset context
-		KG_ASSERT(context, "Context cannot be null");
-		Assets::DeserializeMetaDataContext<Font>& assetContext = *(Assets::DeserializeMetaDataContext<Font>*)context;
+		std::ofstream fout(assetPath);
+		fout << emitter.c_str();
 
-		// Get context fields
-		YAML::Node& metadataNode = *assetContext.m_Node;
+		// Write atlas texture to intermediate file
+		Buffer atlasBuffer = m_AtlasTexture->GetData();
+		Utility::FileSystem::WriteFileBinary(intermediatePath, atlasBuffer);
+		atlasBuffer.Release();
 
-		m_AtlasWidth = metadataNode["AtlasWidth"].as<float>();
-		m_AtlasHeight = metadataNode["AtlasHeight"].as<float>();
-		m_LineHeight = metadataNode["LineHeight"].as<float>();
-		m_Ascender = metadataNode["Ascender"].as<float>();
-		m_Descender = metadataNode["Descender"].as<float>();
-
-		YAML::Node characters = metadataNode["Characters"];
-		for (YAML::Node character : characters)
-		{
-			// Add new character to the character list
-			std::pair<unsigned char, RuntimeUI::Character>& newCharacter = m_Characters.emplace_back();
-
-			// Fill the character fields
-			newCharacter.first = static_cast<uint8_t>(character["Character"].as<uint32_t>());
-			newCharacter.second.m_Size = character["Size"].as<Math::vec2>();
-			newCharacter.second.m_Advance = character["Advance"].as<float>();
-			newCharacter.second.m_TexCoordinateMin = character["TexCoordinateMin"].as<Math::vec2>();
-			newCharacter.second.m_TexCoordinateMax = character["TexCoordinateMax"].as<Math::vec2>();
-			newCharacter.second.m_QuadMin = character["QuadMin"].as<Math::vec2>();
-			newCharacter.second.m_QuadMax = character["QuadMax"].as<Math::vec2>();
-		}
-	}
-
-	void Font::Serialize(void* context)
-	{
-		KG_ERROR("Serialization not implemented for font");
+		KG_INFO("Successfully Serialized Font Asset at {}", assetPath);
 	}
 
 	void Font::Deserialize(void* context)
@@ -96,48 +78,63 @@ namespace Kargono::RuntimeUI
 		KG_ASSERT(metadata, "Metadata cannot be null");
 
 		// Get context fields
-		const std::filesystem::path& assetPath{ metadata->GetAssetFullFilePath() };
+		const std::filesystem::path assetPath{ metadata->GetAssetFullFilePath() };
+		const std::filesystem::path intermediatePath
+		{ 
+			metadata->GetAssetFullIntermediatePath(GetIntermediateExtensions().front().StringView())
+		};
 
-		FontMetaData& fontMetadata = metadata->GetMetadataExtension();
-		Buffer currentResource = Utility::FileSystem::ReadFileBinary(assetPath);
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(assetPath.string());
+		}
+		catch (YAML::ParserException e)
+		{
+			KG_WARN("Failed to load .kgui file '{0}'\n     {1}", assetPath, e.what());
+			return;
+		}
 
-		// Create Texture
+		Buffer currentResource = Utility::FileSystem::ReadFileBinary(intermediatePath);
+
 		Rendering::TextureSpecification spec;
-		spec.m_Width = static_cast<uint32_t>(fontMetadata.m_AtlasWidth);
-		spec.m_Height = static_cast<uint32_t>(fontMetadata.m_AtlasHeight);
+		spec.m_Width = static_cast<uint32_t>(data["AtlasWidth"].as<float>());
+		spec.m_Height = static_cast<uint32_t>(data["AtlasHeight"].as<float>());
 		spec.m_Format = Rendering::ImageFormat::RGB8;
 		spec.m_GenerateMipMaps = false;
+		m_LineHeight = data["LineHeight"].as<float>();
+		m_Ascender = data["Ascender"].as<float>();
+		m_Descender = data["Descender"].as<float>();
+
+		YAML::Node characters = data["Characters"];
+		for (YAML::Node character : characters)
+		{
+			// Add new character to the character map
+			auto [charPtr, success] = m_Characters.insert_or_assign
+			(
+				static_cast<unsigned char>(character["Character"].as<uint32_t>()),
+				RuntimeUI::Character{}
+			);
+
+			// Fill the character fields
+			charPtr->second.m_Size = character["Size"].as<Math::vec2>();
+			charPtr->second.m_Advance = character["Advance"].as<float>();
+			charPtr->second.m_TexCoordinateMin = character["TexCoordinateMin"].as<Math::vec2>();
+			charPtr->second.m_TexCoordinateMax = character["TexCoordinateMax"].as<Math::vec2>();
+			charPtr->second.m_QuadMin = character["QuadMin"].as<Math::vec2>();
+			charPtr->second.m_QuadMax = character["QuadMax"].as<Math::vec2>();
+		}
+
+		// Create Texture
 		// TODO: Might want a register method in the asset manager that takes in an already created asset
+		Assets::AssetCreationData creationData{};
+		creationData.m_IsHidden = true;
 		m_AtlasTexture = Assets::s_Texture2DManager.CreateAssetFromSpec({}, spec);
 		m_AtlasTexture->SetData((void*)currentResource.m_Data, static_cast<uint32_t>(spec.m_Width * spec.m_Height * Utility::ImageFormatToBytes(spec.m_Format)));
-
-		m_LineHeight = fontMetadata.m_LineHeight;
-		m_Ascender = fontMetadata.m_Ascender;
-		m_Descender = fontMetadata.m_Descender;
-
-		for (auto& [character, characterStruct] : fontMetadata.m_Characters)
-		{
-			m_Characters.insert(std::pair<unsigned char, RuntimeUI::Character>(character, characterStruct));
-		}
 
 		currentResource.Release();
 	}
 
-	void Font::CreateFromName(Assets::Metadata<Font>& metadata)
-	{
-		KG_TRACE_CRITICAL("We are calling the create font w/ name, " 
-			"but I'm skeptical of this function bruhh");
-		const std::filesystem::path assetPath{ metadata.GetAssetFullFilePath() };
-
-		YAML::Emitter out;
-		out << YAML::BeginMap; // Start of File Map
-		out << YAML::Key << "Name" << YAML::Value << metadata.m_Name; // Output font name
-		out << YAML::EndMap; // End of File Map
-
-		std::ofstream fout(assetPath);
-		fout << out.c_str();
-		KG_INFO("Successfully created font inside asset directory at {}", assetPath);
-	}
 	void Font::CreateFromFile(Assets::Metadata<Font>& metadata,
 		const std::filesystem::path& sourcePath)
 	{
@@ -266,17 +263,18 @@ namespace Kargono::RuntimeUI
 			character.second.m_Size = { glyphWidth, glyphHeight };
 		}
 
-		// Save Binary Intermediate into File
-		Utility::FileSystem::WriteFileBinary(intermediatePath, buffer);
-
 		// Load data into In-Memory Metadata object
-		FontMetaData& fontMetadata = metadata.GetMetadataExtension();
-		fontMetadata.m_AtlasWidth = static_cast<float>(textureSpec.m_Width);
-		fontMetadata.m_AtlasHeight = static_cast<float>(textureSpec.m_Height);
-		fontMetadata.m_LineHeight = lineHeight;
-		fontMetadata.m_Characters = characters;
-		fontMetadata.m_Ascender = (float)metrics.ascenderY;
-		fontMetadata.m_Descender = (float)metrics.descenderY;
+		Font tempFont;
+		Assets::AssetCreationData creationData{};
+		creationData.m_IsHidden = true;
+		tempFont.m_AtlasTexture = Assets::s_Texture2DManager.CreateAssetFromSpec(creationData, textureSpec);
+		tempFont.m_AtlasTexture->SetData((void*)buffer.m_Data, static_cast<uint32_t>(textureSpec.m_Width* textureSpec.m_Height* Utility::ImageFormatToBytes(textureSpec.m_Format)));
+		tempFont.m_LineHeight = lineHeight;
+		tempFont.m_Characters = std::unordered_map<unsigned char, Character>(characters.begin(), characters.end());
+		tempFont.m_Ascender = (float)metrics.ascenderY;
+		tempFont.m_Descender = (float)metrics.descenderY;
+		tempFont.Serialize({ &metadata });
+
 		buffer.Release();
 	}
 

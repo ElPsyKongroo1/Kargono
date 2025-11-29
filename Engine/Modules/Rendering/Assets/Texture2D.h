@@ -142,6 +142,7 @@ namespace Kargono::Rendering
 		void Bind(uint32_t slot) const;
 		// Load data into OpenGL buffer
 		void SetData(void* data, uint32_t size);
+		[[nodiscard]] Buffer GetData();
 		void LoadBuffer(Buffer buffer, const TextureMetaData& metadata);
 	public:
 		//==============================

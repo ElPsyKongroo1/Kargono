@@ -165,6 +165,23 @@ namespace Kargono::Rendering
 		KG_ASSERT(size == m_Width * m_Height * bytesPerPixel, "Data must be entire texture!");
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 	}
+
+	Buffer Texture2D::GetData()
+	{
+		const uint32_t bytesPerPixel = m_DataFormat == GL_RGBA ? 4 : 3;
+		Buffer buffer{ m_Width * m_Height * bytesPerPixel };
+
+		glGetTextureImage(
+			m_RendererID,    // texture object
+			0,               // mip level
+			m_DataFormat,    // format (GL_RGBA or GL_RGB)
+			GL_UNSIGNED_BYTE,
+			static_cast<uint32_t>(buffer.m_Size),            // total byte size of buffer
+			buffer.m_Data          // destination pointer
+		);
+
+		return buffer;
+	}
 	void Texture2D::Bind(uint32_t slot) const
 	{
 		glBindTextureUnit(slot, m_RendererID);
