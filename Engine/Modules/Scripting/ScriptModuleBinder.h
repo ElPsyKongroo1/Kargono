@@ -42,14 +42,14 @@ namespace Kargono::Scripting
 		//==============================
 		// Generate Module Code
 		//==============================
-		void CreateModuleHeaderFile();
-		bool CreateModuleCPPFile();
+		void CreateModuleHeaderFile(const std::filesystem::path& outputDir);
+		bool CreateModuleCPPFile(const std::filesystem::path& outputDir);
 	private:
 		//==============================
 		// Compile Module
 		//==============================
-		bool CompileModuleCodeMSVC(const std::filesystem::path& destPath, bool createDebug);
-		bool CompileModuleCodeGCC(const std::filesystem::path& destPath, bool createDebug);
+		bool CompileModuleCodeMSVC(const std::filesystem::path& outputDir, bool createDebug);
+		bool CompileModuleCodeGCC(const std::filesystem::path& outputDir, bool createDebug);
 	private:
 		//==============================
 		// Connect Engine To Module
@@ -88,7 +88,7 @@ namespace Kargono::Scripting
 		//==============================
 		// Manage Active Script Module
 		//==============================
-		void LoadActiveScriptModule();
+		void LoadActiveScriptModule(const std::filesystem::path& outputDir);
 		void CloseActiveScriptModule();
 		//==============================
 		// Manage Individual Scripts

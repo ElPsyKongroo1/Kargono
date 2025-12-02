@@ -717,7 +717,7 @@ namespace Kargono
 			}
 
 			Assets::AssetHandle startSceneHandle = Projects::ProjectService::GetActiveContext().GetStartSceneHandle();
-			Scripting::ScriptBinderService::GetActiveContext().LoadActiveScriptModule();
+			Scripting::ScriptBinderService::GetActiveContext().LoadActiveScriptModule(Assets::s_ScriptManager.GetIntermediateDirectory());
 
 			if (Scenes::SceneService::GetActiveContext().GetActiveScene())
 			{
