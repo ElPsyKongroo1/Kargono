@@ -19,4 +19,9 @@ namespace Kargono::Assets
 	template<typename t_AssetType>
 	concept HasRequireUniqueHashFlag = HasAssetFlag<t_AssetType, AssetFlag::RequireUniqueHash>;
 
+	template<typename t_AssetType>
+	concept HasDisableDeleteAssetNotifierFlag = HasAssetFlag<t_AssetType, AssetFlag::DisableDeleteAssetNotifier>;
+
+	template<typename t_AssetType>
+	concept HasDisableUpdateLoadStateNotifierFlag = HasAssetFlag<t_AssetType, AssetFlag::DisableDeleteAssetNotifier>;
 }

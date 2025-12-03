@@ -41,11 +41,11 @@ namespace Kargono::Rendering
 		//==============================
 		// Rendering Functions
 		//==============================
-		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount = 0);
-		static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t* indexPointer, uint32_t indexCount);
-		static void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
-		static void DrawPoints(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
-		static void DrawTriangles(const Ref<VertexArray>& vertexArray, uint32_t vertexCount);
+		static void DrawIndexed(VertexArray& vertexArray, uint32_t indexCount = 0);
+		static void DrawIndexed(VertexArray& vertexArray, uint32_t* indexPointer, uint32_t indexCount);
+		static void DrawLines(VertexArray& vertexArray, uint32_t vertexCount);
+		static void DrawPoints(VertexArray& vertexArray, uint32_t vertexCount);
+		static void DrawTriangles(VertexArray& vertexArray, uint32_t vertexCount);
 
 	};
 }

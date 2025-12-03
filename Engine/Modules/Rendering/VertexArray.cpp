@@ -59,14 +59,14 @@ namespace Kargono::Rendering
 	{
 		glBindVertexArray(0);
 	}
-	void VertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
+	void VertexArray::AddVertexBuffer(const VertexBuffer& vertexBuffer)
 	{
-		KG_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
+		KG_ASSERT(vertexBuffer.GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 
 		// Get the Vertex Buffer Layout
 		glBindVertexArray(m_RendererID);
-		vertexBuffer->Bind();
-		const InputBufferLayout& layout = vertexBuffer->GetLayout();
+		vertexBuffer.Bind();
+		const InputBufferLayout& layout = vertexBuffer.GetLayout();
 		for (const auto& element : layout)
 		{
 			// Here we bind all of the individual elements in a layout to the VertexBufferArray

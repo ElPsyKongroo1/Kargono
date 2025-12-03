@@ -19,9 +19,6 @@ namespace Kargono::Events
 		UpdateAssetInfo
 	};
 
-	//============================================================
-	// Manage Asset Class
-	//============================================================
 	class ManageAsset : public Event
 	{
 	public:
@@ -37,7 +34,6 @@ namespace Kargono::Events
 		//==============================
 		// Getters/Setters
 		//==============================
-
 		UUID GetAssetID() const { return m_AssetID; }
 		Assets::AssetIdentifier GetAssetIdentifier() const { return m_AssetIdentifier; }
 		ManageAssetAction GetAction() const { return m_Action; }

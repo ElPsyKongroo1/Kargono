@@ -11,6 +11,7 @@
 #include "Modules/Assets/Module/AssetTag.h"
 #include "Modules/Assets/AssetReference.h"
 #include "Modules/Rendering/Assets/Texture2D.h"
+#include "Modules/Assets/TrackedAssetReference.h"
 
 #include <string>
 #include <filesystem>
@@ -33,44 +34,8 @@ namespace Kargono::Rendering
 {
 	typedef unsigned int GLenum;
 
-	class Shader;
-
-	struct DrawCallBuffer
-	{
-		Buffer m_VertexBuffer{};
-		uint8_t* m_VertexBufferIterator{ m_VertexBuffer.m_Data };
-		std::vector<uint32_t> m_IndexBuffer {};
-		std::vector<Assets::AssetRef<Texture2D>> m_Textures {};
-		Shader* m_Shader{ nullptr };
-	};
-
-	struct RendererInputSpec
-	{
-	public:
-		//==============================
-		// Constructors/Destructors
-		//==============================
-		RendererInputSpec() = default;
-		~RendererInputSpec() = default;
-	public:
-		//==============================
-		// Clean Up
-		//==============================
-		void ClearData();
-	public:
-		//==============================
-		// Public Fields
-		//==============================
-		Assets::TAssetRef<Shader> m_Shader;
-		Assets::TAssetRef<Texture2D> m_Texture;
-		Rendering::ShapeComponent* m_ShapeComponent{ nullptr }; // TODO: The shape component is a memory leak...
-		Ref<DrawCallBuffer> m_CurrentDrawBuffer;
-		Buffer m_Buffer;
-		uint32_t m_Entity{ (uint32_t)-1};
-		void* m_EntityRegistry;
-		Math::mat4 m_TransformMatrix;
-		Math::mat4 m_ObjectOutlineMatrix;
-	};
+	struct RendererInputSpec;
+	struct DrawCallBuffer;
 
 	enum class ColorInputType
 	{
@@ -259,9 +224,9 @@ namespace Kargono::Rendering
 		const ShaderSpecification& GetSpecification() const { return m_ShaderSpecification; }
 		InputBufferLayout& GetInputLayout() { return m_InputBufferLayout; }
 		const UniformBufferList& GetUniformList() const { return m_UniformBufferList; }
-		const std::vector<std::function<void(RendererInputSpec& spec)>>& GetFillDataObject() const { return m_FillDataPerObject; }
-		const std::vector<std::function<void(RendererInputSpec& spec, uint32_t iteration)>>& GetFillDataVertex() const { return m_FillDataPerVertex; }
-		const std::vector<std::function<void(RendererInputSpec& spec)>>& GetFillDataObjectScene() const { return m_FillDataInScene; }
+		const std::vector<std::function<void(RendererInputSpec* spec)>>& GetFillDataObject() const { return m_FillDataPerObject; }
+		const std::vector<std::function<void(RendererInputSpec* spec, uint32_t iteration)>>& GetFillDataVertex() const { return m_FillDataPerVertex; }
+		const std::vector<std::function<void(RendererInputSpec* spec)>>& GetFillDataObjectScene() const { return m_FillDataInScene; }
 		const std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>>& GetDrawFunctions() const { return m_DrawFunctions; }
 		const std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>>& GetSubmitUniforms() const { return m_SubmitUniforms; }
 
@@ -276,8 +241,8 @@ namespace Kargono::Rendering
 		void SetInputLayout(const InputBufferLayout& shaderInputLayout);
 		void SetUniformList(const UniformBufferList& shaderUniformList) { m_UniformBufferList = shaderUniformList; }
 
-		void SetVertexArray(Ref<VertexArray> newVertexArray) { m_VertexArray = newVertexArray; }
-		Ref<VertexArray> GetVertexArray() { return m_VertexArray; }
+		void SetVertexArray(const VertexArray& newVertexArray) { m_VertexArray = newVertexArray; }
+		VertexArray& GetVertexArray() { return m_VertexArray; }
 
 	protected:
 		ShaderSpecification m_ShaderSpecification {};
@@ -292,21 +257,58 @@ namespace Kargono::Rendering
 		std::string m_Name;
 		bool m_Registered{ false };
 		// Renderer Specific Functionality
-		std::vector<std::function<void(RendererInputSpec& spec)>> m_FillDataPerObject {};
-		std::vector<std::function<void(RendererInputSpec& spec, uint32_t iteration)>> m_FillDataPerVertex {};
-		std::vector<std::function<void(RendererInputSpec& spec)>> m_FillDataInScene {};
+		std::vector<std::function<void(RendererInputSpec* spec)>> m_FillDataPerObject {};
+		std::vector<std::function<void(RendererInputSpec* spec, uint32_t iteration)>> m_FillDataPerVertex {};
+		std::vector<std::function<void(RendererInputSpec* spec)>> m_FillDataInScene {};
 		std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>> m_SubmitUniforms {};
 		std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>> m_DrawFunctions {};
 		// Pre and post draw call functionality
 		std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>> m_PreDrawBuffer {};
 		std::vector<std::function<void(Ref<DrawCallBuffer> buffer)>> m_PostDrawBuffer {};
 		Ref<DrawCallBuffer> m_CurrentDrawCall{ nullptr };
-		Ref<VertexArray> m_VertexArray{ nullptr };
+		VertexArray m_VertexArray;
 		// Underlying OpenGL hook
 		uint32_t m_RendererID;
 	};
 
 	Register_Module_Type(Shader, Assets::AssetTag)
+
+	struct DrawCallBuffer
+	{
+		Buffer m_VertexBuffer{};
+		uint8_t* m_VertexBufferIterator{ m_VertexBuffer.m_Data };
+		std::vector<uint32_t> m_IndexBuffer{};
+		std::vector<Assets::AssetRef<Texture2D>> m_Textures{};
+		Shader* m_Shader{ nullptr };
+	};
+
+	struct RendererInputSpec
+	{
+	public:
+		//==============================
+		// Constructors/Destructors
+		//==============================
+		RendererInputSpec() = default;
+		~RendererInputSpec() = default;
+	public:
+		//==============================
+		// Clean Up
+		//==============================
+		void ClearData();
+	public:
+		//==============================
+		// Public Fields
+		//==============================
+		Assets::TAssetRef<Shader> m_Shader;
+		Assets::TAssetRef<Texture2D> m_Texture;
+		Rendering::ShapeComponent* m_ShapeComponent{ nullptr }; // TODO: The shape component is a memory leak...
+		Ref<DrawCallBuffer> m_CurrentDrawBuffer;
+		Buffer m_Buffer;
+		uint32_t m_Entity{ (uint32_t)-1 };
+		void* m_EntityRegistry;
+		Math::mat4 m_TransformMatrix;
+		Math::mat4 m_ObjectOutlineMatrix;
+	};
 }
 
 namespace Kargono::Utility

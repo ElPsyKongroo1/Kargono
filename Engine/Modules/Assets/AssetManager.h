@@ -33,9 +33,14 @@ namespace Kargono::Assets
 		std::monostate // False type
 		>;
 
-	template<AssetConcept t_AssetType> requires Modules::IsModuleType<t_AssetType>
+	template<typename t_AssetType> requires AssetConcept<t_AssetType>
 	class AssetManager
 	{
+	public:
+		//==============================
+		// Compile Time Checks
+		//==============================
+		static_assert(Modules::IsModuleType<t_AssetType>);
 	public:
 		//==============================
 		// Constructors/Destructors
@@ -446,18 +451,14 @@ namespace Kargono::Assets
 			}
 			
 			// Handle file location information
-			std::filesystem::path metadataFileDirectory = creationData.m_CreationDirectory;
+			std::filesystem::path metadataFileDirectory{};
 
 			if constexpr (HasFileLocation<t_AssetType>)
 			{
-				if (creationData.m_IsHidden)
+				if (!creationData.m_IsHidden)
 				{
-					// Hidden assets should not have user-defined directories
-					KG_ASSERT(metadataFileDirectory.empty(),
-						"Attempt to provide a creation directory for a hidden asset");
-				}
-				else
-				{
+					metadataFileDirectory = creationData.m_CreationDirectory;
+
 					// Validate creation directory
 					bool validDirectoryPath{ ValidateCreationDirectory(metadataFileDirectory) };
 					if (!validDirectoryPath)
@@ -551,23 +552,23 @@ namespace Kargono::Assets
 			}
 
 			// Handle file location information
-			std::filesystem::path metadataFileDirectory = creationData.m_CreationDirectory;
+			std::filesystem::path metadataFileDirectory{};
 			if constexpr (HasFileLocation<t_AssetType>)
 			{
-				// Validate creation directory
-				bool validDirectoryPath{ ValidateCreationDirectory(metadataFileDirectory) };
-				if (!validDirectoryPath)
+				if (!creationData.m_IsHidden)
 				{
-					KG_WARN("Creation directory validation failed for path: {}",
-						metadataFileDirectory.string().c_str());
-					return {};
+					metadataFileDirectory = creationData.m_CreationDirectory;
+
+					// Validate creation directory
+					bool validDirectoryPath{ ValidateCreationDirectory(metadataFileDirectory) };
+					if (!validDirectoryPath)
+					{
+						KG_WARN("Creation directory validation failed for path: {}",
+							metadataFileDirectory.string().c_str());
+						return {};
+					}
+					metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
 				}
-				metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
-			}
-			else
-			{
-				KG_ASSERT(creationData.m_CreationDirectory.empty(),
-					"Attempt to provide a creation directory for an asset type that does not support it");
 			}
 
 			// Check if source path is valid
@@ -649,23 +650,23 @@ namespace Kargono::Assets
 			}
 
 			// Handle file location information
-			std::filesystem::path metadataFileDirectory = creationData.m_CreationDirectory;
+			std::filesystem::path metadataFileDirectory{};
 			if constexpr (HasFileLocation<t_AssetType>)
 			{
-				// Validate creation directory
-				bool validDirectoryPath{ ValidateCreationDirectory(metadataFileDirectory) };
-				if (!validDirectoryPath)
+				if (!creationData.m_IsHidden)
 				{
-					KG_WARN("Creation directory validation failed for path: {}",
-						metadataFileDirectory.string().c_str());
-					return {};
+					metadataFileDirectory = creationData.m_CreationDirectory;
+
+					// Validate creation directory
+					bool validDirectoryPath{ ValidateCreationDirectory(metadataFileDirectory) };
+					if (!validDirectoryPath)
+					{
+						KG_WARN("Creation directory validation failed for path: {}",
+							metadataFileDirectory.string().c_str());
+						return {};
+					}
+					metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
 				}
-				metadataFileDirectory = NormalizeAssetDirectory(metadataFileDirectory);
-			}
-			else
-			{
-				KG_ASSERT(creationData.m_CreationDirectory.empty(),
-					"Attempt to provide a creation directory for an asset type that does not support it");
 			}
 
 			// Create metadata
@@ -751,24 +752,27 @@ namespace Kargono::Assets
 
 				serializer << YAML::Key << "Metadata" << YAML::Value;
 				serializer << YAML::BeginMap; // MetaData Map
-				serializer << YAML::Key << "Handle" << YAML::Value << static_cast<uint64_t>(handle);
 				serializer << YAML::Key << "Name" << YAML::Value << metadata.m_Name;
+				serializer << YAML::Key << "Handle" << YAML::Value << static_cast<uint64_t>(handle);
 				serializer << YAML::Key << "Hash" << YAML::Value << metadata.m_Hash;
 				serializer << YAML::Key << "IsHidden" << YAML::Value << metadata.m_IsHidden;
 				if constexpr (HasFileLocation<t_AssetType>)
 				{
-					serializer << YAML::Key << "FileDirectory" << YAML::Value << metadata.GetAssetRelativeFilePath().string();
+					if (!metadata.m_IsHidden)
+					{
+						serializer << YAML::Key << "FileDirectory" << YAML::Value << metadata.GetAssetRelativeFilePath().string();
+					}
 				}
-				if constexpr (HasIntermediates<t_AssetType>)
-				{
-					serializer << YAML::Key << "IntermediateDirectory" << YAML::Value << metadata.GetAssetRelativeIntermediatePath({}).string();
-				}
+				serializer << YAML::EndMap; // Close metadata map
+
 				if constexpr (HasMetadataExtension<t_AssetType>)
 				{
+					serializer << YAML::Key << "MetadataExtension" << YAML::Value;
+					serializer << YAML::BeginMap; // Metadata-extension map
 					SerializeMetadataExtension(serializer, metadata);
+					serializer << YAML::EndMap; // Close metadata-extension map
 				}
 				
-				serializer << YAML::EndMap; // Close metadata map
 				serializer << YAML::EndMap; // Close asset map
 			}
 			serializer << YAML::EndSeq; // Close asset sequence
@@ -811,9 +815,10 @@ namespace Kargono::Assets
 
 			// Validate type name and identifier
 			const std::string moduleName = data["ModuleName"].as<std::string>();
-			if (moduleName != Modules::GetTypeName<t_AssetType>())
+			if (moduleName != Modules::GetModuleName<t_AssetType>())
 			{
-				KG_WARN("Asset module name from on-disk registry does not match asset's type module.");
+				KG_WARN("Asset module name from on-disk registry does not match asset's type module. On-disk name: {}. In-memory registry name: {}",
+					moduleName, Modules::GetModuleName<t_AssetType>());
 				return;
 			}
 			const std::string typeName = data["TypeName"].as<std::string>();
@@ -846,8 +851,15 @@ namespace Kargono::Assets
 
 					// Get generic metadata
 					YAML::Node metadataNode = asset["Metadata"];
-					newMetadata.m_Handle = metadataNode["Handle"].as<uint64_t>();
+
+					if (!metadataNode)
+					{
+						KG_WARN("Failed to load Metadata node from asset");
+						return;
+					}
+
 					newMetadata.m_Name = metadataNode["Name"].as<std::string>();
+					newMetadata.m_Handle = metadataNode["Handle"].as<uint64_t>();
 					newMetadata.m_Hash = metadataNode["Hash"].as<std::string>();
 					newMetadata.m_IsHidden = metadataNode["IsHidden"].as<bool>();
 
@@ -863,7 +875,13 @@ namespace Kargono::Assets
 					// Open asset specific metadata
 					if constexpr (HasMetadataExtension<t_AssetType>)
 					{
-						DeserializeMetadataExtension(metadataNode, newMetadata);
+						YAML::Node metadataExtensionNode = asset["MetadataExtension"];
+						if (!metadataExtensionNode)
+						{
+							KG_WARN("Failed to load MetadataExtension from asset w/ extension requirement.");
+							return;
+						}
+						DeserializeMetadataExtension(metadataExtensionNode, newMetadata);
 					}
 
 					// Add asset to in memory registry 
@@ -1016,7 +1034,7 @@ namespace Kargono::Assets
 			newAsset->Deserialize((void*)(&deserializeContext));
 
 			// Return asset reference
-			return { metadata.m_Handle, LoadState::Loaded, newAsset };
+			return { metadata.m_Handle, LoadState::Loaded, newAsset, this };
 		}
 
 		void SerializeAssetImpl(Metadata<t_AssetType>& metadata, AssetReference<t_AssetType> assetReference)
@@ -1119,7 +1137,7 @@ namespace Kargono::Assets
 			if constexpr (HasIntermediates<t_AssetType>)
 			{
 				Utility::SHA256Hash intermediateChecksum{};
-				std::filesystem::path intermediateFolder{ metadata.GetAssetFullIntermediatePath({})};
+				std::filesystem::path intermediateFolder = metadata.GetAssetFullIntermediatePath();
 				for (const FixedBufStr16& extension : t_AssetType::GetIntermediateExtensions())
 				{
 					intermediateFolder.replace_extension(extension.CString());
@@ -1145,8 +1163,7 @@ namespace Kargono::Assets
 			// Delete the asset's intermediate(s) on-disk
 			if constexpr (HasIntermediates<t_AssetType>)
 			{
-				std::filesystem::path intermediateFolder{ metadata.GetAssetRelativeIntermediatePath({})};
-				intermediateFolder.replace_filename(metadata.m_Name.CString());
+				std::filesystem::path intermediateFolder = metadata.GetAssetFullIntermediatePath();
 
 				std::span<const FixedBufStr16> allIntermediateExtensions{ t_AssetType::GetIntermediateExtensions()};
 				for (const FixedBufStr16& extension : allIntermediateExtensions)
@@ -1310,15 +1327,15 @@ namespace Kargono::Assets
 
 		bool ValidateAssetName(std::string_view name)
 		{
-			// Ensure name is not empty
-			if (name.empty())
-			{
-				return false;
-			}
-
-			// Ensure name is unique if required
 			if constexpr (HasRequireUniqueNameFlag<t_AssetType>)
 			{
+				// Ensure name is not empty
+				if (name.empty())
+				{
+					return false;
+				}
+
+				// Ensure name is unique
 				for (const auto& [handle, metadata] : m_AssetRegistry)
 				{
 					if (metadata.m_Name.StringView() == name)
@@ -1502,12 +1519,8 @@ namespace Kargono::Assets
 			newMetadata.m_Handle = newHandle;
 			newMetadata.m_IsHidden = isHidden;
 
-			// Set file directory
-			if (isHidden)
-			{
-				newMetadata.m_FileDirectory = newMetadata.GetAssetRelativeHiddenFolder();
-			}
-			else
+			// Set file directory if applicable
+			if (!isHidden)
 			{
 				newMetadata.m_FileDirectory = assetDirectory;
 			}
@@ -1569,6 +1582,7 @@ namespace Kargono::Assets
 		AssetRegistry<t_AssetType> m_AssetRegistry{};
 		AssetCache_t<t_AssetType> m_AssetCache;
 		RegistryExtension_t<t_AssetType> m_RegistryExtension;
+		AssetUpdateNotifier<t_AssetType> m_AssetUpdateNotifer;
 	private:
 		//==============================
 		// Injected Dependencies

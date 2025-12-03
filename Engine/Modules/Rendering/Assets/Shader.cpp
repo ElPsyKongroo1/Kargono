@@ -493,11 +493,15 @@ namespace Kargono::Rendering
 	void Shader::SetInputLayout(const InputBufferLayout& shaderInputLayout)
 	{
 		m_InputBufferLayout = shaderInputLayout;
-		m_VertexArray->RegisterArray();
+		m_VertexArray.RegisterArray();
 
-		Ref<VertexBuffer> quadVertexBuffer;
-		quadVertexBuffer->SetLayout(m_InputBufferLayout);
-		m_VertexArray->AddVertexBuffer(quadVertexBuffer);
+		// Create vertex buffer
+		VertexBuffer quadVertexBuffer;
+		quadVertexBuffer.RegisterBuffer(k_MaxVertexBufferSize);
+		quadVertexBuffer.SetLayout(m_InputBufferLayout);
+
+		// Add it to the array
+		m_VertexArray.AddVertexBuffer(quadVertexBuffer);
 	}
 
 	void Shader::FillRenderFunctionList()

@@ -2,7 +2,7 @@
 
 #include "Modules/Scripting/Module/ScriptingModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"
-#include "Modules/Assets/AssetReference.h"
+#include "Modules/Assets/TrackedAssetReference.h"
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 

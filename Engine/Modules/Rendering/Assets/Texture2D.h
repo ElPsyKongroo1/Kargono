@@ -108,9 +108,12 @@ namespace Kargono::Rendering
 			return std::span(k_IntermediateExtensions.data(), k_IntermediateExtensions.size());
 		}
 
-		static void CreateFromName(Assets::Metadata<Texture2D>& metadata);
 		static void CreateFromFile(Assets::Metadata<Texture2D>& metadata, const std::filesystem::path& sourcePath);
 		static void CreateFromSpec(Assets::Metadata<Texture2D>& metadata, const TextureSpecification& spec);
+	private:
+		// Helpers
+		static void CreateAssetFile(Assets::Metadata<Texture2D>& metadata);
+		static void CreateIntermediateFile(Buffer buffer, Assets::Metadata<Texture2D>& metadata);
 	public:
 		//==============================
 		// Constructors/Destructors

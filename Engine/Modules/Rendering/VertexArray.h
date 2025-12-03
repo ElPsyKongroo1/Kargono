@@ -23,20 +23,20 @@ namespace Kargono::Rendering
 		void Bind() const;
 		void Unbind() const;
 		// Add buffer(s) to renderer
-		void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer);
+		void AddVertexBuffer(const VertexBuffer& vertexBuffer);
 		void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer);
 	public:
 		//==============================
 		// Getters/Setters
 		//==============================
-		const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const { return m_VertexBuffers; }
+		std::vector<VertexBuffer>& GetVertexBuffers()  { return m_VertexBuffers; }
 		const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
 	private:
 		//==============================
 		// Internal Fields
 		//==============================
 		bool m_Registered{ false };
-		std::vector<Ref<VertexBuffer>> m_VertexBuffers{};
+		std::vector<VertexBuffer> m_VertexBuffers{};
 		Ref<IndexBuffer> m_IndexBuffer{ nullptr };
 		uint32_t m_VertexBufferIndex{ 0 };
 		uint32_t m_RendererID{ 0 };

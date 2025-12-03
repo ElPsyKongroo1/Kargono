@@ -219,7 +219,7 @@ namespace Kargono::Rendering
 
 	void Texture2D::Serialize(void* context)
 	{
-		KG_ERROR("Texture serialization is not implemented");
+		KG_ERROR("Serialize not implemented");
 	}
 
 	void Texture2D::Deserialize(void* context)
@@ -245,30 +245,10 @@ namespace Kargono::Rendering
 		currentResource.Release();
 	}
 
-	void Texture2D::CreateFromName(Assets::Metadata<Texture2D>& metadata)
-	{
-		const std::filesystem::path& assetPath = metadata.GetAssetFullFilePath();
-
-		YAML::Emitter out;
-		out << YAML::BeginMap; // Start of File Map
-		out << YAML::Key << "Name" << YAML::Value << metadata.m_Name.CString(); // Output texture name
-		out << YAML::EndMap; // End of File Map
-
-		std::ofstream fout(assetPath);
-		fout << out.c_str();
-		KG_INFO("Successfully created texture inside asset directory at {}", assetPath);
-	}
 	void Texture2D::CreateFromFile(Assets::Metadata<Texture2D>& metadata,
 		const std::filesystem::path& sourcePath)
 	{
-		std::string_view intermediateExtension
-		{
-			Texture2D::GetIntermediateExtensions().front().StringView()
-		};
-		const std::filesystem::path intermediatePath = 
-			metadata.GetAssetFullIntermediatePath(intermediateExtension);
-
-		// Create Texture Binary Intermediate
+		// Create texture binary intermediate
 		int32_t width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
 		Buffer buffer{};
@@ -280,9 +260,6 @@ namespace Kargono::Rendering
 		buffer.Allocate(static_cast<unsigned long long>(width) * height * channels * sizeof(uint8_t));
 		buffer.m_Data = data;
 
-		// Save Binary Intermediate into File
-		Utility::FileSystem::WriteFileBinary(intermediatePath, buffer);
-
 		// Check that save was successful
 		if (!data)
 		{
@@ -291,8 +268,12 @@ namespace Kargono::Rendering
 			return;
 		}
 
-		// Load data into In-Memory Metadata object
-		TextureMetaData& specificMetadata{ metadata.GetMetadataExtension()};
+		// Create the texture files
+		CreateAssetFile(metadata);
+		CreateIntermediateFile(buffer, metadata);
+
+		// Load data into metadata extension
+		TextureMetaData& specificMetadata{ metadata.GetMetadataExtension() };
 		specificMetadata.m_Width = width;
 		specificMetadata.m_Height = height;
 		specificMetadata.m_Channels = channels;
@@ -301,20 +282,40 @@ namespace Kargono::Rendering
 
 	void Texture2D::CreateFromSpec(Assets::Metadata<Texture2D>& metadata, const TextureSpecification& spec)
 	{
-		// Save Binary Intermediate into File
-		std::string_view intermediateExtension
-		{
-			Texture2D::GetIntermediateExtensions().front().StringView()
-		};
-		const std::filesystem::path intermediatePath =
-			metadata.GetAssetFullIntermediatePath(intermediateExtension);
-		Utility::FileSystem::WriteFileBinary(intermediatePath, spec.m_Buffer);
+		// Create the texture files
+		CreateAssetFile(metadata);
+		CreateIntermediateFile(spec.m_Buffer, metadata);
 
 		// Load data into texture metadata
 		TextureMetaData& textureMetadata{ metadata.GetMetadataExtension() };
 		textureMetadata.m_Width = spec.m_Width;
 		textureMetadata.m_Height = spec.m_Height;
 		textureMetadata.m_Channels = static_cast<uint32_t>(Utility::ImageFormatToBytes(spec.m_Format));
+	}
+
+	void Texture2D::CreateAssetFile(Assets::Metadata<Texture2D>& metadata)
+	{
+		// Create asset directory file
+		const std::filesystem::path& assetPath = metadata.GetAssetFullFilePath();
+		YAML::Emitter out;
+		out << YAML::BeginMap; // Start of File Map
+		out << YAML::Key << "Name" << YAML::Value << metadata.m_Name.CString(); // Output texture name
+		out << YAML::Key << "Handle" << YAML::Value << static_cast<std::string>(metadata.m_Handle); // Output texture name
+		out << YAML::EndMap; // End of File Map
+		std::ofstream fout(assetPath);
+		fout << out.c_str();
+	}
+
+	void Texture2D::CreateIntermediateFile(Buffer buffer, Assets::Metadata<Texture2D>& metadata)
+	{
+		// Create intermediates
+		std::string_view intermediateExtension
+		{
+			Texture2D::GetIntermediateExtensions().front().StringView()
+		};
+		const std::filesystem::path intermediatePath =
+			metadata.GetAssetFullIntermediatePath(intermediateExtension);
+		Utility::FileSystem::WriteFileBinary(intermediatePath, buffer);
 	}
 
 	void Texture2D::ValidateDelete(Assets::Metadata<Texture2D>& metadata)

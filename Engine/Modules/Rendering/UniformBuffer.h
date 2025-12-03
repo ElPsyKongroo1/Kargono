@@ -83,6 +83,11 @@ namespace Kargono::Rendering
 		void DeregisterBuffer();
 		// Set data for OpenGl buffer
 		void SetData(const void* data, uint32_t size, uint32_t offset = 0);
+	public:
+		//==============================
+		// Query State
+		//==============================
+		bool IsRegistered() const { return m_Registered; }
 	private:
 		//==============================
 		// Internal Fields

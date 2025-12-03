@@ -2,7 +2,7 @@
 
 #include "Kargono/Math/MathAliases.h"
 #include "Kargono/Core/Base.h"
-#include "Modules/Assets/AssetReference.h"
+#include "Modules/Assets/TrackedAssetReference.h"
 #include "Modules/Audio/Assets/AudioBuffer.h"
 
 #include <cstdint>

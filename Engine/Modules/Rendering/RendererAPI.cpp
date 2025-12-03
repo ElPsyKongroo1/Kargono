@@ -72,35 +72,35 @@ namespace Kargono::Utility
 		KG_ERROR("Unknown severity level!");
 	}
 
-	static GLenum StencilComparisonToGLenum(Kargono::Rendering::StencilComparisonType comparisonType)
+	static GLenum StencilComparisonToGLenum(Rendering::StencilComparisonType comparisonType)
 	{
 		switch (comparisonType)
 		{
-		case Kargono::Rendering::StencilComparisonType::NEVER: return GL_NEVER;
-		case Kargono::Rendering::StencilComparisonType::LESS: return GL_LESS;
-		case Kargono::Rendering::StencilComparisonType::LEQUAL: return GL_LEQUAL;
-		case Kargono::Rendering::StencilComparisonType::GREATER: return GL_GREATER;
-		case Kargono::Rendering::StencilComparisonType::GEQUAL: return GL_GEQUAL;
-		case Kargono::Rendering::StencilComparisonType::EQUAL: return GL_EQUAL;
-		case Kargono::Rendering::StencilComparisonType::NOTEQUAL: return GL_NOTEQUAL;
-		case Kargono::Rendering::StencilComparisonType::ALWAYS: return GL_ALWAYS;
+		case Rendering::StencilComparisonType::NEVER: return GL_NEVER;
+		case Rendering::StencilComparisonType::LESS: return GL_LESS;
+		case Rendering::StencilComparisonType::LEQUAL: return GL_LEQUAL;
+		case Rendering::StencilComparisonType::GREATER: return GL_GREATER;
+		case Rendering::StencilComparisonType::GEQUAL: return GL_GEQUAL;
+		case Rendering::StencilComparisonType::EQUAL: return GL_EQUAL;
+		case Rendering::StencilComparisonType::NOTEQUAL: return GL_NOTEQUAL;
+		case Rendering::StencilComparisonType::ALWAYS: return GL_ALWAYS;
 		}
 		KG_ERROR("Invalid enum provided in StencilComparisonToGLStencil");
 		return 0;
 	}
 
-	static GLenum StencilOptionsToGLEnum(Kargono::Rendering::StencilOptions option)
+	static GLenum StencilOptionsToGLEnum(Rendering::StencilOptions option)
 	{
 		switch (option)
 		{
-		case Kargono::Rendering::StencilOptions::KEEP: return GL_KEEP;
-		case Kargono::Rendering::StencilOptions::ZERO: return GL_ZERO;
-		case Kargono::Rendering::StencilOptions::REPLACE: return GL_REPLACE;
-		case Kargono::Rendering::StencilOptions::INCR: return GL_INCR;
-		case Kargono::Rendering::StencilOptions::INCR_WRAP: return GL_INCR_WRAP;
-		case Kargono::Rendering::StencilOptions::DECR: return GL_DECR;
-		case Kargono::Rendering::StencilOptions::DECR_WRAP: return GL_DECR_WRAP;
-		case Kargono::Rendering::StencilOptions::INVERT: return GL_INVERT;
+		case Rendering::StencilOptions::KEEP: return GL_KEEP;
+		case Rendering::StencilOptions::ZERO: return GL_ZERO;
+		case Rendering::StencilOptions::REPLACE: return GL_REPLACE;
+		case Rendering::StencilOptions::INCR: return GL_INCR;
+		case Rendering::StencilOptions::INCR_WRAP: return GL_INCR_WRAP;
+		case Rendering::StencilOptions::DECR: return GL_DECR;
+		case Rendering::StencilOptions::DECR_WRAP: return GL_DECR_WRAP;
+		case Rendering::StencilOptions::INVERT: return GL_INVERT;
 		}
 		KG_ERROR("Invalid enum provided in StencilOptionsToGLEnum");
 		return 0;
@@ -143,7 +143,7 @@ namespace Kargono::Rendering
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 
-	void RendererAPI::SetClearColor(const Kargono::Math::vec4& color)
+	void RendererAPI::SetClearColor(const Math::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
@@ -155,12 +155,12 @@ namespace Kargono::Rendering
 	{
 		glStencilMask(value);
 	}
-	void RendererAPI::StencilTestFunc(Kargono::Rendering::StencilComparisonType comparisonType, int32_t reference, uint32_t mask)
+	void RendererAPI::StencilTestFunc(Rendering::StencilComparisonType comparisonType, int32_t reference, uint32_t mask)
 	{
 		glStencilFunc(Utility::StencilComparisonToGLenum(comparisonType), reference, mask);
 	}
 
-	void RendererAPI::StencilTestOptions(Kargono::Rendering::StencilOptions sfail, Kargono::Rendering::StencilOptions dfail, Kargono::Rendering::StencilOptions sdpass)
+	void RendererAPI::StencilTestOptions(Rendering::StencilOptions sfail, Rendering::StencilOptions dfail, Rendering::StencilOptions sdpass)
 	{
 		glStencilOp(Utility::StencilOptionsToGLEnum(sfail), Utility::StencilOptionsToGLEnum(dfail), Utility::StencilOptionsToGLEnum(sdpass));
 	}
@@ -168,34 +168,34 @@ namespace Kargono::Rendering
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
-	void RendererAPI::DrawIndexed(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t indexCount)
+	void RendererAPI::DrawIndexed(VertexArray& vertexArray, uint32_t indexCount)
 	{
-		vertexArray->Bind();
-		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		vertexArray.Bind();
+		uint32_t count = indexCount ? indexCount : vertexArray.GetIndexBuffer()->GetCount();
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 
-	void RendererAPI::DrawIndexed(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t* indexPointer, uint32_t indexCount)
+	void RendererAPI::DrawIndexed(VertexArray& vertexArray, uint32_t* indexPointer, uint32_t indexCount)
 	{
-		vertexArray->Bind();
+		vertexArray.Bind();
 		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, indexPointer);
 	}
 
-	void RendererAPI::DrawLines(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t vertexCount)
+	void RendererAPI::DrawLines(VertexArray& vertexArray, uint32_t vertexCount)
 	{
-		vertexArray->Bind();
+		vertexArray.Bind();
 		glDrawArrays(GL_LINES, 0, vertexCount);
 	}
 
-	void RendererAPI::DrawPoints(const Ref<VertexArray>& vertexArray, uint32_t vertexCount)
+	void RendererAPI::DrawPoints(VertexArray& vertexArray, uint32_t vertexCount)
 	{
-		vertexArray->Bind();
+		vertexArray.Bind();
 		glDrawArrays(GL_POINTS, 0, vertexCount);
 	}
 
-	void RendererAPI::DrawTriangles(const Kargono::Ref<Kargono::Rendering::VertexArray>& vertexArray, uint32_t vertexCount)
+	void RendererAPI::DrawTriangles(VertexArray& vertexArray, uint32_t vertexCount)
 	{
-		vertexArray->Bind();
+		vertexArray.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	}
 

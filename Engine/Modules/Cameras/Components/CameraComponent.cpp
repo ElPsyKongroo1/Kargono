@@ -43,6 +43,7 @@ namespace Kargono::Cameras
 
 		// Deserialize
 		YAML::Node cameraProps = node["Camera"];
+		KG_ASSERT(cameraProps);
 		m_Camera.SetProjectionType((Cameras::ProjectionType)cameraProps["ProjectionType"].as<int>());
 		m_Camera.SetPerspectiveVerticalFOV(cameraProps["PerspectiveFOV"].as<float>());
 		m_Camera.SetPerspectiveNearClip(cameraProps["PerspectiveNear"].as<float>());

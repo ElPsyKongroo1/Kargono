@@ -3,7 +3,8 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/BitField.h"
 #include "Kargono/Core/WrappedData.h"
-#include "Modules/Assets/AssetReference.h"
+#include "Modules/Assets/TrackedAssetReference.h"
+#include "Modules/Rendering/Assets/Texture2D.h"
 
 #include <string>
 #include <vector>
@@ -15,11 +16,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <sstream>
-
-namespace Kargono::Rendering
-{
-	class Texture2D;
-}
 
 namespace Kargono::Scripting
 {

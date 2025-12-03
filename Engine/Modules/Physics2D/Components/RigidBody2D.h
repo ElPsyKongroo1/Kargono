@@ -2,7 +2,8 @@
 
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
-#include "Modules/Assets/AssetReference.h"
+#include "Modules/Assets/TrackedAssetReference.h"
+#include "Modules/Scripting/Assets/Script.h"
 
 #include "Modules/Physics2D/Module/Physics2DModule.h"
 #include "Modules/ECSInternal/Module/ComponentTag.h"

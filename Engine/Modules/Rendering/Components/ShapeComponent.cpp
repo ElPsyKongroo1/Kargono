@@ -135,6 +135,7 @@ namespace Kargono::Rendering
 	ShapeComponent::ShapeComponent()
 	{
 		Assets::AssetRef<Shader> shader = Assets::s_ShaderManager.GetAssetBySpec(m_ShaderSpecification);
+		KG_ASSERT(shader.IsUsable());
 		m_Shader = shader;
 		Buffer textureBuffer{ 4 };
 		textureBuffer.SetDataToByte(0xff);
@@ -143,7 +144,10 @@ namespace Kargono::Rendering
 		textureSpec.m_Width = 1;
 		textureSpec.m_Height = 1;
 		textureSpec.m_Format = ImageFormat::RGBA8;
-		Assets::AssetRef<Texture2D> texture = Assets::s_Texture2DManager.CreateAssetFromSpec({}, textureSpec);
+		Assets::AssetCreationData textureData{};
+		textureData.m_AssetName = "BlankTexture";
+		textureData.m_IsHidden = true;
+		Assets::AssetRef<Texture2D> texture = Assets::s_Texture2DManager.CreateAssetFromSpec(textureData, textureSpec);
 		KG_ASSERT(texture.IsUsable());
 		m_Texture = texture;
 		textureBuffer.Release();

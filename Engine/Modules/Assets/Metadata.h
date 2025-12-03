@@ -46,7 +46,15 @@ namespace Kargono::Assets
 		{
 			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
-			return projectPaths.GetAssetDirectory() / GetAssetRelativeFilePath();
+			if (m_IsHidden)
+			{
+				return projectPaths.GetIntermediateDirectory() / 
+					GetAssetRelativeHiddenPath();
+			}
+			else
+			{
+				return projectPaths.GetAssetDirectory() / GetAssetRelativeFilePath();
+			}
 		}
 		std::filesystem::path GetAssetRelativeFilePath() requires HasFileLocation<t_AssetType>
 		{
@@ -54,7 +62,7 @@ namespace Kargono::Assets
 			KG_ASSERT(!m_FileDirectory.empty());
 			return m_FileDirectory / (m_Name.String() + t_AssetType::GetFileExtension().String());
 		}
-		std::filesystem::path GetAssetFullIntermediatePath(std::string_view extension) requires HasIntermediates<t_AssetType>
+		std::filesystem::path GetAssetFullIntermediatePath(std::string_view extension = {}) requires HasIntermediates<t_AssetType>
 		{
 			Projects::ProjectPaths& projectPaths{ Projects::ProjectService::GetActiveContext().GetProjectPaths() };
 
@@ -63,10 +71,12 @@ namespace Kargono::Assets
 		}
 		std::filesystem::path GetAssetRelativeIntermediatePath(std::string_view extension) requires HasIntermediates<t_AssetType>
 		{
-			KG_ASSERT(!m_Name.IsEmpty());
-			KG_ASSERT(ValidateExtension(extension));
+			if (!extension.empty())
+			{
+				KG_ASSERT(ValidateExtension(extension));
+			}
 
-			return std::filesystem::path(Modules::GetModuleName<t_AssetType>()) / Modules::GetTypeName<t_AssetType>() / (m_Name.String() + std::string(extension));
+			return std::filesystem::path(Modules::GetModuleName<t_AssetType>()) / Modules::GetTypeName<t_AssetType>() / CreateFileName(extension);
 		}
 		std::filesystem::path GetAssetFullHiddenFolder() requires HasIntermediates<t_AssetType>
 		{
@@ -78,6 +88,11 @@ namespace Kargono::Assets
 		std::filesystem::path GetAssetRelativeHiddenFolder()
 		{
 			return std::filesystem::path(Modules::GetModuleName<t_AssetType>()) / Modules::GetTypeName<t_AssetType>();
+		}
+
+		std::filesystem::path GetAssetRelativeHiddenPath() requires HasFileLocation<t_AssetType>
+		{
+			return GetAssetRelativeHiddenFolder() / CreateFileName(t_AssetType::GetFileExtension().String());
 		}
 	private:
 		// Helper(s)
@@ -92,6 +107,28 @@ namespace Kargono::Assets
 				}
 			}
 			return false;
+		}
+
+		std::filesystem::path CreateFileName(std::string_view fileExtension)
+		{
+			// Specify the file name based on whether or not name is empty
+			std::filesystem::path fileName;
+			if (m_Name.IsEmpty())
+			{
+				fileName = std::string(m_Handle);
+			}
+			else
+			{
+				fileName = m_Name.String() + "_" + std::string(m_Handle);
+			}
+
+			// Optionally add the extension
+			if (!fileExtension.empty())
+			{
+				fileName += std::string(fileExtension);
+			}
+
+			return fileName;
 		}
 	public:
 		//==============================
@@ -109,7 +146,7 @@ namespace Kargono::Assets
 		//==============================
 		// Public Fields
 		//==============================
-		FixedBufStr16 m_Name{};
+		FixedBufStr32 m_Name{};
 		std::filesystem::path m_FileDirectory{};
 		AssetHandle m_Handle{ Assets::k_EmptyHandle };
 		Utility::SHA256Hash m_Hash{};

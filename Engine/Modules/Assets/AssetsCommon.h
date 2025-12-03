@@ -66,9 +66,14 @@ namespace Kargono::Assets
 	enum AssetFlag : uint8_t
 	{
 		None = 0, // Default value
+		// Extra functionality flag(s)
 		HasAssetCache = 1, // Store cache of the filetype in runtime memory for easy reuse
+		// Requirement flags
 		RequireUniqueName = 2, // Individual asset names must be unique
-		RequireUniqueHash = 3 // Individual asset hashes must be unique
+		RequireUniqueHash = 3, // Individual asset hashes must be unique
+		// Notifier flags
+		DisableDeleteAssetNotifier = 4, // Removes the usage & storage of the delete-asset notifier/delegate
+		DisableUpdateLoadStateNotifier = 5 // Removes the usage & storage of the update-load-state notifier/delegate
 	};
 
 	using AssetFlags = BitField<std::underlying_type_t<AssetFlag>>;

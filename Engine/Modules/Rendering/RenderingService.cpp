@@ -24,11 +24,12 @@ namespace Kargono::Rendering
 
 	struct RendererData
 	{
+	public:
 		float m_LineWidth = 4.0f;
 		float m_PointWidth = 8.0f;
 		Statistics m_Stats;
 		CameraData m_CameraBuffer;
-		Ref<UniformBuffer> m_CameraUniformBuffer;
+		UniformBuffer m_CameraUniformBuffer;
 		std::vector<Ref<DrawCallBuffer>> m_DrawCalls;
 	};
 
@@ -41,29 +42,29 @@ namespace Kargono::Rendering
 
 	void RenderingService::Init()
 	{
-		s_Data.m_CameraUniformBuffer->RegisterBuffer(sizeof(CameraData), 0);
-		KG_VERIFY(s_Data.m_CameraUniformBuffer, "Renderer Init")
+		s_Data.m_CameraUniformBuffer.RegisterBuffer(sizeof(CameraData), 0);
+		KG_VERIFY(s_Data.m_CameraUniformBuffer.IsRegistered(), "Renderer Init")
 	}
 	void RenderingService::Shutdown()
 	{
-		s_Data.m_CameraUniformBuffer.reset();
+		s_Data.m_CameraUniformBuffer.DeregisterBuffer();
 		s_Data.m_DrawCalls.clear();
 	}
 	void RenderingService::BeginScene(const Cameras::CameraProjection& camera, const Math::mat4& transform)
 	{
 		s_Data.m_CameraBuffer.m_ViewProjection = camera.GetProjection() * transform;
-		s_Data.m_CameraUniformBuffer->SetData(&s_Data.m_CameraBuffer, sizeof(CameraData));
+		s_Data.m_CameraUniformBuffer.SetData(&s_Data.m_CameraBuffer, sizeof(CameraData));
 	}
 	void RenderingService::BeginScene(const Cameras::PerspectiveCamera& camera)
 	{
 		s_Data.m_CameraBuffer.m_ViewProjection = camera.GetViewProjection();
-		s_Data.m_CameraUniformBuffer->SetData(&s_Data.m_CameraBuffer, sizeof(CameraData));
+		s_Data.m_CameraUniformBuffer.SetData(&s_Data.m_CameraBuffer, sizeof(CameraData));
 	}
 
 	void RenderingService::BeginScene(const Math::mat4 projection)
 	{
 		s_Data.m_CameraBuffer.m_ViewProjection = projection;
-		s_Data.m_CameraUniformBuffer->SetData(&s_Data.m_CameraBuffer, sizeof(CameraData));
+		s_Data.m_CameraUniformBuffer.SetData(&s_Data.m_CameraBuffer, sizeof(CameraData));
 	}
 
 	void RenderingService::EndScene()
@@ -89,17 +90,17 @@ namespace Kargono::Rendering
 		return s_Data.m_Stats;
 	}
 
-	void RenderingService::FillTextureIndex(RendererInputSpec& inputSpec)
+	void RenderingService::FillTextureIndex(RendererInputSpec* inputSpec)
 	{
 		//if (s_Data.m_QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
-		KG_ASSERT(inputSpec.m_ShapeComponent->m_Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
-		auto& m_Textures = inputSpec.m_CurrentDrawBuffer->m_Textures;
+		KG_ASSERT(inputSpec->m_ShapeComponent->m_Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
+		auto& m_Textures = inputSpec->m_CurrentDrawBuffer->m_Textures;
 		float textureIndex = -1.0f;
 
 		uint32_t iteration = 0;
 		for (auto& texture : m_Textures)
 		{
-			if (texture == inputSpec.m_ShapeComponent->m_Texture)
+			if (texture == inputSpec->m_ShapeComponent->m_Texture)
 			{
 				textureIndex = (float)iteration;
 				break;
@@ -113,85 +114,85 @@ namespace Kargono::Rendering
 				textureIndex = 0.0f;
 				// TODO: NextBatch, Create a new DrawCallBuffer for the current shader and update Textures Ref
 			}
-			m_Textures.push_back(inputSpec.m_ShapeComponent->m_Texture.GetAssetRef());
+			m_Textures.push_back(inputSpec->m_ShapeComponent->m_Texture.GetAssetRef());
 			textureIndex = static_cast<float>(m_Textures.size() - 1);
 		}
 
 		Shader::SetDataAtInputLocation<float>(textureIndex, 
 			Utility::FileSystem::CRCFromString("a_TexIndex"),
-			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
+			inputSpec->m_Buffer, inputSpec->m_Shader.GetAssetRef());
 	}
 
-	void RenderingService::FillTextureAtlas(RendererInputSpec& inputSpec)
+	void RenderingService::FillTextureAtlas(RendererInputSpec* inputSpec)
 	{
 		//if (s_Data.m_QuadIndexCount >= RendererData::MaxIndices) { NextBatch(); }
-		KG_ASSERT(inputSpec.m_ShapeComponent->m_Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
-		std::vector<Assets::AssetRef<Texture2D>>& m_Textures = inputSpec.m_CurrentDrawBuffer->m_Textures;
+		KG_ASSERT(inputSpec->m_ShapeComponent->m_Texture, "Texture shader added, however, no texture is available in ShapeComponent.");
+		std::vector<Assets::AssetRef<Texture2D>>& m_Textures = inputSpec->m_CurrentDrawBuffer->m_Textures;
 		m_Textures.clear();
-		m_Textures.emplace_back(inputSpec.m_ShapeComponent->m_Texture.GetAssetRef());
+		m_Textures.emplace_back(inputSpec->m_ShapeComponent->m_Texture.GetAssetRef());
 	}
 
-	void RenderingService::FillTextureCoordinate(RendererInputSpec& inputSpec, uint32_t iteration)
+	void RenderingService::FillTextureCoordinate(RendererInputSpec* inputSpec, uint32_t iteration)
 	{
-		const Math::vec2& coordinates = inputSpec.m_ShapeComponent->m_TextureCoordinates->at(iteration);
+		const Math::vec2& coordinates = inputSpec->m_ShapeComponent->m_TextureCoordinates->at(iteration);
 		Shader::SetDataAtInputLocation<Math::vec2>(coordinates, 
 			Utility::FileSystem::CRCFromString("a_TexCoord"),
-			inputSpec.m_Buffer, 
-			inputSpec.m_Shader.GetAssetRef());
+			inputSpec->m_Buffer,
+			inputSpec->m_Shader.GetAssetRef());
 	}
 
-	void RenderingService::FillLocalPosition(RendererInputSpec& inputSpec, uint32_t iteration)
+	void RenderingService::FillLocalPosition(RendererInputSpec* inputSpec, uint32_t iteration)
 	{
-		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->m_Vertices->at(iteration) * 2.0f;
+		const Math::vec3& localPosition = inputSpec->m_ShapeComponent->m_Vertices->at(iteration) * 2.0f;
 		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, 
 			Utility::FileSystem::CRCFromString("a_LocalPosition"),
-			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
+			inputSpec->m_Buffer, inputSpec->m_Shader.GetAssetRef());
 	}
 
-	void RenderingService::FillWorldPosition(RendererInputSpec& inputSpec, uint32_t iteration)
+	void RenderingService::FillWorldPosition(RendererInputSpec* inputSpec, uint32_t iteration)
 	{
-		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->m_Vertices->at(iteration);
-		Math::vec3 worldPosition = inputSpec.m_TransformMatrix * Math::vec4(localPosition, 1.0f);
+		const Math::vec3& localPosition = inputSpec->m_ShapeComponent->m_Vertices->at(iteration);
+		Math::vec3 worldPosition = inputSpec->m_TransformMatrix * Math::vec4(localPosition, 1.0f);
 		Shader::SetDataAtInputLocation<Math::vec3>(worldPosition, 
 			Utility::FileSystem::CRCFromString("a_Position"),
-			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
+			inputSpec->m_Buffer, inputSpec->m_Shader.GetAssetRef());
 	}
 
 
-	void RenderingService::FillWorldPositionNoTransform(RendererInputSpec& inputSpec, uint32_t iteration)
+	void RenderingService::FillWorldPositionNoTransform(RendererInputSpec* inputSpec, uint32_t iteration)
 	{
-		const Math::vec3& localPosition = inputSpec.m_ShapeComponent->m_Vertices->at(iteration);
+		const Math::vec3& localPosition = inputSpec->m_ShapeComponent->m_Vertices->at(iteration);
 
 		Shader::SetDataAtInputLocation<Math::vec3>(localPosition, 
 			Utility::FileSystem::CRCFromString("a_Position"),
-			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
+			inputSpec->m_Buffer, inputSpec->m_Shader.GetAssetRef());
 	}
 
-	void RenderingService::FillVertexColor(RendererInputSpec& inputSpec, uint32_t iteration)
+	void RenderingService::FillVertexColor(RendererInputSpec* inputSpec, uint32_t iteration)
 	{
-		auto& colorVector = inputSpec.m_ShapeComponent->m_VertexColors;
+		auto& colorVector = inputSpec->m_ShapeComponent->m_VertexColors;
 		KG_ASSERT(iteration < static_cast<uint32_t>(colorVector->size()), "Invalid iteration inside FillVertexColor function");
 		Shader::SetDataAtInputLocation<Math::vec4>(colorVector->at(iteration), 
 			Utility::FileSystem::CRCFromString("a_Color"),
-			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
+			inputSpec->m_Buffer, inputSpec->m_Shader.GetAssetRef());
 	}
 
-	void RenderingService::FillIndicesData(RendererInputSpec& inputSpec)
+	void RenderingService::FillIndicesData(RendererInputSpec* inputSpec)
 	{
 		// Upload Indices
-		Ref<DrawCallBuffer> drawCallBuffer = inputSpec.m_Shader->GetCurrentDrawCallBuffer();
-		std::size_t currentBufferSize = (drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.m_Data) / inputSpec.m_Shader->GetInputLayout().GetStride();
-		for (auto& index : *(inputSpec.m_ShapeComponent->m_Indices))
+		Ref<DrawCallBuffer> drawCallBuffer = inputSpec->m_Shader->GetCurrentDrawCallBuffer();
+		std::size_t currentBufferSize = (drawCallBuffer->m_VertexBufferIterator - drawCallBuffer->m_VertexBuffer.m_Data) / inputSpec->m_Shader->GetInputLayout().GetStride();
+		for (auto& index : *(inputSpec->m_ShapeComponent->m_Indices))
 		{
 			drawCallBuffer->m_IndexBuffer.push_back(static_cast<uint32_t>(currentBufferSize) + index);
 		}
 	}
 
-	void RenderingService::FillEntityID(Rendering::RendererInputSpec& inputSpec)
+	void RenderingService::FillEntityID(Rendering::RendererInputSpec* inputSpec)
 	{
-		Shader::SetDataAtInputLocation<uint32_t>(inputSpec.m_Entity, 
+		Shader::SetDataAtInputLocation<uint32_t>(inputSpec->m_Entity, 
 			Utility::FileSystem::CRCFromString("a_EntityID"),
-			inputSpec.m_Buffer, inputSpec.m_Shader.GetAssetRef());
+			inputSpec->m_Buffer, inputSpec->m_Shader.GetAssetRef());
 	}
 
 	void RenderingService::SubmitDataToRenderer(RendererInputSpec& inputSpec)
@@ -238,14 +239,14 @@ namespace Kargono::Rendering
 
 		for (const auto& PerObjectFunction : inputSpec.m_Shader->GetFillDataObject())
 		{
-			PerObjectFunction(inputSpec);
+			PerObjectFunction(&inputSpec);
 		}
 
 		for (uint32_t iteration {0}; iteration < inputSpec.m_ShapeComponent->m_Vertices->size(); iteration++)
 		{
 			for (const auto& PerVertexFunction : inputSpec.m_Shader->GetFillDataVertex())
 			{
-				PerVertexFunction(inputSpec, iteration);
+				PerVertexFunction(&inputSpec, iteration);
 			}
 			memcpy(inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator, inputSpec.m_Buffer.m_Data, inputSpec.m_Buffer.m_Size);
 			inputSpec.m_CurrentDrawBuffer->m_VertexBufferIterator += inputSpec.m_Buffer.m_Size;
@@ -303,7 +304,7 @@ namespace Kargono::Rendering
 
 			buffer->m_Shader->Bind();
 			uint32_t dataSize = static_cast<uint32_t>(buffer->m_VertexBufferIterator - buffer->m_VertexBuffer.m_Data);
-			buffer->m_Shader->GetVertexArray()->GetVertexBuffers().at(0)->SetData(buffer->m_VertexBuffer.m_Data, dataSize);
+			buffer->m_Shader->GetVertexArray().GetVertexBuffers().at(0).SetData(buffer->m_VertexBuffer.m_Data, dataSize);
 
 			// Submit Per Buffer Uniforms
 			for (const auto& uniformFunction : buffer->m_Shader->GetSubmitUniforms())

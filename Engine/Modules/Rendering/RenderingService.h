@@ -52,19 +52,19 @@ namespace Kargono::Rendering
 		//==============================
 		// Per Object Function Pointers for Filling Input Data
 		//==============================
-		static void FillTextureIndex(RendererInputSpec& inputSpec);
-		static void FillTextureAtlas(RendererInputSpec& inputSpec);
-		static void FillIndicesData(RendererInputSpec& inputSpec);
-		static void FillEntityID(Rendering::RendererInputSpec& inputSpec);
+		static void FillTextureIndex(RendererInputSpec* inputSpec);
+		static void FillTextureAtlas(RendererInputSpec* inputSpec);
+		static void FillIndicesData(RendererInputSpec* inputSpec);
+		static void FillEntityID(Rendering::RendererInputSpec* inputSpec);
 	private:
 		//==============================
 		// Per Vertex Function Pointers for Filling Input Data
 		//==============================
-		static void FillTextureCoordinate(RendererInputSpec& inputSpec, uint32_t iteration);
-		static void FillLocalPosition(RendererInputSpec& inputSpec, uint32_t iteration);
-		static void FillWorldPosition(RendererInputSpec& inputSpec, uint32_t iteration);
-		static void FillWorldPositionNoTransform(RendererInputSpec& inputSpec, uint32_t iteration);
-		static void FillVertexColor(RendererInputSpec& inputSpec, uint32_t iteration);
+		static void FillTextureCoordinate(RendererInputSpec* inputSpec, uint32_t iteration);
+		static void FillLocalPosition(RendererInputSpec* inputSpec, uint32_t iteration);
+		static void FillWorldPosition(RendererInputSpec* inputSpec, uint32_t iteration);
+		static void FillWorldPositionNoTransform(RendererInputSpec* inputSpec, uint32_t iteration);
+		static void FillVertexColor(RendererInputSpec* inputSpec, uint32_t iteration);
 	private:
 		//==============================
 		// Per DrawCallBuffer Function Pointers to fill Uniform Data

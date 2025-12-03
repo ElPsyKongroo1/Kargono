@@ -391,7 +391,7 @@ namespace Kargono::Scenes
 
 				for (const auto& PerObjectSceneFunction : shape.m_Shader->GetFillDataObjectScene())
 				{
-					PerObjectSceneFunction(inputSpec);
+					PerObjectSceneFunction(&inputSpec);
 				}
 
 				Rendering::RenderingService::SubmitDataToRenderer(inputSpec);

@@ -3,7 +3,7 @@
 #include "Kargono/Core/Base.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/Assets/AssetsCommon.h"
-#include "Modules/Assets/AssetReference.h"
+#include "Modules/Assets/TrackedAssetReference.h"
 
 namespace Kargono::InputMap
 {

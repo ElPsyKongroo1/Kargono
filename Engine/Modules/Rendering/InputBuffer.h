@@ -110,7 +110,7 @@ namespace Kargono::Rendering
 		void Bind() const;
 		void Unbind() const;
 		// Set data in renderer
-		void SetData(const void* data, uint32_t size);
+		void SetData(void* data, uint32_t size);
 	public:
 		//==============================
 		// Getters/Setters

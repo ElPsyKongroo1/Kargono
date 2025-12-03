@@ -2,17 +2,13 @@
 
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Assets/Module/AssetTag.h"
-#include "Kargono/Core/Notifier.h"
 
 #include <functional>
 
 namespace Kargono::Assets
 {
-	template<typename t_AssetType>
-	using UserCallback = std::function<void(LoadState, t_AssetType*)>;
-
-	template<typename t_AssetType>
-	using AssetUpdateNotifier = MultiNotifier<LoadState, t_AssetType*>;
+	template<typename t_AssetType> requires AssetConcept<t_AssetType>
+	class AssetManager;
 
 	template<typename t_AssetType>
 	struct AssetReference
@@ -22,7 +18,8 @@ namespace Kargono::Assets
 		// Constructors/Destructors
 		//==============================
 		AssetReference() = default;
-		AssetReference(AssetHandle handle, LoadState state, t_AssetType* asset)
+		AssetReference(AssetHandle handle, LoadState state, 
+			t_AssetType* asset, AssetManager<t_AssetType>* context)
 			: m_Handle(handle), m_LoadState(state), m_Asset(asset)
 		{
 			KG_ASSERT((state == LoadState::Loaded && asset) ||
@@ -32,17 +29,6 @@ namespace Kargono::Assets
 		~AssetReference() = default;
 	public:
 		//==============================
-		// Notification
-		//==============================
-		void OnUpdateAsset(LoadState state, void* asset)
-		{
-			m_Asset = (t_AssetType*)asset;
-			m_LoadState = state;
-
-			KG_ASSERT(IsValid());
-		}
-	public:
-		//==============================
 		// Reset
 		//==============================
 		void Reset()
@@ -50,6 +36,7 @@ namespace Kargono::Assets
 			m_Handle = k_EmptyHandle;
 			m_LoadState = LoadState::Unloaded;
 			m_Asset = nullptr;
+			i_Context = nullptr;
 		}
 	public:
 		//==============================
@@ -57,16 +44,16 @@ namespace Kargono::Assets
 		//==============================
 		t_AssetType& GetAsset()
 		{
-			KG_ASSERT(m_Asset);
-			KG_ASSERT(m_Handle.IsValid());
-			KG_ASSERT(m_LoadState == LoadState::Loaded);
-
 			// Note that this function assumes you have verified the asset is loaded
+			KG_ASSERT(IsUsable());
 			return *m_Asset;
 		}
 
 		OptionalRef<t_AssetType> GetAssetOptional()
 		{
+			// Please use this function if you are unsure if the asset is loaded
+			KG_ASSERT(IsValid());
+
 			if (m_Asset && m_LoadState == LoadState::Loaded)
 			{
 				return *m_Asset;
@@ -74,19 +61,13 @@ namespace Kargono::Assets
 			return {};
 		}
 
-		AssetHandle GetHandle() const
-		{
-			return m_Handle;
-		}
-
-		LoadState GetLoadState() const
-		{
-			return m_LoadState;
-		}
+		AssetHandle GetHandle() const { return m_Handle;}
+		LoadState GetLoadState() const { return m_LoadState;}
+		AssetManager<t_AssetType>* GetContext() { i_Context; }
 
 		bool IsValid() const
 		{
-			return m_Handle.IsValid() && (
+			return m_Handle.IsValid() && static_cast<bool>(i_Context) && (
 				(m_LoadState == LoadState::Loaded && m_Asset) ||
 				(m_LoadState != LoadState::Loaded && !m_Asset));
 		}
@@ -103,9 +84,8 @@ namespace Kargono::Assets
 
 		t_AssetType* GetAssetPtr()
 		{
-			KG_ASSERT(IsValid());
-
 			// Note that this function assumes you have verified the asset is loaded
+			KG_ASSERT(IsUsable());
 			return m_Asset;
 		}
 
@@ -118,6 +98,7 @@ namespace Kargono::Assets
 			m_Handle = other.m_Handle;
 			m_LoadState = other.m_LoadState;
 			m_Asset = other.m_Asset;
+			i_Context = other.i_Context;
 
 			return *this;
 		}
@@ -140,191 +121,15 @@ namespace Kargono::Assets
 		AssetHandle m_Handle{ Assets::k_EmptyHandle };
 		LoadState m_LoadState{ LoadState::Unloaded };
 		t_AssetType* m_Asset{ nullptr };
+
+	private:
+		//==============================
+		// Injected Dependencies
+		//==============================
+		// Greater context that outlives reference
+		AssetManager<t_AssetType>* i_Context{ nullptr };
 	};
 
 	template<typename t_AssetType>
 	using AssetRef = AssetReference<t_AssetType>;
-
-	template<typename t_AssetType>
-	struct TrackedAssetReference
-	{
-	public:
-		//==============================
-		// Constructors/Destructors
-		//==============================
-		TrackedAssetReference() = default;
-		TrackedAssetReference(AssetReference<t_AssetType> assetReference)
-		{
-			SetAssetReference(assetReference);
-		}
-		~TrackedAssetReference()
-		{
-			// Please unregister from notifier before destruction
-			KG_ASSERT(!IsNotifierRegistered());
-		}
-	public:
-		//==============================
-		// Notification
-		//==============================
-		// Function called by notifier when asset is updated
-		void OnNotify(LoadState state, t_AssetType* asset)
-		{
-			KG_ASSERT(m_ListenerIndex != k_InvalidListenerIndex);
-			KG_ASSERT(i_AssetReference);
-
-			// Call pre update callback
-			if (m_PreUpdateCallback)
-			{
-				m_PreUpdateCallback(state, asset);
-			}
-
-			// Update internal asset reference
-			i_AssetReference.OnUpdateAsset(state, asset);
-
-			// Call post update callback
-			if (m_PostUpdateCallback)
-			{
-				m_PostUpdateCallback(state, asset);
-			}
-		}
-
-		void RegisterNotifier(AssetUpdateNotifier<t_AssetType>& notifier, UserCallback<t_AssetType> preCallback, UserCallback<t_AssetType> postCallback)
-		{
-			// Cannot register if already registered (leads to dangling pointers)
-			KG_ASSERT(!IsNotifierRegistered());
-
-			// Must have a valid asset reference to register with
-			KG_ASSERT(i_AssetReference);
-			KG_ASSERT(i_AssetReference.IsValid());
-
-			// Register with notifier
-			ListenerIndex listenerIndex = notifier.AddObserver(KG_BIND_CLASS_FN(OnNotify));
-			KG_ASSERT(listenerIndex != k_InvalidListenerIndex);
-
-			// Store internal data
-			i_Notifier = &notifier;
-			m_ListenerIndex = listenerIndex;
-			m_PreUpdateCallback = preCallback;
-			m_PostUpdateCallback = postCallback;
-		}
-
-		void UnregisterNotifier()
-		{
-			// Must be registered to unregister
-			KG_ASSERT(IsNotifierRegistered());
-
-			// Unregister from notifier
-			i_Notifier->RemoveObserver(m_ListenerIndex);
-
-			// Reset internal data
-			i_Notifier = nullptr;
-			m_ListenerIndex = k_InvalidListenerIndex;
-			m_PreUpdateCallback = nullptr;
-			m_PostUpdateCallback = nullptr;
-		}
-
-		ListenerIndex Reset()
-		{
-			// Cache listener index
-			ListenerIndex oldIndex{ m_ListenerIndex };
-
-			// Unregister notifier if necessary
-			if (IsNotifierRegistered())
-			{
-				UnregisterNotifier();
-			}
-
-			// Reset asset reference
-			i_AssetReference.Reset();
-
-			return oldIndex;
-		}
-	public:
-		//==============================
-		// Getters/Setters
-		//==============================
-		ListenerIndex GetListenerIndex() const
-		{
-			return m_ListenerIndex;
-		}
-
-		bool IsNotifierRegistered() const
-		{
-			return i_Notifier && m_ListenerIndex != k_InvalidListenerIndex;
-		}
-
-		void SetAssetReference(AssetReference<t_AssetType> assetReference)
-		{
-			KG_ASSERT(assetReference);
-			// Cannot change asset reference if notifier already registered (leads to dangling pointers)
-			// Please unregister first
-			KG_ASSERT(!IsNotifierRegistered());
-
-			i_AssetReference = assetReference;
-		}
-
-		bool IsAssetUsable() const
-		{
-			return i_AssetReference && i_AssetReference.IsUsable() && IsNotifierRegistered();
-		}
-
-		t_AssetType& GetAsset()
-		{
-			// Ensure asset reference should be usable
-			KG_ASSERT(IsAssetUsable());
-
-			// Note that this function assumes you have verified the asset is loaded
-			return i_AssetReference.GetAsset();
-		}
-
-		t_AssetType* GetAssetPtr()
-		{
-			// Ensure asset reference should be usable
-			KG_ASSERT(IsAssetUsable());
-
-			// Note that this function assumes you have verified the asset is loaded
-			return &i_AssetReference.GetAsset();
-		}
-
-		AssetHandle GetAssetHandle()
-		{
-			return i_AssetReference.GetHandle();
-		}
-
-		AssetRef<t_AssetType> GetAssetRef() const
-		{
-			return i_AssetReference;
-		}
-
-	public:
-		//==============================
-		// Operator Overloads
-		//==============================
-		operator bool() const noexcept 
-		{
-			return IsAssetUsable();
-		}
-
-		t_AssetType* operator->() 
-		{
-			return &GetAsset();
-		}
-	private:
-		//==============================
-		// Internal Fields
-		//==============================
-		// Notifier data
-		ListenerIndex m_ListenerIndex{ k_InvalidListenerIndex };
-		UserCallback<t_AssetType> m_PreUpdateCallback{ nullptr };
-		UserCallback<t_AssetType> m_PostUpdateCallback{ nullptr };
-	private:
-		//==============================
-		// Injected Depenencies
-		//==============================
-		AssetReference<t_AssetType> i_AssetReference{};
-		AssetUpdateNotifier<t_AssetType>* i_Notifier{ nullptr };
-	};
-
-	template<typename t_AssetType>
-	using TAssetRef = TrackedAssetReference<t_AssetType>;
 }

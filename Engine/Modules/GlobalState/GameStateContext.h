@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Modules/GlobalState/Assets/GameState.h"
-#include "Modules/Assets/AssetReference.h"
+#include "Modules/Assets/TrackedAssetReference.h"
 
 namespace Kargono::GlobalState
 {

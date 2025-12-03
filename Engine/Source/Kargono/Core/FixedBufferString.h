@@ -313,8 +313,8 @@ namespace Kargono
 				uint8_t byteB = reinterpret_cast<const uint8_t*>(other.m_DataBuffer.data())[i];
 				uint8_t xorByte = byteA ^ byteB;
 
-				// Check for null terminator in either string
-				if (byteA == '\0' || byteB == '\0')
+				// Check for null terminator in both strings
+				if (byteA == '\0' && byteB == '\0')
 				{
 					result.m_DataBuffer[i] = '\0';
 					result.m_StringLength = i;

@@ -201,6 +201,7 @@ namespace Kargono::ECS
 		if (cameraComponent)
 		{
 			Cameras::CameraComponent& cc = AddComponent<Cameras::CameraComponent>();
+			componentContext.m_Node = &cameraComponent;
 			cc.Deserialize((void*)&componentContext);
 		}
 

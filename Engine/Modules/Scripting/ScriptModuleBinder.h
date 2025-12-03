@@ -6,6 +6,7 @@
 #include "Kargono/Core/WrappedData.h"
 #include "Modules/Scripting/ScriptingCommon.h"
 #include "Kargono/Utility/Random.h"
+#include "Modules/Scripting/Assets/Script.h"
 
 #include "Modules/Scripting/Platform/SharedLibrary.h"
 
@@ -17,9 +18,6 @@
 
 namespace Kargono::Scripting
 {
-	class Script;
-	class ScriptModuleBinder;
-
 	class ScriptModuleBuilder
 	{
 	private:
