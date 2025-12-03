@@ -2,7 +2,7 @@
 
 #include "Modules/ECSInternal/Module/ComponentTag.h"
 #include "Modules/Scripting/Module/ScriptingModule.h"
-#include "Modules/Assets/TrackedAssetReference.h"
+#include "Modules/Assets/AssetReference.h"
 
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
@@ -38,7 +38,7 @@ namespace Kargono::Scripting
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::TAssetRef<Scripting::Script> m_OnCreateScript{};
+		Assets::AssetRef<Scripting::Script> m_OnCreateScript{};
 	};
 
 	Register_Module_Type(OnCreate, ECSInternal::ComponentTag)

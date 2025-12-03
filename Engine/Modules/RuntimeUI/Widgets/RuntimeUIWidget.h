@@ -69,7 +69,7 @@ namespace Kargono::RuntimeUI
 
 	struct WidgetCallbacks
 	{
-		Assets::TAssetRef<Scripting::Script> m_OnPress{};
+		Assets::AssetRef<Scripting::Script> m_OnPress{};
 	};
 
 	struct SelectionData
@@ -153,7 +153,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Public Fields
 		//============================
-		Assets::TAssetRef<Rendering::Texture2D> m_ImageRef{};
+		Assets::AssetRef<Rendering::Texture2D> m_ImageRef{};
 		bool m_FixedAspectRatio{ false };
 	};
 

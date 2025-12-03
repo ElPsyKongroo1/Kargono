@@ -47,7 +47,7 @@ namespace Kargono::Scenes
 		//====================
 		// Internal Fields
 		//====================
-		Assets::TAssetRef<Scene> m_ActiveScene{};
+		Assets::AssetRef<Scene> m_ActiveScene{};
 	};
 
 	class SceneService // TODO: EWWWWW UGHHHHHHH

@@ -10,6 +10,41 @@ namespace Kargono::Assets
 	template<typename t_AssetType> requires AssetConcept<t_AssetType>
 	class AssetManager;
 
+
+	template<typename t_AssetType>
+	struct AssetStorage
+	{
+		// Control block 
+		size_t m_StrongRefCount{ 0 };
+		size_t m_WeakRefCount{ 0 };
+		// Data
+		LoadState m_LoadState{ LoadState::Unloaded };
+		t_AssetType* m_AssetPtr{ nullptr };
+	};
+
+	template<typename t_AssetType>
+	struct WeakAssetReference
+	{
+	public:
+		ExpectedRef GetAsset()
+		{
+			// Please use this function if you are unsure if the asset is loaded
+			KG_ASSERT(IsValid());
+
+			if (m_Asset && m_LoadState == LoadState::Loaded)
+			{
+				return *m_Asset;
+			}
+			return {};
+		}
+	private:
+		AssetHandle m_AssetHandle{ k_EmptyHandle };
+		AssetStorage* m_Storage{ nullptr };
+	};
+
+	template <typename t_AssetType>
+	using WAssetRef = WeakAssetReference<t_AssetType>;
+
 	template<typename t_AssetType>
 	struct AssetReference
 	{

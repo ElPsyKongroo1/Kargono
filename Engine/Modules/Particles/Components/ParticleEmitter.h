@@ -38,7 +38,7 @@ namespace Kargono::Particles
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::TAssetRef<EmitterConfig> m_EmitterConfigRef{};
+		Assets::AssetRef<EmitterConfig> m_EmitterConfigRef{};
 	};
 
 	Register_Module_Type(ParticleEmitter, ECSInternal::ComponentTag)

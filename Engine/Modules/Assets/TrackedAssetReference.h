@@ -3,16 +3,32 @@
 #include "Modules/Assets/AssetReference.h"
 #include "Kargono/Core/Notifier.h"
 #include "Modules/Assets/Metadata.h"
+#include "Modules/Assets/Concepts/AssetFlagConcepts.h"
 
 namespace Kargono::Assets
 {
 	// Callback types
 	template<typename t_AssetType>
-	using UpdateLoadStateCallback = std::function<void(LoadState, t_AssetType*)>;
+	using UpdateLoadStateCallback = std::conditional_t
+		<
+		HasUpdateLoadStateNotifierFlag<t_AssetType>, // Condition
+		std::function<void(LoadState, t_AssetType*)>, // True type
+		std::monostate // False type
+		>;
 	template<typename t_AssetType>
-	using DeleteAssetCallback = std::function<void()>;
+	using DeleteAssetCallback = std::conditional_t
+		<
+		HasDeleteAssetNotifierFlag<t_AssetType>, // Condition
+		std::function<void()>, // True type
+		std::monostate // False type
+		>;
 	template<typename t_AssetType>
-	using UpdateMetadataCallback = std::function<void(Metadata<t_AssetType>& newMetadata)>;
+	using UpdateMetadataCallback = std::conditional_t
+		<
+		HasUpdateMetadataNotifierFlag<t_AssetType>, // Condition
+		std::function<void(Metadata<t_AssetType>& newMetadata)>, // True type
+		std::monostate // False type
+		>;
 
 	template<AssetConcept t_AssetType>
 	struct NotificationHandlers
@@ -112,9 +128,6 @@ namespace Kargono::Assets
 		{
 			KG_ASSERT(m_NotificationHandlers.m_UpdateMetadata != k_InvalidListenerIndex);
 			KG_ASSERT(i_AssetReference);
-
-			// Reset the reference
-			i_AssetReference->Reset();
 
 			// Call post update callback
 			if (m_NotificationHandlers.m_UpdateMetadata)
@@ -256,7 +269,4 @@ namespace Kargono::Assets
 		//==============================
 		AssetReference<t_AssetType> i_AssetReference{};
 	};
-
-	template<typename t_AssetType>
-	using TAssetRef = TrackedAssetReference<t_AssetType>;
 }

@@ -48,7 +48,7 @@ namespace Kargono::InputMap
 		//=========================
 		// Current Input Mode
 		//=========================
-		Assets::TAssetRef<InputMap> m_ActiveInputMap{};
+		Assets::AssetRef<InputMap> m_ActiveInputMap{};
 	};
 
 	class InputMapService // TODO: REMOVE EWWWWWWW

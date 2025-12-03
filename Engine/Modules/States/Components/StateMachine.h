@@ -40,11 +40,11 @@ namespace Kargono::States
 		// Public Fields
 		//==============================
 		// Main state that undergoes state transitions
-		Assets::TAssetRef<State> m_CurrentStateReference{};
+		Assets::AssetRef<State> m_CurrentStateReference{};
 		// This state allows transitioning into a temporary state for the CurrentState and easily reverting back
-		Assets::TAssetRef<State> m_PreviousStateReference{};
+		Assets::AssetRef<State> m_PreviousStateReference{};
 		// Globally held state that is ubiquitously available and ran in the OnUpdate() function
-		Assets::TAssetRef<State> m_GlobalStateReference{};
+		Assets::AssetRef<State> m_GlobalStateReference{};
 	};
 
 	Register_Module_Type(StateMachine, ECSInternal::ComponentTag)

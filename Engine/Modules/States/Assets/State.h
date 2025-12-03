@@ -5,7 +5,7 @@
 #include "Modules/Assets/Metadata.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/Assets/Module/AssetTag.h"
-#include "Modules/Assets/TrackedAssetReference.h"
+#include "Modules/Assets/AssetReference.h"
 
 namespace Kargono::States
 {
@@ -57,13 +57,13 @@ namespace Kargono::States
 		// Public Fields
 		//==============================
 		// Called each frame if entity has AIComponent
-		Assets::TAssetRef<Scripting::Script> m_OnUpdate{};
+		Assets::AssetRef<Scripting::Script> m_OnUpdate{};
 		// Called when this state is entered
-		Assets::TAssetRef<Scripting::Script> m_OnEnterState{};
+		Assets::AssetRef<Scripting::Script> m_OnEnterState{};
 		// Called when this state is exited
-		Assets::TAssetRef<Scripting::Script> m_OnExitState{};
+		Assets::AssetRef<Scripting::Script> m_OnExitState{};
 		// Called when a message is received
-		Assets::TAssetRef<Scripting::Script> m_OnMessage{};
+		Assets::AssetRef<Scripting::Script> m_OnMessage{};
 	};
 
 	Register_Module_Type(State, Assets::AssetTag)

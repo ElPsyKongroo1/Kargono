@@ -57,9 +57,9 @@ namespace Kargono::Rendering
 		Ref<std::vector<Math::vec2>> m_TextureCoordinates{ nullptr };
 		Ref<std::vector<uint32_t>> m_Indices{ nullptr };
 		Ref<std::vector<Math::vec4>> m_VertexColors{ nullptr };
-		Assets::TAssetRef<Rendering::Shader> m_Shader;
+		Assets::AssetRef<Rendering::Shader> m_Shader;
 		Rendering::ShaderSpecification m_ShaderSpecification{ Rendering::ColorInputType::None, Rendering::TextureInputType::None, false, true, true, Rendering::RenderingType::DrawIndex, false };
-		Assets::TAssetRef<Rendering::Texture2D> m_Texture;
+		Assets::AssetRef<Rendering::Texture2D> m_Texture;
 		Buffer m_ShaderData;
 	};
 

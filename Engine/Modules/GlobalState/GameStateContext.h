@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Modules/GlobalState/Assets/GameState.h"
-#include "Modules/Assets/TrackedAssetReference.h"
+#include "Modules/Assets/AssetReference.h"
 
 namespace Kargono::GlobalState
 {
@@ -22,7 +22,7 @@ namespace Kargono::GlobalState
 		//=========================
 		// Internal Fields
 		//=========================
-		Assets::TAssetRef<GameState> m_ActiveGameState{};
+		Assets::AssetRef<GameState> m_ActiveGameState{};
 	};
 
 	class GameStateService // TODO: EWWWWW UGHHHHHHH

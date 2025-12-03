@@ -20,8 +20,11 @@ namespace Kargono::Assets
 	concept HasRequireUniqueHashFlag = HasAssetFlag<t_AssetType, AssetFlag::RequireUniqueHash>;
 
 	template<typename t_AssetType>
-	concept HasDisableDeleteAssetNotifierFlag = HasAssetFlag<t_AssetType, AssetFlag::DisableDeleteAssetNotifier>;
+	concept HasDeleteAssetNotifierFlag = HasAssetFlag<t_AssetType, AssetFlag::HasDeleteAssetNotifier>;
 
 	template<typename t_AssetType>
-	concept HasDisableUpdateLoadStateNotifierFlag = HasAssetFlag<t_AssetType, AssetFlag::DisableDeleteAssetNotifier>;
+	concept HasUpdateLoadStateNotifierFlag = HasAssetFlag<t_AssetType, AssetFlag::HasUpdateLoadStateNotifier>;
+
+	template<typename t_AssetType>
+	concept HasUpdateMetadataNotifierFlag = HasAssetFlag<t_AssetType, AssetFlag::HasUpdateMetadataNotifier>;
 }

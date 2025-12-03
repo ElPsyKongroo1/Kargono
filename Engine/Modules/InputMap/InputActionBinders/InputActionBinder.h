@@ -3,7 +3,7 @@
 #include "Kargono/Core/Base.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
 #include "Modules/Assets/AssetsCommon.h"
-#include "Modules/Assets/TrackedAssetReference.h"
+#include "Modules/Assets/AssetReference.h"
 
 namespace Kargono::InputMap
 {
@@ -58,6 +58,6 @@ namespace Kargono::InputMap
 		// Protected Fields
 		//=========================
 		InputActionTypes m_BindingType{ InputActionTypes::None };
-		Assets::TAssetRef<Scripting::Script> m_Script{};
+		Assets::AssetRef<Scripting::Script> m_Script{};
 	};
 }

@@ -48,9 +48,9 @@ namespace Kargono::RuntimeUI
 		// Public Fields
 		//==============================
 		// Active UI
-		Assets::TAssetRef<UserInterface> m_ActiveUI{};
+		Assets::AssetRef<UserInterface> m_ActiveUI{};
 		// Default values
-		Assets::TAssetRef<Font> m_DefaultFont{};
+		Assets::AssetRef<Font> m_DefaultFont{};
 		// Rendering data
 		Rendering::RendererInputSpec m_BackgroundInputSpec{};
 		Rendering::RendererInputSpec m_ImageInputSpec{};

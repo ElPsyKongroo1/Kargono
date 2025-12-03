@@ -2,7 +2,7 @@
 
 #include "Modules/Assets/AssetsCommon.h"
 #include "Modules/Scripting/ScriptModuleBinder.h"
-#include "Modules/Assets/TrackedAssetReference.h"
+#include "Modules/Assets/AssetReference.h"
 #include "Modules/Scripting/Assets/Script.h"
 
 #include "Modules/Physics2D/Module/Physics2DModule.h"
@@ -57,8 +57,8 @@ namespace Kargono::Physics2D
 		// Storage for runtime
 		void* m_RuntimeBody{ nullptr };
 		// Collision callback function pointers
-		Assets::TAssetRef<Scripting::Script> m_OnCollisionStartScript{};
-		Assets::TAssetRef<Scripting::Script> m_OnCollisionEndScript{};
+		Assets::AssetRef<Scripting::Script> m_OnCollisionStartScript{};
+		Assets::AssetRef<Scripting::Script> m_OnCollisionEndScript{};
 	};
 
 	Register_Module_Type(RigidBody2D, ECSInternal::ComponentTag)

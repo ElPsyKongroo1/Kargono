@@ -3,7 +3,7 @@
 #include "Kargono/Core/Base.h"
 #include "Kargono/Core/BitField.h"
 #include "Kargono/Core/WrappedData.h"
-#include "Modules/Assets/TrackedAssetReference.h"
+#include "Modules/Assets/AssetReference.h"
 #include "Modules/Rendering/Assets/Texture2D.h"
 
 #include <string>
@@ -98,7 +98,7 @@ namespace Kargono::Scripting
 		ScriptTokenType AcceptableLiteral{};
 		std::string EmittedDeclaration {};
 		std::string EmittedParameter {};
-		Assets::TAssetRef<Rendering::Texture2D> Icon {};
+		Assets::AssetRef<Rendering::Texture2D> Icon {};
 		std::unordered_map<std::string, Ref<MemberType>> Members{};
 		std::unordered_set<std::string> AcceptableArithmetic{};
 	};

@@ -2,7 +2,7 @@
 
 #include "Kargono/Core/Base.h"
 #include "Modules/Assets/AssetsCommon.h"
-#include "Modules/Assets/TrackedAssetReference.h"
+#include "Modules/Assets/AssetReference.h"
 #include "Modules/Rendering/Assets/Texture2D.h"
 
 #include "Modules/EditorUI/ExternalAPI/ImGuiAPI.h"
@@ -94,24 +94,24 @@ namespace Kargono::EditorUI
 		// Public Fields
 		//==============================
 		// Navigation
-		Assets::TAssetRef<Rendering::Texture2D> m_Down;
-		Assets::TAssetRef<Rendering::Texture2D> m_Right;
-		Assets::TAssetRef<Rendering::Texture2D> m_Dash;
+		Assets::AssetRef<Rendering::Texture2D> m_Down;
+		Assets::AssetRef<Rendering::Texture2D> m_Right;
+		Assets::AssetRef<Rendering::Texture2D> m_Dash;
 		// Modify
-		Assets::TAssetRef<Rendering::Texture2D> m_Delete;
-		Assets::TAssetRef<Rendering::Texture2D> m_Edit;
-		Assets::TAssetRef<Rendering::Texture2D> m_Cancel;
-		Assets::TAssetRef<Rendering::Texture2D> m_Cancel2;
-		Assets::TAssetRef<Rendering::Texture2D> m_Confirm;
+		Assets::AssetRef<Rendering::Texture2D> m_Delete;
+		Assets::AssetRef<Rendering::Texture2D> m_Edit;
+		Assets::AssetRef<Rendering::Texture2D> m_Cancel;
+		Assets::AssetRef<Rendering::Texture2D> m_Cancel2;
+		Assets::AssetRef<Rendering::Texture2D> m_Confirm;
 		// Other
-		Assets::TAssetRef<Rendering::Texture2D> m_Search;
-		Assets::TAssetRef<Rendering::Texture2D> m_Checkbox_Disabled;
-		Assets::TAssetRef<Rendering::Texture2D> m_Checkbox_Enabled;
-		Assets::TAssetRef<Rendering::Texture2D> m_Notification;
-		Assets::TAssetRef<Rendering::Texture2D> m_Options;
-		Assets::TAssetRef<Rendering::Texture2D> m_Settings;
-		Assets::TAssetRef<Rendering::Texture2D> m_AI;
-		Assets::TAssetRef<Rendering::Texture2D> m_Camera;
+		Assets::AssetRef<Rendering::Texture2D> m_Search;
+		Assets::AssetRef<Rendering::Texture2D> m_Checkbox_Disabled;
+		Assets::AssetRef<Rendering::Texture2D> m_Checkbox_Enabled;
+		Assets::AssetRef<Rendering::Texture2D> m_Notification;
+		Assets::AssetRef<Rendering::Texture2D> m_Options;
+		Assets::AssetRef<Rendering::Texture2D> m_Settings;
+		Assets::AssetRef<Rendering::Texture2D> m_AI;
+		Assets::AssetRef<Rendering::Texture2D> m_Camera;
 	private:
 		//==============================
 		// Owning Class
@@ -136,14 +136,14 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::TAssetRef<Rendering::Texture2D> m_BoxCollider;
-		Assets::TAssetRef<Rendering::Texture2D> m_CircleCollider;
-		Assets::TAssetRef<Rendering::Texture2D> m_Entity;
-		Assets::TAssetRef<Rendering::Texture2D> m_Particles;
-		Assets::TAssetRef<Rendering::Texture2D> m_ClassInstance;
-		Assets::TAssetRef<Rendering::Texture2D> m_RigidBody;
-		Assets::TAssetRef<Rendering::Texture2D> m_Tag;
-		Assets::TAssetRef<Rendering::Texture2D> m_Transform;
+		Assets::AssetRef<Rendering::Texture2D> m_BoxCollider;
+		Assets::AssetRef<Rendering::Texture2D> m_CircleCollider;
+		Assets::AssetRef<Rendering::Texture2D> m_Entity;
+		Assets::AssetRef<Rendering::Texture2D> m_Particles;
+		Assets::AssetRef<Rendering::Texture2D> m_ClassInstance;
+		Assets::AssetRef<Rendering::Texture2D> m_RigidBody;
+		Assets::AssetRef<Rendering::Texture2D> m_Tag;
+		Assets::AssetRef<Rendering::Texture2D> m_Transform;
 	private:
 		//==============================
 		// Owning Class
@@ -168,13 +168,13 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::TAssetRef<Rendering::Texture2D> m_Display;
-		Assets::TAssetRef<Rendering::Texture2D> m_Simulate;
-		Assets::TAssetRef<Rendering::Texture2D> m_Step;
-		Assets::TAssetRef<Rendering::Texture2D> m_Play;
-		Assets::TAssetRef<Rendering::Texture2D> m_Pause;
-		Assets::TAssetRef<Rendering::Texture2D> m_Stop;
-		Assets::TAssetRef<Rendering::Texture2D> m_Grid;
+		Assets::AssetRef<Rendering::Texture2D> m_Display;
+		Assets::AssetRef<Rendering::Texture2D> m_Simulate;
+		Assets::AssetRef<Rendering::Texture2D> m_Step;
+		Assets::AssetRef<Rendering::Texture2D> m_Play;
+		Assets::AssetRef<Rendering::Texture2D> m_Pause;
+		Assets::AssetRef<Rendering::Texture2D> m_Stop;
+		Assets::AssetRef<Rendering::Texture2D> m_Grid;
 	private:
 		//==============================
 		// Owning Class
@@ -199,16 +199,16 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::TAssetRef<Rendering::Texture2D> m_VerticalContainer;
-		Assets::TAssetRef<Rendering::Texture2D> m_HorizontalContainer;
-		Assets::TAssetRef<Rendering::Texture2D> m_DropDownWidget;
-		Assets::TAssetRef<Rendering::Texture2D> m_SliderWidget;
-		Assets::TAssetRef<Rendering::Texture2D> m_UserInterface2;
-		Assets::TAssetRef<Rendering::Texture2D> m_InputTextWidget;
-		Assets::TAssetRef<Rendering::Texture2D> m_ButtonWidget;
-		Assets::TAssetRef<Rendering::Texture2D> m_ImageButtonWidget;
-		Assets::TAssetRef<Rendering::Texture2D> m_TextWidget;
-		Assets::TAssetRef<Rendering::Texture2D> m_Window;
+		Assets::AssetRef<Rendering::Texture2D> m_VerticalContainer;
+		Assets::AssetRef<Rendering::Texture2D> m_HorizontalContainer;
+		Assets::AssetRef<Rendering::Texture2D> m_DropDownWidget;
+		Assets::AssetRef<Rendering::Texture2D> m_SliderWidget;
+		Assets::AssetRef<Rendering::Texture2D> m_UserInterface2;
+		Assets::AssetRef<Rendering::Texture2D> m_InputTextWidget;
+		Assets::AssetRef<Rendering::Texture2D> m_ButtonWidget;
+		Assets::AssetRef<Rendering::Texture2D> m_ImageButtonWidget;
+		Assets::AssetRef<Rendering::Texture2D> m_TextWidget;
+		Assets::AssetRef<Rendering::Texture2D> m_Window;
 	private:
 		//==============================
 		// Owning Class
@@ -233,11 +233,11 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::TAssetRef<Rendering::Texture2D> m_Number;
-		Assets::TAssetRef<Rendering::Texture2D> m_Variable;
-		Assets::TAssetRef<Rendering::Texture2D> m_Function;
-		Assets::TAssetRef<Rendering::Texture2D> m_Boolean;
-		Assets::TAssetRef<Rendering::Texture2D> m_Decimal;
+		Assets::AssetRef<Rendering::Texture2D> m_Number;
+		Assets::AssetRef<Rendering::Texture2D> m_Variable;
+		Assets::AssetRef<Rendering::Texture2D> m_Function;
+		Assets::AssetRef<Rendering::Texture2D> m_Boolean;
+		Assets::AssetRef<Rendering::Texture2D> m_Decimal;
 	private:
 		//==============================
 		// Owning Class
@@ -262,29 +262,29 @@ namespace Kargono::EditorUI
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::TAssetRef<Rendering::Texture2D> m_Forward;
-		Assets::TAssetRef<Rendering::Texture2D> m_Directory;
-		Assets::TAssetRef<Rendering::Texture2D> m_GenericFile;
-		Assets::TAssetRef<Rendering::Texture2D> m_Back;
-		Assets::TAssetRef<Rendering::Texture2D> m_Audio;
-		Assets::TAssetRef<Rendering::Texture2D> m_Texture;
-		Assets::TAssetRef<Rendering::Texture2D> m_Binary;
-		Assets::TAssetRef<Rendering::Texture2D> m_Scene;
-		Assets::TAssetRef<Rendering::Texture2D> m_Scene_KG;
-		Assets::TAssetRef<Rendering::Texture2D> m_Registry;
-		Assets::TAssetRef<Rendering::Texture2D> m_UserInterface;
-		Assets::TAssetRef<Rendering::Texture2D> m_Font;
-		Assets::TAssetRef<Rendering::Texture2D> m_Input;
-		Assets::TAssetRef<Rendering::Texture2D> m_AI_KG;
-		Assets::TAssetRef<Rendering::Texture2D> m_Audio_KG;
-		Assets::TAssetRef<Rendering::Texture2D> m_Font_KG;
-		Assets::TAssetRef<Rendering::Texture2D> m_GlobalState;
-		Assets::TAssetRef<Rendering::Texture2D> m_CustomComponent;
-		Assets::TAssetRef<Rendering::Texture2D> m_Script;
-		Assets::TAssetRef<Rendering::Texture2D> m_Texture_KG;
-		Assets::TAssetRef<Rendering::Texture2D> m_EmitterConfig;
-		Assets::TAssetRef<Rendering::Texture2D> m_Enum;
-		Assets::TAssetRef<Rendering::Texture2D> m_ColorPalette;
+		Assets::AssetRef<Rendering::Texture2D> m_Forward;
+		Assets::AssetRef<Rendering::Texture2D> m_Directory;
+		Assets::AssetRef<Rendering::Texture2D> m_GenericFile;
+		Assets::AssetRef<Rendering::Texture2D> m_Back;
+		Assets::AssetRef<Rendering::Texture2D> m_Audio;
+		Assets::AssetRef<Rendering::Texture2D> m_Texture;
+		Assets::AssetRef<Rendering::Texture2D> m_Binary;
+		Assets::AssetRef<Rendering::Texture2D> m_Scene;
+		Assets::AssetRef<Rendering::Texture2D> m_Scene_KG;
+		Assets::AssetRef<Rendering::Texture2D> m_Registry;
+		Assets::AssetRef<Rendering::Texture2D> m_UserInterface;
+		Assets::AssetRef<Rendering::Texture2D> m_Font;
+		Assets::AssetRef<Rendering::Texture2D> m_Input;
+		Assets::AssetRef<Rendering::Texture2D> m_AI_KG;
+		Assets::AssetRef<Rendering::Texture2D> m_Audio_KG;
+		Assets::AssetRef<Rendering::Texture2D> m_Font_KG;
+		Assets::AssetRef<Rendering::Texture2D> m_GlobalState;
+		Assets::AssetRef<Rendering::Texture2D> m_CustomComponent;
+		Assets::AssetRef<Rendering::Texture2D> m_Script;
+		Assets::AssetRef<Rendering::Texture2D> m_Texture_KG;
+		Assets::AssetRef<Rendering::Texture2D> m_EmitterConfig;
+		Assets::AssetRef<Rendering::Texture2D> m_Enum;
+		Assets::AssetRef<Rendering::Texture2D> m_ColorPalette;
 	private:
 		//==============================
 		// Owning Class

@@ -72,8 +72,9 @@ namespace Kargono::Assets
 		RequireUniqueName = 2, // Individual asset names must be unique
 		RequireUniqueHash = 3, // Individual asset hashes must be unique
 		// Notifier flags
-		DisableDeleteAssetNotifier = 4, // Removes the usage & storage of the delete-asset notifier/delegate
-		DisableUpdateLoadStateNotifier = 5 // Removes the usage & storage of the update-load-state notifier/delegate
+		HasDeleteAssetNotifier = 4, // Removes the usage & storage of the delete-asset notifier/delegate
+		HasUpdateLoadStateNotifier = 5, // Removes the usage & storage of the update-load-state notifier/delegate
+		HasUpdateMetadataNotifier = 6 // Removes the usage & storage of the update-metadata notifier/delegate
 	};
 
 	using AssetFlags = BitField<std::underlying_type_t<AssetFlag>>;

@@ -52,7 +52,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		SelectionData m_SelectionData;
 		Math::vec2 m_Bounds{ 0.0f, 1.0f };
-		Assets::TAssetRef<Scripting::Script> m_OnMoveSlider{};
+		Assets::AssetRef<Scripting::Script> m_OnMoveSlider{};
 		Math::vec4 m_SliderColor{ 1.0f };
 		Math::vec4 m_LineColor{ 1.0f };
 

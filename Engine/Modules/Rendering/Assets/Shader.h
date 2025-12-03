@@ -11,7 +11,7 @@
 #include "Modules/Assets/Module/AssetTag.h"
 #include "Modules/Assets/AssetReference.h"
 #include "Modules/Rendering/Assets/Texture2D.h"
-#include "Modules/Assets/TrackedAssetReference.h"
+#include "Modules/Assets/AssetReference.h"
 
 #include <string>
 #include <filesystem>
@@ -299,8 +299,8 @@ namespace Kargono::Rendering
 		//==============================
 		// Public Fields
 		//==============================
-		Assets::TAssetRef<Shader> m_Shader;
-		Assets::TAssetRef<Texture2D> m_Texture;
+		Assets::AssetRef<Shader> m_Shader;
+		Assets::AssetRef<Texture2D> m_Texture;
 		Rendering::ShapeComponent* m_ShapeComponent{ nullptr }; // TODO: The shape component is a memory leak...
 		Ref<DrawCallBuffer> m_CurrentDrawBuffer;
 		Buffer m_Buffer;

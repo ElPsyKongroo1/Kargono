@@ -38,8 +38,8 @@ namespace Kargono::RuntimeUI
 
 	struct UserInterfaceCallbacks
 	{
-		Assets::TAssetRef<Scripting::Script> m_OnMove{};
-		Assets::TAssetRef<Scripting::Script> m_OnHover{};
+		Assets::AssetRef<Scripting::Script> m_OnMove{};
+		Assets::AssetRef<Scripting::Script> m_OnHover{};
 	};
 
 	struct Bounds
@@ -130,7 +130,7 @@ namespace Kargono::RuntimeUI
 		//============================
 		// Public Fields
 		//============================
-		Assets::TAssetRef<Font> m_Font{};
+		Assets::AssetRef<Font> m_Font{};
 		Math::vec4 m_SelectColor{ 1.0f };
 		Math::vec4 m_HoveredColor{ 0.5f };
 		Math::vec4 m_EditingColor{ 0.15f, 0.15f, 0.15f, 1.0f };
